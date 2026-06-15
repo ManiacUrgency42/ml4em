@@ -1,0 +1,66 @@
+# ml4em configuration template.
+# Copy to config.yaml and edit. Only include keys that differ from defaults.
+#
+# NEVER put tokens here. Use environment variables or a .env file:
+#   WDB_ZTF_TOKEN=your_kowalski_token
+#   WDB_RUBIN_TOKEN=your_rubin_rsp_token
+
+sources:
+  ztf:
+    host: kowalski.caltech.edu
+    port: 443
+    timeout: 300
+    collection_sources: ZTF_sources_20240515
+    max_timestamp_hjd: 2459951.5   # end of ZTF DR16; null = all data
+    bands: [g, r, i]
+    min_cadence_days: 0.020833     # 30 minutes
+
+  rubin:
+    tap_url: https://data.lsst.cloud/api/tap
+    timeout: 300
+    bands: [u, g, r, i, z, y]
+    # data_path: /path/to/local/cache   # optional, for HPC / offline
+
+features:
+  min_observations: 50
+  compute_dmdt: true
+
+  period:
+    algorithms: [CE, AOV, LS, BLS]
+    min_period_days: 0.01
+    max_period_days: 10.0
+    top_n_periods: 3
+    min_agreement: 2
+
+  dmdt:
+    n_dt_bins: 26
+    n_dm_bins: 26
+    dt_min: 0.001
+    dt_max: 1000.0
+    dm_min: -3.0
+    dm_max:  3.0
+
+  catalog:
+    xmatch_radius_arcsec: 2.0
+    include_gaia: true
+
+storage:
+  features_dir:    features
+  models_dir:      models
+  predictions_dir: predictions
+
+training:
+  batch_size: 64
+  learning_rate: 3.0e-4
+  max_epochs: 100
+  patience: 20
+  val_fraction: 0.1
+  test_fraction: 0.1
+  seed: 42
+
+inference:
+  model_path: null   # null = latest model in storage.models_dir
+  batch_size: 10000
+  confidence_thresholds:
+    high:   0.9
+    medium: 0.7
