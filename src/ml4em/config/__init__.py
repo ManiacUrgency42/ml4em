@@ -11,13 +11,13 @@ from .schema import (
     SourcesConfig,
     StorageConfig,
     TrainingConfig,
-    WDBConfig,
+    PipelineConfig,
     ZTFConfig,
 )
 
 __all__ = [
     # Root
-    "WDBConfig",
+    "PipelineConfig",
     # Sources
     "SourcesConfig", "ZTFConfig", "RubinConfig",
     # Features

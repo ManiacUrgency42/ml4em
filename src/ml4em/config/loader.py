@@ -10,8 +10,8 @@ Rules
 2. .env files are supported for local development.
    Place a .env file in the project root (gitignored):
 
-       WDB_ZTF_TOKEN=your_kowalski_token
-       WDB_RUBIN_TOKEN=your_rubin_rsp_token
+       ML4EM_ZTF_TOKEN=your_kowalski_token
+       ML4EM_RUBIN_TOKEN=your_rubin_rsp_token
 
    load_config() loads this file automatically before reading config.yaml.
 
@@ -19,7 +19,7 @@ Rules
    Pydantic raises immediately on type errors or invalid values — not
    silently mid-pipeline.
 
-4. WDBConfig() works with no file.
+4. PipelineConfig() works with no file.
    load_default_config() returns a fully valid config from schema defaults,
    useful in tests and notebooks.
 """
@@ -32,7 +32,7 @@ from typing import Union
 
 import yaml
 
-from ml4em.config.schema import WDBConfig
+from ml4em.config.schema import PipelineConfig
 
 try:
     from dotenv import load_dotenv as _load_dotenv
@@ -54,7 +54,7 @@ def load_config(
     path: Union[str, Path] = "config.yaml",
     *,
     dotenv_path: Union[str, Path, None] = None,
-) -> WDBConfig:
+) -> PipelineConfig:
     """Load and validate a ml4em config file.
 
     Reads the YAML file at ``path``, merges with schema defaults, and
@@ -75,7 +75,7 @@ def load_config(
 
     Returns
     -------
-    WDBConfig
+    PipelineConfig
         Fully validated configuration object.
 
     Examples
@@ -101,15 +101,15 @@ def load_config(
     with config_path.open() as fh:
         raw = yaml.safe_load(fh) or {}
 
-    return WDBConfig(**raw)
+    return PipelineConfig(**raw)
 
 
-def load_default_config() -> WDBConfig:
-    """Return a WDBConfig built entirely from schema defaults.
+def load_default_config() -> PipelineConfig:
+    """Return a PipelineConfig built entirely from schema defaults.
 
     No file I/O.  Useful in unit tests and exploratory notebooks.
     """
-    return WDBConfig()
+    return PipelineConfig()
 
 
 # ---------------------------------------------------------------------------
@@ -119,20 +119,20 @@ def load_default_config() -> WDBConfig:
 def get_ztf_token() -> str:
     """Return the Kowalski API token for ZTF access.
 
-    Reads ``WDB_ZTF_TOKEN`` from the environment.  Set this in your shell
+    Reads ``ML4EM_ZTF_TOKEN`` from the environment.  Set this in your shell
     or in a .env file — never in config.yaml.
 
     Raises
     ------
     EnvironmentError
-        If ``WDB_ZTF_TOKEN`` is not set or is empty.
+        If ``ML4EM_ZTF_TOKEN`` is not set or is empty.
     """
-    token = os.environ.get("WDB_ZTF_TOKEN", "").strip()
+    token = os.environ.get("ML4EM_ZTF_TOKEN", "").strip()
     if not token:
         raise EnvironmentError(
-            "WDB_ZTF_TOKEN is not set.\n"
+            "ML4EM_ZTF_TOKEN is not set.\n"
             "Add it to your .env file:\n"
-            "    WDB_ZTF_TOKEN=your_kowalski_token"
+            "    ML4EM_ZTF_TOKEN=your_kowalski_token"
         )
     return token
 
@@ -140,18 +140,18 @@ def get_ztf_token() -> str:
 def get_rubin_token() -> str:
     """Return the RSP API token for Rubin DP1 TAP access.
 
-    Reads ``WDB_RUBIN_TOKEN`` from the environment.
+    Reads ``ML4EM_RUBIN_TOKEN`` from the environment.
 
     Raises
     ------
     EnvironmentError
-        If ``WDB_RUBIN_TOKEN`` is not set or is empty.
+        If ``ML4EM_RUBIN_TOKEN`` is not set or is empty.
     """
-    token = os.environ.get("WDB_RUBIN_TOKEN", "").strip()
+    token = os.environ.get("ML4EM_RUBIN_TOKEN", "").strip()
     if not token:
         raise EnvironmentError(
-            "WDB_RUBIN_TOKEN is not set.\n"
+            "ML4EM_RUBIN_TOKEN is not set.\n"
             "Add it to your .env file:\n"
-            "    WDB_RUBIN_TOKEN=your_rubin_rsp_token"
+            "    ML4EM_RUBIN_TOKEN=your_rubin_rsp_token"
         )
     return token

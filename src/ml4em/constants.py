@@ -1,14 +1,18 @@
 """
-Physical and survey constants for ml4em.
+Survey and pipeline constants for ml4em.
 
 Every fixed value used anywhere in the codebase is defined here with its
-unit and source. Magic numbers must not appear in any other module.
+unit and source.  Magic numbers must not appear in any other module.
+
+These constants are science-case agnostic (survey parameters, histogram
+binning, cross-match geometry).  Science-case-specific physical constants
+(e.g. WD mass range, WDB period bounds) belong in the downstream
+application (e.g. wdb-ml), NOT here.
 
 Sections
 --------
-Physical constants (SI)
-White dwarf binary physics
-dm/dt histogram parameters
+Physical constants (SI)    — fundamental, used by any EM science case
+dm/dt histogram parameters — fixed binning (changing invalidates saved features)
 ZTF survey parameters
 Rubin survey parameters
 Cross-match parameters
@@ -25,33 +29,6 @@ C       : float = 2.997_924_58e8  # speed of light                m s⁻¹
 MSUN    : float = 1.988_416e30    # solar mass                    kg
 RSUN    : float = 6.957_00e8      # solar radius                  m
 MTSUN_SI: float = G * MSUN / C**3 # solar mass in seconds        ~4.926e-6 s
-
-
-# ---------------------------------------------------------------------------
-# White dwarf binary (WDB) physics
-# ---------------------------------------------------------------------------
-
-# Mass range (solar masses)
-WD_MASS_MIN : float = 0.17   # ELM (extremely low mass) WDs from binary evolution
-WD_MASS_MAX : float = 1.44   # Chandrasekhar limit
-
-# Typical radius (solar radii).  Scales as ~0.0126 * (M/Msun)^(-1/3) for C/O WDs.
-WD_RADIUS_TYPICAL : float = 0.012   # ≈ 1.25 Earth radii
-
-# Orbital period search range (days).
-#
-# Lower bound: ZTF cadence is typically 1–3 days; the period-finding
-#   algorithms can recover periods down to ~0.01 d (14 min) with
-#   sufficient phase coverage, but reliability degrades below this.
-#   Ultra-compact AM CVn systems can have P < 0.01 d, but ZTF sampling
-#   cannot recover those reliably.
-#
-# Upper bound: WDBs relevant for GW science (AM CVn, HW Vir, NN Ser)
-#   have P < ~1 d.  Extending to 10 d captures semi-detached systems
-#   and allows the classifier to distinguish WDB from longer-period
-#   eclipsing binaries involving non-degenerate stars.
-WDB_PERIOD_MIN_DAYS : float = 0.01   # days  (~14 min)
-WDB_PERIOD_MAX_DAYS : float = 10.0   # days
 
 
 # ---------------------------------------------------------------------------

@@ -6,10 +6,10 @@ Requires the 'rubin' optional dependency group:
 
 Token
 -----
-Set WDB_RUBIN_TOKEN in your environment or .env file.
+Set ML4EM_RUBIN_TOKEN in your environment or .env file.
 Never put the token in config.yaml.
 
-    WDB_RUBIN_TOKEN=your_rsp_token
+    ML4EM_RUBIN_TOKEN=your_rsp_token
 
 Rubin source model
 ------------------

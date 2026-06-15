@@ -10,13 +10,13 @@ extraction, and vice versa.
 
 Layer → Config section mapping
 -------------------------------
-Data layer        →  WDBConfig.sources.ztf / WDBConfig.sources.rubin
-Feature layer     →  WDBConfig.features
-Training layer    →  WDBConfig.training
-Inference layer   →  WDBConfig.inference
-All layers        →  WDBConfig.storage  (shared path roots)
+Data layer        →  PipelineConfig.sources.ztf / PipelineConfig.sources.rubin
+Feature layer     →  PipelineConfig.features
+Training layer    →  PipelineConfig.training
+Inference layer   →  PipelineConfig.inference
+All layers        →  PipelineConfig.storage  (shared path roots)
 
-Defaults are set so that WDBConfig() is a fully valid config with no
+Defaults are set so that PipelineConfig() is a fully valid config with no
 config.yaml needed.  Users only override what differs from defaults.
 """
 
@@ -34,8 +34,6 @@ from ml4em.constants import (
     N_DM_BINS,
     N_DT_BINS,
     RUBIN_BANDS,
-    WDB_PERIOD_MAX_DAYS,
-    WDB_PERIOD_MIN_DAYS,
     XMATCH_RADIUS_ARCSEC,
     ZTF_BANDS,
     ZTF_DR16_MAX_HJD,
@@ -138,9 +136,9 @@ class PeriodConfig(BaseModel):
     MHF  Multi-Harmonic Fit
     """
 
-    algorithms    : list[str] = ["CE", "AOV", "LS", "BLS"]
-    min_period_days : float   = WDB_PERIOD_MIN_DAYS
-    max_period_days : float   = WDB_PERIOD_MAX_DAYS
+    algorithms      : list[str] = ["CE", "AOV", "LS", "BLS"]
+    min_period_days : float     = 0.01   # days — override for your science case
+    max_period_days : float     = 10.0   # days — override for your science case
     top_n_periods   : int     = 3    # periods retained per algorithm before scoring
     min_agreement   : int     = 2    # algorithms that must agree → "high confidence"
 
@@ -312,12 +310,16 @@ class InferenceConfig(BaseModel):
 # Root config
 # ---------------------------------------------------------------------------
 
-class WDBConfig(BaseModel):
+class PipelineConfig(BaseModel):
     """Root configuration for the ml4em pipeline.
 
     Maps directly to the structure of config.yaml.
-    Calling WDBConfig() with no arguments returns a fully valid config
+    Calling PipelineConfig() with no arguments returns a fully valid config
     using all defaults — no file required.
+
+    This config is science-case agnostic.  The researcher's science case
+    (WDB, AGN, RR Lyrae, etc.) is defined by the model trained and the
+    labels used — not by this config.
 
     Minimal config.yaml example (override only what differs):
 
@@ -327,12 +329,14 @@ class WDBConfig(BaseModel):
         features:
           period:
             algorithms: [CE, AOV, LS, BLS]
+            min_period_days: 0.01
+            max_period_days: 10.0
         storage:
           features_dir: /data/ml4em/features
     """
 
-    sources  : SourcesConfig  = Field(default_factory=SourcesConfig)
-    features : FeatureConfig  = Field(default_factory=FeatureConfig)
-    storage  : StorageConfig  = Field(default_factory=StorageConfig)
-    training : TrainingConfig = Field(default_factory=TrainingConfig)
+    sources  : SourcesConfig   = Field(default_factory=SourcesConfig)
+    features : FeatureConfig   = Field(default_factory=FeatureConfig)
+    storage  : StorageConfig   = Field(default_factory=StorageConfig)
+    training : TrainingConfig  = Field(default_factory=TrainingConfig)
     inference: InferenceConfig = Field(default_factory=InferenceConfig)

@@ -1,14 +1,16 @@
 """
 Core data contracts for ml4em.
 
-Three types define every boundary between pipeline layers:
+Four types define every boundary between pipeline layers:
 
     LightCurve      raw photometric time series            (Data → Feature)
     FeatureVector   extracted feature set for one source   (Feature → Training / Inference)
-    WDBCandidate    inference result for one source        (Inference → Output)
+    LabeledSample   FeatureVector + ground-truth label     (Label prep → Training)
+    Candidate       inference result for one source        (Inference → Output)
 
 These types are the only shared language between modules.
-Nothing in this file computes anything.
+Nothing in this file computes anything.  All types are generic — no assumption
+is made about the science case (WDB, AGN, RR Lyrae, etc.).
 """
 
 from __future__ import annotations
@@ -112,6 +114,11 @@ class FeatureVector:
     source_id : str
     survey    : Survey
 
+    # Sky position — copied from the primary LightCurve by the feature pipeline.
+    # Required by the inference layer to populate Candidate.ra / .dec.
+    ra  : float = np.nan   # right ascension, decimal degrees (J2000)
+    dec : float = np.nan   # declination, decimal degrees (J2000)
+
     # ── 1. Light curve statistics ────────────────────────────────────────────
     # Computed directly from (time, mag, mag_err) by StatisticsExtractor.
     n_obs               : int   = 0
@@ -176,14 +183,44 @@ class FeatureVector:
 
 
 # ---------------------------------------------------------------------------
+# Interface 2b: Label preparation → Training layer
+# ---------------------------------------------------------------------------
+
+@dataclass
+class LabeledSample:
+    """A FeatureVector paired with a ground-truth label for training.
+
+    Data contract between upstream label preparation (e.g. Gaia cross-match
+    in wdb-ml) and the training layer.  The training layer never produces
+    labels — it only consumes them.
+
+    Fields
+    ------
+    feature : FeatureVector
+        Fully extracted feature set for this source.
+    label : int
+        Ground-truth class.
+        1 = positive (WDB candidate confirmed by Gaia WD catalog).
+        0 = negative (background / non-WDB source).
+    """
+
+    feature : FeatureVector
+    label   : int
+
+
+# ---------------------------------------------------------------------------
 # Interface 3: Inference layer → Output
 # ---------------------------------------------------------------------------
 
 @dataclass(frozen=True)
-class WDBCandidate:
-    """Inference result for a single source.
+class Candidate:
+    """Inference result for a single source.  Generic — not science-case specific.
 
     Produced by the inference post-processing step. Immutable once created.
+
+    The researcher's science case (WDB, AGN, eclipsing binary, etc.) is
+    encoded in the trained model and the labels used during training —
+    not in this type.
 
     Fields
     ------
@@ -194,11 +231,11 @@ class WDBCandidate:
     survey : Survey
         Originating survey.
     probability : float
-        Model output in [0, 1] — probability the source is a WDB.
+        Model output in [0, 1] — P(positive class) as defined by training labels.
     period : float
-        Detected orbital period in days.
+        Detected dominant period in days.  np.nan if not computed.
     period_algorithm : str
-        Algorithm that found the period.
+        Algorithm that found the period.  Empty string if not computed.
     confidence : Confidence
         Qualitative tier derived from probability thresholds defined in
         InferenceConfig.confidence_thresholds.

@@ -6,10 +6,10 @@ Requires the 'ztf' optional dependency group:
 
 Token
 -----
-Set WDB_ZTF_TOKEN in your environment or .env file.
+Set ML4EM_ZTF_TOKEN in your environment or .env file.
 Never put the token in config.yaml.
 
-    WDB_ZTF_TOKEN=your_kowalski_token
+    ML4EM_ZTF_TOKEN=your_kowalski_token
 
 ZTF source model
 ----------------
