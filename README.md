@@ -2,144 +2,168 @@
 
 Machine learning for electromagnetic light curve analysis.
 
-A modular, general-purpose library for processing photometric time series data from astronomical surveys. Designed for tasks like White Dwarf Binary (WDB) detection, but not coupled to any single science case.
+A general-purpose, modular library for building ML pipelines on top of photometric time series data from astronomical surveys. Science-case agnostic by design — the researcher defines the target class (WDB, AGN, RR Lyrae, etc.) through training labels and model choice.
 
 ---
 
-## Design Philosophy
+## Architecture Overview
 
-ml4em is built around three principles pulled directly from the ml4gw architecture:
+The library is organized into six layers. Each layer has a single responsibility, a well-defined Protocol, and strict dependency boundaries.
 
-1. **Strict layer separation.** Each pipeline layer owns one config section and one data type. A layer never reads another layer's config.
-2. **Protocol-based composition, not inheritance.** Data sources and feature extractors are pluggable via structural typing (`typing.Protocol`). No base class registration required — implement the right methods and it works.
-3. **Contracts at every boundary.** Three dataclasses define the shared language between all layers. No raw tuples or dicts cross a module boundary.
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  Foundation                                                          │
+│  types.py  ·  constants.py  ·  config/                              │
+│  Data contracts, physical constants, validated pipeline config       │
+└──────────────────┬───────────────────────────────────────────────────┘
+                   │
+┌──────────────────▼───────────────────────────────────────────────────┐
+│  Data                  data/                                         │
+│  Protocol: LightCurveSource                                          │
+│  fetch(source_id) → list[LightCurve]                                 │
+│  Implementations: ZTFSource · RubinSource · SimulatedSource          │
+└──────────────────┬───────────────────────────────────────────────────┘
+                   │ LightCurve
+┌──────────────────▼───────────────────────────────────────────────────┐
+│  Features              features/                                     │
+│  Protocol: FeatureExtractor                                          │
+│  extract(lcs) → dict                                                 │
+│  Extractors: StatisticsExtractor · PeriodExtractor                   │
+│              DmdtExtractor · CatalogExtractor                        │
+│  Composer:   FeaturePipeline                                         │
+└──────────┬───────────────────────────────────────────────────────────┘
+           │ FeatureVector
+     ┌─────┴──────┐
+     │            │
+┌────▼────┐  ┌────▼─────────────────────────────────────────────────┐
+│Training │  │  Models               models/                        │
+│training/│  │  Protocol: MLModel                                   │
+│         │  │  predict_proba(features) → np.ndarray                │
+│Trainer  │  │  Reference: XGBoostClassifier                        │
+│Protocol │  │  Utilities: SCALAR_FIELDS · features_to_array        │
+│         │  └────┬─────────────────────────────────────────────────┘
+│         │       │ MLModel
+│FeatureD-│  ┌────▼─────────────────────────────────────────────────┐
+│ataset   │  │  Inference            inference/                     │
+│Standard-│  │  Protocol: Predictor                                 │
+│Trainer  │  │  predict(features) → list[Candidate]                 │
+└─────────┘  │  StandardPredictor · load_model · postprocess        │
+             └──────────────────────────────────────────────────────┘
+```
+
+**Dependency rule:** each layer imports only from layers above it. Training and inference are parallel — neither imports from the other.
 
 ---
 
-## Architecture
+## Design Principles
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Foundation                                                   │
-│  types.py · constants.py · config/schema.py · config/loader  │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-┌──────────────────────────────▼───────────────────────────────┐
-│  Data Layer         data/                                     │
-│  LightCurveSource Protocol                                    │
-│  ZTFSource · RubinSource · SimulatedSource                    │
-│  output: list[LightCurve]                                     │
-└──────────────────────────────┬───────────────────────────────┘
-                               │ LightCurve
-┌──────────────────────────────▼───────────────────────────────┐
-│  Feature Layer      features/                                 │
-│  FeatureExtractor Protocol                                    │
-│  StatisticsExtractor · PeriodExtractor                        │
-│  DmdtExtractor · CatalogExtractor                             │
-│  FeaturePipeline (composer)                                   │
-│  output: FeatureVector                                        │
-└──────────────┬───────────────────────────┬───────────────────┘
-               │ FeatureVector             │ FeatureVector
-┌──────────────▼──────────┐   ┌───────────▼───────────────────┐
-│  Training Layer         │   │  Inference Layer               │
-│  (pending)              │   │  (pending)                     │
-│  output: model weights  │   │  output: WDBCandidate          │
-└─────────────────────────┘   └───────────────────────────────┘
-```
+**Protocols over inheritance.** Every layer boundary is defined by a `typing.Protocol`. Any class implementing the right methods satisfies the contract with no registration or base class required. Adding a new data source, extractor, or model is one new file.
 
-Training and inference are siblings — they share the feature layer output but diverge completely after that. Neither touches the other's config or artifacts.
+**Code controls architecture, config controls parameters.** Model architecture (which model, layer widths, tree depth) is chosen in code by importing the relevant class. `PipelineConfig` / `config.yaml` controls loop and pipeline parameters (learning rate, batch size, period search range, storage paths).
+
+**Explicit data contracts.** Three dataclasses are the only shared language between layers. No raw tuples or dicts cross a module boundary.
+
+**Partial execution is safe.** All `FeatureVector` float fields default to `np.nan`. A source with too few observations returns an all-NaN vector, not an exception. The pipeline continues.
 
 ---
 
-## Data Contracts
+## Data Contracts (`types.py`)
 
-Three dataclasses are the only shared language between layers. Nothing else crosses a module boundary.
+The four types defined here are the only objects that cross layer boundaries.
 
-```python
-LightCurve      # Data layer → Feature layer
-FeatureVector   # Feature layer → Training / Inference
-WDBCandidate    # Inference layer → Output  (frozen=True)
-```
+### `LightCurve` — Data → Feature
 
-**`LightCurve`** — single-band photometric time series for one source.
+Single-band photometric time series for one source.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `source_id` | `str` | Survey-native ID |
+| `source_id` | `str` | Survey-native identifier |
 | `time` | `ndarray (N,)` | Observation times in MJD |
 | `mag` | `ndarray (N,)` | Apparent magnitude |
-| `mag_err` | `ndarray (N,)` | 1-sigma magnitude uncertainty |
-| `band` | `Band` | Photometric filter (`g`, `r`, `i`, …) |
+| `mag_err` | `ndarray (N,)` | 1-sigma uncertainty |
+| `band` | `Band` | Photometric filter: `u g r i z y` |
 | `survey` | `Survey` | `"ztf"` \| `"rubin"` \| `"simulated"` |
 | `ra`, `dec` | `float` | Sky position, decimal degrees (J2000) |
 
-**`FeatureVector`** — 43+ features extracted from a `LightCurve`, ready for ML.
+### `FeatureVector` — Feature → Training / Inference
 
-| Group | Features | Notes |
-|-------|----------|-------|
-| LC statistics | 22 scalars | chi2red, Stetson I/J/K, skew, kurtosis, MAD, IQR, … |
-| Period detection | 3 | period (days), significance, algorithm name |
-| Fourier decomposition | 14 | amplitude, phase, relative amplitudes of harmonics 1–5 |
-| dm/dt histogram | `(26, 26)` ndarray | pairwise (Δt, Δmag) image; `None` if not computed |
-| Gaia cross-match | 4 | parallax, parallax_error, BP-RP colour, RUWE |
+Fully extracted feature set for one source. All float fields default to `np.nan`.
 
-All float fields default to `np.nan`. Partial feature extraction is explicit — uncomputed fields are `nan`, not absent.
+| Group | Fields | Count |
+|-------|--------|-------|
+| Sky position | `ra`, `dec` | 2 |
+| LC statistics | `median` `wmean` `chi2red` `roms` `wstd` `norm_peak_to_peak_amp` `norm_excess_var` `median_abs_dev` `iqr` `i60r` `i70r` `i80r` `i90r` `skew` `small_kurt` `inv_von_neumann` `stetson_i` `stetson_j` `stetson_k` `anderson_darling` `shapiro_wilk` `n_obs` | 22 |
+| Period | `period` `period_significance` `period_algorithm` | 3 |
+| Fourier | `f1_power` `f1_bic` `f1_a` `f1_b` `f1_amp` `f1_phi0` `f1_relamp1..4` `f1_relphi1..4` | 14 |
+| dm/dt image | `dmdt` — shape `(26, 26)` ndarray | 1 |
+| Gaia | `gaia_parallax` `gaia_parallax_error` `gaia_bp_rp` `gaia_ruwe` | 4 |
 
-**`WDBCandidate`** — inference result for a single source. Immutable (`frozen=True`).
+**42 scalar fields** (everything except `source_id`, `survey`, `period_algorithm`, `dmdt`). These are listed in `models.SCALAR_FIELDS` for use by any scalar-based model.
 
-| Field | Description |
-|-------|-------------|
-| `source_id`, `ra`, `dec`, `survey` | Source identity |
-| `probability` | Model output in [0, 1] |
-| `period`, `period_algorithm` | Best detected period |
-| `confidence` | `"high"` \| `"medium"` \| `"low"` |
+### `LabeledSample` — Label preparation → Training
+
+```python
+@dataclass
+class LabeledSample:
+    feature : FeatureVector
+    label   : int   # 1 = positive class, 0 = background
+```
+
+Labels are never generated by ml4em. They come from the researcher's upstream preparation step (e.g. a catalog cross-match).
+
+### `Candidate` — Inference → Output
+
+Immutable inference result for one source (`frozen=True`).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `source_id` `ra` `dec` `survey` | — | Source identity |
+| `probability` | `float` | P(positive class) in [0, 1] |
+| `period` `period_algorithm` | — | Dominant period from feature layer |
+| `confidence` | `"high"` \| `"medium"` \| `"low"` | Derived from `InferenceConfig.confidence_thresholds` |
 
 ---
 
-## Layer Details
+## Layer Reference
 
 ### Foundation
 
 ```
-src/ml4em/
-├── types.py          # LightCurve, FeatureVector, WDBCandidate
-├── constants.py      # Physical + survey constants, dmdt bin parameters
-└── config/
-    ├── schema.py     # Pydantic models — WDBConfig and all sub-configs
-    └── loader.py     # YAML loader + env-var secret accessors
+types.py          Data contracts (LightCurve, FeatureVector, LabeledSample, Candidate)
+constants.py      Survey constants, dm/dt bin parameters, cross-match geometry
+config/
+  schema.py       Pydantic models — PipelineConfig and all sub-configs
+  loader.py       YAML loader + env-var secret accessors
 ```
 
-**Config design.** `WDBConfig` is the pipeline architecture expressed in configuration form. Each section maps to exactly one layer:
+**`PipelineConfig`** is the pipeline expressed as configuration. Each section maps to exactly one layer:
 
 ```
-WDBConfig
-├── sources.ztf       →  ZTFSource
-├── sources.rubin     →  RubinSource
-├── features.period   →  PeriodExtractor
-├── features.dmdt     →  DmdtExtractor
-├── features.catalog  →  CatalogExtractor
-├── storage           →  all layers (file paths only)
-├── training          →  Trainer
-└── inference         →  Predictor
+PipelineConfig.sources.ztf    →  ZTFSource
+PipelineConfig.sources.rubin  →  RubinSource
+PipelineConfig.features       →  FeaturePipeline
+PipelineConfig.storage        →  all layers (shared file paths)
+PipelineConfig.training       →  StandardTrainer (loop params only)
+PipelineConfig.inference      →  StandardPredictor
 ```
 
-Pydantic validation catches config errors at startup, before any data is fetched. Validators encode domain knowledge: `PeriodConfig` rejects negative period bounds; `InferenceConfig` rejects a "high" confidence threshold below "medium".
+Model architecture hyperparameters (layer widths, tree depth, dropout) are **not** in `PipelineConfig`. They live in per-model config dataclasses (`XGBoostConfig`, etc.) and are set in code.
 
-**Secrets.** Tokens (`WDB_ZTF_TOKEN`, `WDB_RUBIN_TOKEN`) are never stored in `WDBConfig`. They are read from environment variables at call time. Config files can be committed freely.
+Secrets (`ML4EM_ZTF_TOKEN`, `ML4EM_RUBIN_TOKEN`) are never stored in config. Read them with `config.get_ztf_token()` / `config.get_rubin_token()` which pull from environment variables or a `.env` file.
 
 ---
 
-### Data Layer (`data/`)
+### Data layer — `data/`
 
 ```
-src/ml4em/data/
-├── base.py           # LightCurveSource Protocol
-├── ztf.py            # ZTFSource — Kowalski/penquins client
-├── rubin.py          # RubinSource — TAP stub
-└── simulation.py     # SimulatedSource — Lcurve stub
+data/
+  base.py         LightCurveSource Protocol
+  ztf.py          ZTFSource   — Kowalski/penquins client      [implemented]
+  rubin.py        RubinSource — Rubin DP1 via TAP             [stub]
+  simulation.py   SimulatedSource — Lcurve wrapper            [stub]
 ```
 
-**`LightCurveSource` Protocol.** Any class with `fetch(source_id)` and `fetch_batch(source_ids)` satisfies the protocol. The feature layer accepts any compliant object — it never imports `ZTFSource` directly.
+#### Protocol — `LightCurveSource`
 
 ```python
 class LightCurveSource(Protocol):
@@ -147,101 +171,278 @@ class LightCurveSource(Protocol):
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]: ...
 ```
 
-Swapping ZTF for Rubin is one line at the call site. Adding a new survey is one new file — nothing else changes.
+Any class with these two methods is a valid source. The feature layer accepts any compliant object — it never imports a concrete source class directly.
 
-**`ZTFSource`** (implemented). Fetches from the Kowalski database via `penquins`. Each ZTF `_id` encodes a single (sky position, band) pair. `fetch_batch` sends a single batched Kowalski `find` query. Applies two data quality steps: discard flagged epochs (`catflags != 0`) and remove intra-night duplicates closer than `min_cadence_days` (default 30 min) to avoid period-finding aliases.
+#### `ZTFSource`
 
-**`RubinSource`** (stub). Planned TAP query against `dp1.ForcedSource ⋈ dp1.Visit ⋈ dp1.Object`. One `objectId` may return up to six `LightCurve` objects (one per band). Pending Rubin DP1 schema review.
+Fetches from the Kowalski database via the `penquins` client (requires `pip install "ml4em[ztf]"`).
 
-**`SimulatedSource`** (stub). Will wrap Tom Marsh's Lcurve code to produce physics-based synthetic WDB light curves. Planned interface: `source_id` is a path to an Lcurve `.mod` parameter file. Noise and realistic cadence will be injected after model evaluation. Used for training when labeled survey data is insufficient.
+- Each ZTF `_id` encodes one (sky position, band) pair → one `LightCurve`
+- `fetch_batch` sends a single batched Kowalski `find` query
+- Data quality: discards flagged epochs (`catflags != 0`) and removes intra-night duplicates within `min_cadence_days` (default 30 min) to prevent period-finding aliases
 
----
+#### `RubinSource` *(stub)*
 
-### Feature Layer (`features/`)
+Planned TAP query against `dp1.ForcedSource ⋈ dp1.Visit ⋈ dp1.Object`. One `objectId` may return up to six `LightCurve` objects (one per band: u g r i z y).
 
-```
-src/ml4em/features/
-├── base.py           # FeatureExtractor Protocol
-├── statistics.py     # StatisticsExtractor — 22 LC statistics
-├── period.py         # PeriodExtractor — multi-algorithm period finding + Fourier
-├── dmdt.py           # DmdtExtractor — 2-D pairwise histogram
-├── catalog.py        # CatalogExtractor — Gaia EDR3 cross-match
-└── pipeline.py       # FeaturePipeline — composer
-```
+#### `SimulatedSource` *(stub)*
 
-**`FeatureExtractor` Protocol.** Any class with `extract(lcs: list[LightCurve]) -> dict[str, Any]` satisfies the protocol. Extractors receive all bands for one source and select the band(s) they need internally. They must never raise — return a partial or empty dict on failure so the pipeline continues.
+Will wrap Tom Marsh's Lcurve code to produce physics-based synthetic light curves. `source_id` is a path to an Lcurve `.mod` parameter file or a grid index.
 
-**`FeaturePipeline`** composes extractors in order: statistics → period → dmdt → catalog. The factory method `FeaturePipeline.default(cfg.features)` builds the standard pipeline from config. Results are merged left-to-right into a `FeatureVector`. Sources with fewer than `min_observations` points (default 50) are skipped and returned as all-NaN vectors.
-
-**Period finding.** `PeriodExtractor` runs multiple algorithms (CE, AOV, LS, BLS) across the configured period range and scores agreement across algorithms. The period with the highest cross-algorithm agreement is selected. After period detection, a Fourier series is fit to the phased light curve through the 5th harmonic.
-
-**dm/dt histogram.** `DmdtExtractor` computes all pairwise (Δt, Δmag) values across the light curve and bins them into a 26×26 image. Time differences are log-spaced (minutes to years); magnitude differences are linear (±3 mag). The image is L2-normalised and stored as the `dmdt` field. Set `features.compute_dmdt: false` to skip this for XGBoost-only runs (avoids the O(N²) pairwise cost).
-
-**Gaia cross-match.** `CatalogExtractor` queries Gaia EDR3 for the nearest source within 2 arcsec of the light curve's (ra, dec). Returns parallax, parallax_error, BP-RP colour, and RUWE. RUWE < 1.4 indicates a clean astrometric solution (Lindegren et al. 2021). Note: Gaia is not a light curve source — it is a per-source feature enrichment step in the feature layer.
+**Adding a new source:** create a file in `data/` with a class implementing `fetch()` and `fetch_batch()`. No registration needed.
 
 ---
 
-### Training and Inference Layers
+### Feature layer — `features/`
 
-Not yet implemented. Planned interfaces:
+```
+features/
+  base.py         FeatureExtractor Protocol
+  statistics.py   StatisticsExtractor  — 22 scalar LC statistics    [implemented]
+  period.py       PeriodExtractor      — period finding + 14 Fourier [implemented]
+  dmdt.py         DmdtExtractor        — 26×26 pairwise histogram    [implemented]
+  catalog.py      CatalogExtractor     — 4 Gaia EDR3 features        [stub]
+  pipeline.py     FeaturePipeline      — composer                    [implemented]
+```
 
-- **Training**: reads `FeatureVector` objects from `storage.features_dir`, trains a model, writes weights to `storage.models_dir`.
-- **Inference**: reads `FeatureVector` objects and a trained model, writes `WDBCandidate` results to `storage.predictions_dir`.
+#### Protocol — `FeatureExtractor`
 
-Config sections (`TrainingConfig`, `InferenceConfig`) are already defined.
+```python
+class FeatureExtractor(Protocol):
+    def extract(self, lcs: list[LightCurve]) -> dict[str, Any]: ...
+```
+
+Each extractor receives all bands for one source and returns a flat dict of `FeatureVector` field names → computed values. Extractors must never raise — return a partial or empty dict on failure so the pipeline continues.
+
+#### `StatisticsExtractor`
+
+Computes 22 scalar variability statistics from the primary band (most observations). Applies iterative 3-MAD sigma-clipping before computation. Uses error-weighted moments throughout. Computes Stetson I using two simultaneous bands when available.
+
+#### `PeriodExtractor`
+
+Runs multiple period-finding algorithms in parallel over a configurable range:
+- **LS** — Lomb-Scargle (scipy; always available)
+- **BLS** — Box Least Squares (astropy; best for flat-bottomed eclipses)
+- **CE** — Conditional Entropy *(stub, requires periodfind)*
+- **AOV** — Analysis of Variance *(stub, requires periodfind)*
+
+Selects the best period by cross-algorithm agreement scoring (fractional tolerance 2%). Falls back to highest-significance result if no agreement found. Fits a Fourier series through 5 harmonics at the best period, selecting order by BIC.
+
+#### `DmdtExtractor`
+
+Computes all N(N−1)/2 pairwise (Δt, Δmag) values and bins them into a 26×26 image. Δt axis is log-spaced (minutes to years); Δmag axis is linear (±3 mag). Output is L2-normalised. Falls back from `fast-histogram` to `numpy` if the former is not installed.
+
+Set `features.compute_dmdt: false` in config to skip for scalar-only models (avoids the O(N²) cost).
+
+#### `CatalogExtractor` *(stub)*
+
+Will query Gaia EDR3 for the nearest counterpart within `xmatch_radius_arcsec` (default 2 arcsec). Returns `gaia_parallax`, `gaia_parallax_error`, `gaia_bp_rp`, `gaia_ruwe`. Two planned backends: astroquery TAP+ or Kowalski Gaia catalog.
+
+#### `FeaturePipeline`
+
+Composes extractors in order (statistics → period → dmdt → catalog), merges their output dicts, and builds a `FeatureVector`. Sources with fewer than `min_observations` (default 50) return an all-NaN vector immediately.
+
+```python
+pipeline = FeaturePipeline.default(cfg.features)   # standard ordering
+fv  = pipeline.run(lcs)                            # single source
+fvs = pipeline.run_batch(grouped_lcs)              # batch
+```
+
+**Adding a new extractor:** create a file in `features/` implementing `extract()`. Pass it to `FeaturePipeline` — no other changes needed.
+
+---
+
+### Models layer — `models/`
+
+```
+models/
+  base.py         MLModel Protocol + SCALAR_FIELDS utilities
+  xgboost.py      XGBoostClassifier — reference implementation
+```
+
+The models layer defines the shared contract between training and inference. It does not perform training or inference itself.
+
+#### Protocol — `MLModel`
+
+```python
+class MLModel(Protocol):
+    def predict_proba(self, features: list[FeatureVector]) -> np.ndarray: ...
+    def save(self, path: str) -> None: ...
+```
+
+Any class implementing these two methods satisfies `MLModel`. `load` is a `@classmethod` on each concrete model, not on the Protocol (torch and joblib load differently; the dispatch lives in `inference/loader.py`).
+
+#### Scalar field utilities
+
+Defined in `models/base.py`, shared by any scalar-based model:
+
+| Name | Description |
+|------|-------------|
+| `SCALAR_FIELDS` | Ordered list of 42 float `FeatureVector` field names |
+| `N_SCALAR_FEATURES` | `42` |
+| `features_to_array(features)` | Extracts `SCALAR_FIELDS` → `np.ndarray (N, 42)` |
+
+Field order in `SCALAR_FIELDS` is stable. Changing it invalidates saved models trained on that ordering.
+
+#### `XGBoostClassifier` — reference implementation
+
+Gradient-boosted tree classifier. Uses `SCALAR_FIELDS` only; `dmdt` image is ignored. Implements `predict_proba`, `save` (writes `model.ubj` + `manifest.json`), and `@classmethod load`.
+
+This class exists as a **pattern reference**, not as the committed model for any science case. When adding your own model, follow this file as the template.
+
+#### Adding a new model
+
+1. Create `models/my_model.py` with `MyModelConfig` (dataclass) and `MyModel`
+2. Implement `predict_proba()`, `save()`, `@classmethod load()`
+3. Add one entry to `inference/loader.py` `_MODEL_REGISTRY`
+4. Import and use — training, inference, and postprocess are unchanged
+
+```python
+# Swap model = one import + one constructor
+from ml4em.models import XGBoostClassifier, XGBoostConfig
+# from ml4em.models.my_model import MyModel, MyModelConfig
+
+model = XGBoostClassifier(config=XGBoostConfig(n_estimators=500))
+trainer = StandardTrainer(model, cfg.training)
+trainer.fit(dataset)
+```
+
+---
+
+### Training layer — `training/`
+
+```
+training/
+  base.py         Trainer Protocol
+  dataset.py      FeatureDataset — load features + join labels
+  trainer.py      StandardTrainer
+```
+
+Training and inference are parallel — neither imports from the other. Both consume `FeatureVector` (from the feature layer) and `MLModel` (from the models layer).
+
+#### Protocol — `Trainer`
+
+```python
+class Trainer(Protocol):
+    def fit(self, dataset: FeatureDataset) -> None: ...
+    def save(self, path: str) -> None: ...
+```
+
+#### `FeatureDataset`
+
+Loads `FeatureVector` objects from `storage.features_dir` (parquet files written by `FeaturePipeline`) and joins them with a researcher-supplied labels CSV.
+
+```
+labels.csv format:
+  source_id,label
+  1234567890,1
+  0987654321,0
+```
+
+Labels must be `0` (negative/background) or `1` (positive class). Sources present in only one of features or labels are silently skipped.
+
+```python
+dataset = FeatureDataset.from_storage(cfg.storage, labels_path="labels.csv")
+train, val, test = dataset.split(val_fraction=0.1, test_fraction=0.1, seed=42)
+print(dataset.class_counts())        # {0: 5000, 1: 320}
+print(dataset.positive_fraction())   # 0.060
+```
+
+Parquet loading is a stub pending the feature layer writing output files.
+
+#### `StandardTrainer` *(shell)*
+
+```python
+trainer = StandardTrainer(model, cfg.training)
+trainer.fit(dataset)   # → NotImplementedError (training loop pending)
+trainer.save(path)     # delegates to model.save(path) — implemented
+```
+
+`cfg.training` controls loop params (`lr`, `batch_size`, `max_epochs`, `patience`, `seed`). Model architecture is set at construction time on the model object itself.
+
+---
+
+### Inference layer — `inference/`
+
+```
+inference/
+  base.py         Predictor Protocol
+  loader.py       load_model(path) → MLModel
+  predictor.py    StandardPredictor
+  postprocess.py  probabilities_to_candidates            [fully implemented]
+```
+
+#### Protocol — `Predictor`
+
+```python
+class Predictor(Protocol):
+    def predict(self, features: list[FeatureVector]) -> list[Candidate]: ...
+```
+
+#### `load_model`
+
+```python
+model = load_model("models/xgb_v1/")
+```
+
+Reads `{path}/manifest.json` → `{"model_class": "XGBoostClassifier"}` → dispatches to `XGBoostClassifier.load(path)`. This is the only place that knows about concrete model types. Everything else in the inference layer is model-agnostic.
+
+To register a new model: add one entry to `_MODEL_REGISTRY` in `inference/loader.py`.
+
+#### `StandardPredictor` *(shell)*
+
+```python
+predictor = StandardPredictor(model, cfg.inference)
+candidates = predictor.predict(feature_vectors)
+```
+
+Calls `model.predict_proba()` in batches of `cfg.inference.batch_size`, then passes probabilities to `postprocess`.
+
+#### `postprocess.probabilities_to_candidates`
+
+Fully implemented. Converts raw probabilities → `list[Candidate]` by:
+1. Applying `cfg.inference.confidence_thresholds` to assign `"high"` / `"medium"` / `"low"`
+2. Copying `source_id`, `ra`, `dec`, `survey`, `period`, `period_algorithm` from each `FeatureVector`
+
+```python
+candidates = probabilities_to_candidates(features, probs, cfg.inference)
+```
 
 ---
 
 ## Dependencies
 
-Core (`pip install ml4em`) requires only `numpy`, `pydantic`, `pyyaml`, `python-dotenv`. Every other dependency is opt-in:
+Core install requires only `numpy`, `pydantic`, `pyyaml`, `python-dotenv`. Every other dependency is opt-in:
 
 ```bash
-pip install "ml4em[ztf]"        # ZTF via Kowalski
-pip install "ml4em[rubin]"      # Rubin via TAP
-pip install "ml4em[features]"   # astropy, scipy, numba, fast-histogram
-pip install "ml4em[training]"   # torch, scikit-learn
-pip install "ml4em[inference]"  # torch
-pip install "ml4em[all]"        # everything
+pip install "ml4em[ztf]"        # ZTF via Kowalski  (penquins)
+pip install "ml4em[rubin]"      # Rubin via TAP     (pyvo, pyarrow)
+pip install "ml4em[features]"   # Feature extraction (astropy, scipy, numba, fast-histogram)
+pip install "ml4em[training]"   # Training           (torch, scikit-learn)
+pip install "ml4em[inference]"  # Inference          (torch)
+pip install "ml4em[dev]"        # Dev tools          (pytest, ruff)
+pip install "ml4em[all]"        # Everything
 ```
-
----
-
-## Gaia Cross-Match Note
-
-Gaia has two distinct roles in the WDB pipeline, handled at different stages:
-
-1. **Candidate pre-filter (outside ml4em, one-time)** — the Gaia WD catalog (Gentile Fusillo et al. 2021, ~1.3M WD candidates) is cross-matched against the ZTF source catalog to produce the initial candidate list. This is a notebook-level operation in the upstream `wdb-ml` repo, not part of the feature pipeline.
-
-2. **Per-source feature enrichment (inside ml4em)** — for each source being processed, `CatalogExtractor` appends Gaia astrometric properties to the `FeatureVector`. These are used by the classifier to confirm WD nature (high parallax = nearby, blue BP-RP = hot, low RUWE = clean astrometry).
-
----
-
-## Repository Relation
-
-```
-wdb-ml/              (application repo — notebooks, cross-match, experiments)
-  external/
-    ml4em/           (this repo — reusable library, imported as submodule)
-    scope-ml/        (existing ZTF variability library, reference implementation)
-```
-
-ml4em is infrastructure. Science-case-specific logic (labeling, cross-match notebooks, experiment configs) lives in `wdb-ml`.
 
 ---
 
 ## Implementation Status
 
-| Layer | Status |
-|-------|--------|
-| Foundation (`types`, `constants`, `config`) | Complete |
-| Data — ZTFSource | Complete |
-| Data — RubinSource | Stub (TAP query pending) |
-| Data — SimulatedSource | Stub (Lcurve integration pending) |
-| Features — StatisticsExtractor | Complete |
-| Features — PeriodExtractor | Complete |
-| Features — DmdtExtractor | Complete |
-| Features — CatalogExtractor | Complete |
-| Features — FeaturePipeline | Complete |
-| Training layer | Not started |
-| Inference layer | Not started |
+| Module | File | Status |
+|--------|------|--------|
+| Foundation | `types.py` `constants.py` `config/` | Complete |
+| Data | `data/ztf.py` | Complete |
+| Data | `data/rubin.py` | Stub — TAP query pending |
+| Data | `data/simulation.py` | Stub — Lcurve integration pending |
+| Features | `features/statistics.py` | Complete |
+| Features | `features/period.py` | Complete (CE/AOV stubs pending periodfind) |
+| Features | `features/dmdt.py` | Complete |
+| Features | `features/catalog.py` | Stub — Gaia TAP query pending |
+| Features | `features/pipeline.py` | Complete |
+| Models | `models/base.py` | Complete |
+| Models | `models/xgboost.py` | Reference pattern (predict/save/load shells) |
+| Training | `training/dataset.py` | Partial — label join complete; parquet load stub |
+| Training | `training/trainer.py` | Shell — training loop pending |
+| Inference | `inference/postprocess.py` | Complete |
+| Inference | `inference/loader.py` | Complete |
+| Inference | `inference/predictor.py` | Shell — depends on model implementation |
