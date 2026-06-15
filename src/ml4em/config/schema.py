@@ -14,7 +14,6 @@ Data layer        →  WDBConfig.sources.ztf / WDBConfig.sources.rubin
 Feature layer     →  WDBConfig.features
 Training layer    →  WDBConfig.training
 Inference layer   →  WDBConfig.inference
-Training+Inference→  WDBConfig.classification  (what to look for)
 All layers        →  WDBConfig.storage  (shared path roots)
 
 Defaults are set so that WDBConfig() is a fully valid config with no
@@ -25,7 +24,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator
 
 from ml4em.constants import (
     DMDT_DM_MAX,
@@ -310,223 +309,6 @@ class InferenceConfig(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Classification  (training + inference layer config)
-# ---------------------------------------------------------------------------
-
-class StellarClassConfig(BaseModel):
-    """Physics-informed descriptor for one class of variable stellar object.
-
-    Used by the training layer to assign positive/negative labels and by
-    the feature layer to optionally narrow the period search range to a
-    class-specific window.
-
-    Fields
-    ------
-    label : str
-        String label as it appears in the training data parquet
-        (e.g. "wdb", "cv", "rr_lyrae").
-    description : str
-        Plain-language description of the object type.
-    period_min_days, period_max_days : float | None
-        Expected orbital or pulsation period range for this class.
-        None means "no physics-based bound" (e.g. irregular variables).
-        When a run targets this class, the feature layer can use these
-        to override the global PeriodConfig bounds and focus the search.
-    is_periodic : bool
-        True if the class shows periodic variability.
-        False for irregular classes (CVs in outburst, YSOs).
-    """
-
-    label            : str
-    description      : str   = ""
-    period_min_days  : Optional[float] = None
-    period_max_days  : Optional[float] = None
-    is_periodic      : bool  = True
-
-
-# Physics-informed defaults for all classes the pipeline distinguishes.
-# Grouped by relationship to white dwarfs.
-_DEFAULT_CLASSES: dict[str, StellarClassConfig] = {
-
-    # ── WD binary systems (target and closely related) ────────────────────
-
-    "wdb": StellarClassConfig(
-        label="wdb",
-        description=(
-            "White Dwarf Binary — detached, non-accreting WD + companion. "
-            "Includes post-common-envelope binaries (WD+M dwarf) and "
-            "double-WD systems. Primary detection signature: deep, narrow "
-            "eclipses at short orbital period."
-        ),
-        period_min_days=0.01,    # ~14 min; lower limit set by ZTF phase coverage
-        period_max_days=10.0,
-        is_periodic=True,
-    ),
-
-    "am_cvn": StellarClassConfig(
-        label="am_cvn",
-        description=(
-            "AM CVn — ultra-compact WD + WD or WD + He-star system. "
-            "Helium-dominated accretion disk. Periods 5–65 min; the shortest "
-            "known EM-detected compact binaries and primary LISA verification "
-            "targets. Most ZTF observations alias-fold these periods."
-        ),
-        period_min_days=0.003,   # ~4.3 min (HM Cnc, shortest known)
-        period_max_days=0.065,   # ~94 min
-        is_periodic=True,
-    ),
-
-    "hw_vir": StellarClassConfig(
-        label="hw_vir",
-        description=(
-            "HW Vir — hot subdwarf (sdB or sdO) primary + M-dwarf secondary. "
-            "Deep primary eclipse (sdB eclipsed by cool companion) and "
-            "prominent reflection effect. Period typically 0.07–0.3 d."
-        ),
-        period_min_days=0.07,
-        period_max_days=0.30,
-        is_periodic=True,
-    ),
-
-    "cv": StellarClassConfig(
-        label="cv",
-        description=(
-            "Cataclysmic Variable — WD + Roche-lobe-filling donor, "
-            "actively accreting. Light curve dominated by disk flickering, "
-            "outbursts (dwarf novae), or steady accretion (nova-likes). "
-            "Orbital period detectable in quiescence but LC is irregular."
-        ),
-        period_min_days=0.01,
-        period_max_days=0.50,
-        is_periodic=False,   # irregular outburst morphology
-    ),
-
-    # ── Non-degenerate eclipsing binaries (contaminants) ─────────────────
-
-    "ea": StellarClassConfig(
-        label="ea",
-        description=(
-            "Algol-type (EA) eclipsing binary — detached, non-degenerate. "
-            "Flat light curve between eclipses; primary minimum deeper than "
-            "secondary. Period 0.5–100 d. Primary contaminant for WDB "
-            "because of similar eclipse morphology at short periods."
-        ),
-        period_min_days=0.5,
-        period_max_days=100.0,
-        is_periodic=True,
-    ),
-
-    "eb": StellarClassConfig(
-        label="eb",
-        description=(
-            "Beta Lyrae-type (EB) eclipsing binary — semi-detached; one "
-            "component fills its Roche lobe. Continuous brightness variation "
-            "with unequal minima. Period 0.3–200 d."
-        ),
-        period_min_days=0.3,
-        period_max_days=200.0,
-        is_periodic=True,
-    ),
-
-    "ew": StellarClassConfig(
-        label="ew",
-        description=(
-            "W Ursae Majoris (EW / W UMa) — overcontact binary sharing a "
-            "common envelope. Nearly equal eclipse depths; quasi-sinusoidal "
-            "light curve. Period tightly clustered 0.2–0.8 d. Superficially "
-            "similar to short-period WDB systems."
-        ),
-        period_min_days=0.2,
-        period_max_days=0.8,
-        is_periodic=True,
-    ),
-
-    # ── Pulsating variables (contaminants) ───────────────────────────────
-
-    "rr_lyrae": StellarClassConfig(
-        label="rr_lyrae",
-        description=(
-            "RR Lyrae — radial pulsator on the horizontal branch. "
-            "Asymmetric (sawtooth) light curve with rapid rise and slow "
-            "decline. Period 0.2–1.0 d. Clearly distinguished from WDB "
-            "by light curve shape but overlaps in period space."
-        ),
-        period_min_days=0.2,
-        period_max_days=1.0,
-        is_periodic=True,
-    ),
-
-    "delta_scuti": StellarClassConfig(
-        label="delta_scuti",
-        description=(
-            "Delta Scuti / SX Phoenicis — short-period pulsator near the "
-            "instability strip. Often multi-periodic. Period 0.01–0.3 d; "
-            "overlaps with compact binary period space."
-        ),
-        period_min_days=0.01,
-        period_max_days=0.30,
-        is_periodic=True,
-    ),
-
-    # ── Rotating / spotted stars (contaminants) ──────────────────────────
-
-    "rs_cvn": StellarClassConfig(
-        label="rs_cvn",
-        description=(
-            "RS CVn — chromospherically active binary with large stellar "
-            "spots. Quasi-sinusoidal light curve; shape evolves on months "
-            "timescale as spots migrate. Period 1–14 d."
-        ),
-        period_min_days=1.0,
-        period_max_days=14.0,
-        is_periodic=True,
-    ),
-}
-
-
-class ClassificationConfig(BaseModel):
-    """Defines the classification task: what to detect and what to distinguish it from.
-
-    Consumed by both the training layer (labeling) and the inference layer
-    (interpreting model output).
-
-    Fields
-    ------
-    target : str
-        The positive class for this training/inference run.
-        Must be a key in ``classes``.  All other classes in ``classes``
-        are treated as negative examples in binary classification.
-    classes : dict[str, StellarClassConfig]
-        All object types the model is trained to distinguish.
-        Keys are the string labels used in training data parquets.
-    """
-
-    target  : str = "wdb"
-    classes : dict[str, StellarClassConfig] = Field(
-        default_factory=lambda: dict(_DEFAULT_CLASSES)
-    )
-
-    @model_validator(mode="after")
-    def _target_must_exist(self) -> "ClassificationConfig":
-        if self.target not in self.classes:
-            raise ValueError(
-                f"target='{self.target}' is not in classes. "
-                f"Available: {list(self.classes.keys())}"
-            )
-        return self
-
-    @property
-    def target_config(self) -> StellarClassConfig:
-        """Return the StellarClassConfig for the current target class."""
-        return self.classes[self.target]
-
-    @property
-    def contaminant_labels(self) -> list[str]:
-        """Return labels of all non-target classes."""
-        return [k for k in self.classes if k != self.target]
-
-
-# ---------------------------------------------------------------------------
 # Root config
 # ---------------------------------------------------------------------------
 
@@ -539,8 +321,6 @@ class WDBConfig(BaseModel):
 
     Minimal config.yaml example (override only what differs):
 
-        classification:
-          target: wdb
         sources:
           ztf:
             collection_sources: ZTF_sources_20240515
@@ -551,9 +331,8 @@ class WDBConfig(BaseModel):
           features_dir: /data/ml4em/features
     """
 
-    classification : ClassificationConfig = Field(default_factory=ClassificationConfig)
-    sources        : SourcesConfig        = Field(default_factory=SourcesConfig)
-    features       : FeatureConfig        = Field(default_factory=FeatureConfig)
-    storage        : StorageConfig        = Field(default_factory=StorageConfig)
-    training       : TrainingConfig       = Field(default_factory=TrainingConfig)
-    inference      : InferenceConfig      = Field(default_factory=InferenceConfig)
+    sources  : SourcesConfig  = Field(default_factory=SourcesConfig)
+    features : FeatureConfig  = Field(default_factory=FeatureConfig)
+    storage  : StorageConfig  = Field(default_factory=StorageConfig)
+    training : TrainingConfig = Field(default_factory=TrainingConfig)
+    inference: InferenceConfig = Field(default_factory=InferenceConfig)

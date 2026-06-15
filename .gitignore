@@ -20,12 +20,12 @@ env/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
 
-# Data and outputs — large files stay local
-data/
-outputs/
-features/
-models/
-predictions/
+# Data and outputs — large files stay local (top-level dirs only)
+/data/
+/outputs/
+/features/
+/models/
+/predictions/
 
 # OS
 .DS_Store

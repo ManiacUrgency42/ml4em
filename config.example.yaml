@@ -5,24 +5,6 @@
 #   WDB_ZTF_TOKEN=your_kowalski_token
 #   WDB_RUBIN_TOKEN=your_rubin_rsp_token
 
-# ---------------------------------------------------------------------------
-# Classification — what to detect and what to distinguish it from.
-# ---------------------------------------------------------------------------
-# target must be a key in the classes dict.
-# To search for AM CVn instead of WDB: set target: am_cvn
-# Built-in classes (always available): wdb, am_cvn, hw_vir, cv,
-#   ea, eb, ew, rr_lyrae, delta_scuti, rs_cvn
-classification:
-  target: wdb
-  # To add a custom class alongside the defaults, list all classes explicitly:
-  # classes:
-  #   my_type:
-  #     label: my_type
-  #     description: "My custom variable star"
-  #     period_min_days: 1.0
-  #     period_max_days: 10.0
-  #     is_periodic: true
-
 sources:
   ztf:
     host: kowalski.caltech.edu
