@@ -6,6 +6,34 @@ A general-purpose, modular library for building ML pipelines on top of photometr
 
 ---
 
+## Table of Contents
+
+- [Architecture Overview](#architecture-overview)
+- [Design Principles](#design-principles)
+- [Data Contracts](#data-contracts-typespy)
+  - [`LightCurve`](#lightcurve--data--feature)
+  - [`FeatureVector`](#featurevector--feature--training--inference)
+  - [`LabeledSample`](#labeledsample--label-preparation--training)
+  - [`Candidate`](#candidate--inference--output)
+- [Layer Reference](#layer-reference)
+  - [Foundation](#foundation)
+  - [Data layer](#data-layer--data)
+  - [Feature layer](#feature-layer--features)
+  - [Models layer](#models-layer--models)
+  - [Training layer](#training-layer--training)
+  - [Inference layer](#inference-layer--inference)
+- [Dependencies](#dependencies)
+- [Build & Deployment](#build--deployment)
+  - [Why Docker, not conda](#why-docker-not-conda)
+  - [Build targets](#build-targets)
+  - [GHCR](#ghcr-github-container-registry)
+  - [MSI / Apptainer](#msi--apptainer)
+  - [Initialising the submodule](#initialising-the-submodule)
+  - [Updating periodfind](#updating-periodfind)
+- [Implementation Status](#implementation-status)
+
+---
+
 ## Architecture Overview
 
 The library is organized into six layers. Each layer has a single responsibility, a well-defined Protocol, and strict dependency boundaries.
