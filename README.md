@@ -209,30 +209,43 @@ features/
 
 ```python
 class FeatureExtractor(Protocol):
-    def extract(self, lcs: list[LightCurve]) -> dict[str, Any]: ...
+    def extract(self, sources: list[list[LightCurve]]) -> list[dict[str, Any]]: ...
 ```
 
-Each extractor receives all bands for one source and returns a flat dict of `FeatureVector` field names → computed values. Extractors must never raise — return a partial or empty dict on failure so the pipeline continues.
+Batch-first interface: each element of `sources` is all bands for one source (one `LightCurve` per filter). Returns one dict per source. A single source is just a batch of one. Extractors must never raise — return an empty dict on failure so the pipeline continues.
+
+All feature computation is delegated to **periodfind** (a Rust/CUDA-backed library), which processes the entire batch in a single kernel call. `periodfind` is a hard dependency — see [Build & Deployment](#build--deployment) for how to install it.
 
 #### `StatisticsExtractor`
 
-Computes 22 scalar variability statistics from the primary band (most observations). Applies iterative 3-MAD sigma-clipping before computation. Uses error-weighted moments throughout. Computes Stetson I using two simultaneous bands when available.
+Delegates to `periodfind.BasicStats().calc(times, mags, errs)` — a Rust-backed batched implementation. Selects the primary band (most observations) per source, casts to float32, and makes one call for all N sources, returning an `(N, 22)` array. Column order is defined by `BasicStats.STAT_NAMES`; names are remapped to `FeatureVector` field names (e.g. `"RoMS"` → `"roms"`, `"WelchI"` → `"stetson_i"`).
+
+No sigma-clipping — consistent with scope-ml's periodfind-based pipeline.
 
 #### `PeriodExtractor`
 
-Runs multiple period-finding algorithms in parallel over a configurable range:
-- **LS** — Lomb-Scargle (scipy; always available)
-- **BLS** — Box Least Squares (astropy; best for flat-bottomed eclipses)
-- **CE** — Conditional Entropy *(stub, requires periodfind)*
-- **AOV** — Analysis of Variance *(stub, requires periodfind)*
+Delegates to periodfind's GPU-accelerated algorithms. Algorithm objects and the period grid are built once at construction and reused across all `extract()` calls.
 
-Selects the best period by cross-algorithm agreement scoring (fractional tolerance 2%). Falls back to highest-significance result if no agreement found. Fits a Fourier series through 5 harmonics at the best period, selecting order by BIC.
+**Core algorithms (scope-ml production set):**
+
+| Key | Algorithm | periodfind class |
+|-----|-----------|-----------------|
+| `CE`  | Conditional Entropy        | `ConditionalEntropy(n_phase=20, n_mag=10)` |
+| `AOV` | Analysis of Variance       | `AOV(n_phase=20)` |
+| `LS`  | Lomb-Scargle               | `LombScargle()` |
+| `MHF` | Multi-Harmonic Fourier     | `MultiHarmonicFourier(max_harmonics=5)` |
+
+Each algorithm runs over all N sources in one batched call (`output='peaks'`). Cross-algorithm agreement scoring picks the period confirmed by the most algorithms within a 2% fractional tolerance; falls back to highest significance if no pair agrees.
+
+Fourier decomposition is then run via `periodfind.FourierDecomposition().calc()` on the valid-period subset, returning 14 features per source: `[power, BIC, offset, slope, A1, B1, A2, B2, A3, B3, A4, B4, A5, B5]`.
+
+Configurable via `PeriodConfig`: `min_period_days`, `max_period_days`, `n_freq_grid`, `algorithms`, `top_n_periods`.
 
 #### `DmdtExtractor`
 
-Computes all N(N−1)/2 pairwise (Δt, Δmag) values and bins them into a 26×26 image. Δt axis is log-spaced (minutes to years); Δmag axis is linear (±3 mag). Output is L2-normalised. Falls back from `fast-histogram` to `numpy` if the former is not installed.
+Delegates to `periodfind.DmDt().calc(times, mags, dt_edges, dm_edges)` — a Rust-backed batched implementation. Δt edges are log-spaced (float32), Δmag edges are linear (float32), both pre-built once in `__init__`. Returns an `(N, n_dm, n_dt)` array.
 
-Set `features.compute_dmdt: false` in config to skip for scalar-only models (avoids the O(N²) cost).
+Set `features.compute_dmdt: false` in config to skip this extractor entirely for scalar-only models.
 
 #### `CatalogExtractor` *(stub)*
 
@@ -244,11 +257,13 @@ Composes extractors in order (statistics → period → dmdt → catalog), merge
 
 ```python
 pipeline = FeaturePipeline.default(cfg.features)   # standard ordering
-fv  = pipeline.run(lcs)                            # single source
-fvs = pipeline.run_batch(grouped_lcs)              # batch
+fvs = pipeline.run_batch(grouped_lcs)              # one FeatureVector per source
+fv  = pipeline.run_batch([lcs])[0]                 # single-source (batch of 1)
 ```
 
-**Adding a new extractor:** create a file in `features/` implementing `extract()`. Pass it to `FeaturePipeline` — no other changes needed.
+`run_batch()` calls `periodfind.set_device(device)` once before processing, then chunks `grouped_lcs` into batches of `feature_batch_size` (default 1000). The `device` setting (`"cpu"` / `"gpu"` / `"auto"`) is orthogonal to batch size and is read from `FeatureConfig.device`.
+
+**Adding a new extractor:** create a file in `features/` implementing the batch `extract()` interface. Pass it to `FeaturePipeline` — no other changes needed.
 
 ---
 
@@ -412,17 +427,113 @@ candidates = probabilities_to_candidates(features, probs, cfg.inference)
 
 ## Dependencies
 
-Core install requires only `numpy`, `pydantic`, `pyyaml`, `python-dotenv`. Every other dependency is opt-in:
+Core install requires `numpy`, `pydantic`, `pyyaml`, `python-dotenv`, and **`periodfind`**.
+
+`periodfind` cannot be installed via `pip install periodfind` on Python ≥ 3.11 (no pre-built wheels). It must be compiled from source inside a Docker image — see [Build & Deployment](#build--deployment). The submodule lives at `external/periodfind`.
+
+Optional extras:
 
 ```bash
 pip install "ml4em[ztf]"        # ZTF via Kowalski  (penquins)
 pip install "ml4em[rubin]"      # Rubin via TAP     (pyvo, pyarrow)
-pip install "ml4em[features]"   # Feature extraction (astropy, scipy, numba, fast-histogram)
+pip install "ml4em[catalog]"    # Gaia xmatch       (astropy)
 pip install "ml4em[training]"   # Training           (torch, scikit-learn)
 pip install "ml4em[inference]"  # Inference          (torch)
 pip install "ml4em[dev]"        # Dev tools          (pytest, ruff)
-pip install "ml4em[all]"        # Everything
 ```
+
+---
+
+## Build & Deployment
+
+ml4em bundles `periodfind` as a git submodule at `external/periodfind` and bakes the entire build stack into Docker images. Researchers do not install Rust, maturin, or CUDA separately.
+
+### Why Docker, not conda
+
+`periodfind` has a two-layer build:
+
+1. **`periodfind_cpu`** — a Rust extension built with `maturin` (requires the Rust toolchain)
+2. **`periodfind`** — a Cython extension; CUDA GPU extensions compile automatically when `nvcc` is present, skipped silently when absent
+
+Managing Rust + maturin + optional CUDA in a conda env on HPC clusters caused repeated dependency conflicts. Docker bakes the full toolchain once and ships a reproducible binary image. MSI (Minnesota Supercomputing Institute) runs Apptainer (formerly Singularity), which converts Docker images into `.sif` files that run without root privileges.
+
+### Build targets
+
+The `Dockerfile` defines two named targets:
+
+| Target | Base image | periodfind GPU extensions | Use for |
+|--------|-----------|--------------------------|---------|
+| `cpu`  | `ubuntu:22.04` | no (`nvcc` absent) | local dev, CI, CPU-only runs |
+| `gpu`  | `nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04` | yes (`nvcc` present) | MSI GPU nodes |
+
+```bash
+# CPU image — local development and CI
+docker build --target cpu -t ml4em:cpu .
+
+# GPU image — MSI production
+docker build --target gpu -t ml4em:gpu .
+```
+
+Both targets execute the same build sequence:
+1. Install Python 3.11, build tools, Rust toolchain via `rustup`
+2. Build `periodfind_cpu` from `external/periodfind/rust` with `maturin build --release`
+3. Install `periodfind` from `external/periodfind` (`setup.py` auto-detects `nvcc`)
+4. Install `ml4em` in editable mode
+
+### GHCR (GitHub Container Registry)
+
+Push built images so MSI can pull them:
+
+```bash
+docker push ghcr.io/<org>/ml4em:cpu
+docker push ghcr.io/<org>/ml4em:gpu
+```
+
+### MSI / Apptainer
+
+MSI GPU nodes cannot run Docker directly (no root). Pull the image as an Apptainer `.sif` file once, then run it for every job.
+
+```bash
+# One-time pull — store in /scratch, not $HOME (.sif files are 5–8 GB)
+apptainer pull /scratch/$USER/ml4em_gpu.sif docker://ghcr.io/<org>/ml4em:gpu
+
+# Run the pipeline with GPU passthrough
+apptainer run --nv \
+    --bind /scratch/$USER/data:/data \
+    /scratch/$USER/ml4em_gpu.sif \
+    python -m ml4em.run --config /data/config.yaml
+```
+
+Key flags:
+- `--nv` — pass NVIDIA GPU through to the container (required for GPU period-finding)
+- `--bind /scratch/$USER/data:/data` — mount your scratch data directory inside the container at `/data`
+
+The GPU device is controlled by `features.device` in `config.yaml` (`"cpu"` / `"gpu"` / `"auto"`). The container handles everything else.
+
+### Initialising the submodule
+
+When cloning ml4em for the first time:
+
+```bash
+git clone --recurse-submodules <ml4em-repo-url>
+# or, after a plain clone:
+git submodule update --init
+```
+
+### Updating periodfind
+
+The submodule is pinned to a specific commit. To advance it:
+
+```bash
+cd external/periodfind
+git fetch origin
+git checkout <new-commit-or-tag>
+cd ../..
+git add external/periodfind
+git commit -m "chore: bump periodfind to <new-version>"
+```
+
+Rebuild and push a new Docker image after updating.
 
 ---
 
@@ -434,9 +545,9 @@ pip install "ml4em[all]"        # Everything
 | Data | `data/ztf.py` | Complete |
 | Data | `data/rubin.py` | Stub — TAP query pending |
 | Data | `data/simulation.py` | Stub — Lcurve integration pending |
-| Features | `features/statistics.py` | Complete |
-| Features | `features/period.py` | Complete (CE/AOV stubs pending periodfind) |
-| Features | `features/dmdt.py` | Complete |
+| Features | `features/statistics.py` | Complete — periodfind BasicStats backend |
+| Features | `features/period.py` | Complete — CE/AOV/LS/MHF via periodfind |
+| Features | `features/dmdt.py` | Complete — periodfind DmDt backend |
 | Features | `features/catalog.py` | Stub — Gaia TAP query pending |
 | Features | `features/pipeline.py` | Complete |
 | Models | `models/base.py` | Complete |

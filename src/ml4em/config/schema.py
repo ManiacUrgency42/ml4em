@@ -136,11 +136,12 @@ class PeriodConfig(BaseModel):
     MHF  Multi-Harmonic Fit
     """
 
-    algorithms      : list[str] = ["CE", "AOV", "LS", "BLS"]
+    algorithms      : list[str] = ["CE", "AOV", "LS", "MHF"]
     min_period_days : float     = 0.01   # days — override for your science case
     max_period_days : float     = 10.0   # days — override for your science case
-    top_n_periods   : int     = 3    # periods retained per algorithm before scoring
-    min_agreement   : int     = 2    # algorithms that must agree → "high confidence"
+    n_freq_grid     : int       = 5000   # number of trial periods in the search grid
+    top_n_periods   : int       = 3      # periods retained per algorithm before scoring
+    min_agreement   : int       = 2      # algorithms that must agree → "high confidence"
 
     _KNOWN = frozenset({"CE", "AOV", "LS", "FPW", "BLS", "MHF"})
 
@@ -211,6 +212,14 @@ class FeatureConfig(BaseModel):
     # Whether to compute the dm/dt histogram.
     # Set False for XGBoost-only runs to skip the O(N²) pairwise computation.
     compute_dmdt : bool = True
+
+    # periodfind device selection.
+    # 'auto' tries GPU (nvidia-smi check), falls back to CPU if unavailable.
+    device : str = "auto"
+
+    # Number of sources processed per periodfind call.
+    # Controls GPU memory usage — lower this if you hit OOM on large light curves.
+    feature_batch_size : int = 1000
 
 
 # ---------------------------------------------------------------------------
