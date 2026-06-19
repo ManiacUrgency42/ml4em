@@ -1,0 +1,2712 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Machine learning for electromagnetic light curve analysis">
+      
+      
+      
+        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/background/variability-statistics/">
+      
+      
+        <link rel="prev" href="../period-finding/">
+      
+      
+        <link rel="next" href="../dmdt/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Variability Statistics - ml4em</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#variability-statistics" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ml4em" class="md-header__button md-logo" aria-label="ml4em" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ml4em
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Variability Statistics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ManiacUrgency42/ml4em" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ml4em
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../quickstart/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quick Start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Background
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/overview/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../data-contracts/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Data Contracts
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../layers/foundation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Layer Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guides/add-data-source/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/types/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ml4em" class="md-nav__button md-logo" aria-label="ml4em" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ml4em
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ManiacUrgency42/ml4em" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ml4em
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Background
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Background
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../light-curves/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Light Curves
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../surveys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Surveys (ZTF & Rubin)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../period-finding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Period Finding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variability Statistics
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variability Statistics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-22-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 22 statistics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 22 statistics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#n_obs-number-of-observations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        n_obs — number of observations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#median-median-apparent-magnitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        median — median apparent magnitude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wmean-error-weighted-mean-magnitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wmean — error-weighted mean magnitude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chi2red-reduced-chi-squared-2dof" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chi2red — reduced chi-squared (χ²/dof)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roms-ratio-of-median-scatter-to-sigma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        roms — ratio of median scatter to sigma
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wstd-error-weighted-standard-deviation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wstd — error-weighted standard deviation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#norm_peak_to_peak_amp-normalized-peak-to-peak-amplitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        norm_peak_to_peak_amp — normalized peak-to-peak amplitude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#norm_excess_var-normalized-excess-variance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        norm_excess_var — normalized excess variance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#median_abs_dev-median-absolute-deviation-mad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        median_abs_dev — median absolute deviation (MAD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iqr-interquartile-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iqr — interquartile range
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i60r-i70r-i80r-i90r-percentile-range-ratios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        i60r, i70r, i80r, i90r — percentile range ratios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skew-skewness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skew — skewness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#small_kurt-small-sample-kurtosis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        small_kurt — small-sample kurtosis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inv_von_neumann-inverse-von-neumann-ratio-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inv_von_neumann — inverse Von Neumann ratio (1/η)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stetson_i-stetson-i-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stetson_i — Stetson I index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stetson_j-stetson-j-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stetson_j — Stetson J index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stetson_k-stetson-k-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stetson_k — Stetson K index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anderson_darling-anderson-darling-normality-test-statistic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        anderson_darling — Anderson-Darling normality test statistic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapiro_wilk-shapiro-wilk-normality-test-w-statistic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        shapiro_wilk — Shapiro-Wilk normality test W statistic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code connection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dmdt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The dm/dt Histogram
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gaia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gaia & Stellar Catalogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Contracts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Layer Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../layers/foundation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../layers/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../layers/features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../layers/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../layers/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../layers/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/add-data-source/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add a Data Source
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/add-extractor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add an Extractor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/add-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add a Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/label-preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preparing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Builds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/ghcr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Container Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/hpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MSI / HPC (Apptainer)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-22-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 22 statistics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 22 statistics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#n_obs-number-of-observations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        n_obs — number of observations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#median-median-apparent-magnitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        median — median apparent magnitude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wmean-error-weighted-mean-magnitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wmean — error-weighted mean magnitude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chi2red-reduced-chi-squared-2dof" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chi2red — reduced chi-squared (χ²/dof)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roms-ratio-of-median-scatter-to-sigma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        roms — ratio of median scatter to sigma
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wstd-error-weighted-standard-deviation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wstd — error-weighted standard deviation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#norm_peak_to_peak_amp-normalized-peak-to-peak-amplitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        norm_peak_to_peak_amp — normalized peak-to-peak amplitude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#norm_excess_var-normalized-excess-variance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        norm_excess_var — normalized excess variance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#median_abs_dev-median-absolute-deviation-mad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        median_abs_dev — median absolute deviation (MAD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iqr-interquartile-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iqr — interquartile range
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i60r-i70r-i80r-i90r-percentile-range-ratios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        i60r, i70r, i80r, i90r — percentile range ratios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skew-skewness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skew — skewness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#small_kurt-small-sample-kurtosis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        small_kurt — small-sample kurtosis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inv_von_neumann-inverse-von-neumann-ratio-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inv_von_neumann — inverse Von Neumann ratio (1/η)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stetson_i-stetson-i-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stetson_i — Stetson I index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stetson_j-stetson-j-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stetson_j — Stetson J index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stetson_k-stetson-k-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stetson_k — Stetson K index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anderson_darling-anderson-darling-normality-test-statistic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        anderson_darling — Anderson-Darling normality test statistic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapiro_wilk-shapiro-wilk-normality-test-w-statistic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        shapiro_wilk — Shapiro-Wilk normality test W statistic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code connection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="variability-statistics">Variability Statistics<a class="headerlink" href="#variability-statistics" title="Permanent link">&para;</a></h1>
+<p>The <code>StatisticsExtractor</code> computes 22 scalar numbers from each light curve. These
+numbers compress the entire brightness history of a source into a fixed-length feature
+vector. Together, they tell the model whether a source is variable (and how), without
+requiring explicit period information.</p>
+<p>All 22 statistics are computed by the Rust-backed <code>periodfind.BasicStats</code> library in
+a single batched call. They are computed on the <strong>primary band</strong> — the band with the
+most observations for that source.</p>
+<div class="admonition info">
+<p class="admonition-title">Units</p>
+<p>All statistics that have magnitude units are in the same units as <code>LightCurve.mag</code>
+(apparent magnitude). Remember: smaller = brighter.</p>
+</div>
+<hr />
+<h2 id="the-22-statistics">The 22 statistics<a class="headerlink" href="#the-22-statistics" title="Permanent link">&para;</a></h2>
+<h3 id="n_obs-number-of-observations">n_obs — number of observations<a class="headerlink" href="#n_obs-number-of-observations" title="Permanent link">&para;</a></h3>
+<p>How many data points are in the light curve.</p>
+<p>Sources with fewer than <code>min_observations</code> (default 50, set in <code>config.yaml</code>) receive
+an all-NaN feature vector and are skipped.</p>
+<hr />
+<h3 id="median-median-apparent-magnitude">median — median apparent magnitude<a class="headerlink" href="#median-median-apparent-magnitude" title="Permanent link">&para;</a></h3>
+<p>The 50th-percentile brightness. More robust than the mean because a single very bright
+or very faint outlier (e.g. a cosmic ray that slipped through) doesn't shift it much.</p>
+<p>In magnitude units: smaller = brighter.</p>
+<hr />
+<h3 id="wmean-error-weighted-mean-magnitude">wmean — error-weighted mean magnitude<a class="headerlink" href="#wmean-error-weighted-mean-magnitude" title="Permanent link">&para;</a></h3>
+<p>The mean brightness, weighted so that observations with smaller <code>mag_err</code> count more:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>wmean = Σ(mag_i / mag_err_i²) / Σ(1 / mag_err_i²)
+</code></pre></div>
+<p>A single high-uncertainty observation barely shifts this, while a precise observation
+counts for more. This is the standard way to combine measurements of different quality.</p>
+<hr />
+<h3 id="chi2red-reduced-chi-squared-2dof">chi2red — reduced chi-squared (χ²/dof)<a class="headerlink" href="#chi2red-reduced-chi-squared-2dof" title="Permanent link">&para;</a></h3>
+<p>Measures how much the light curve varies <strong>relative to what measurement noise alone
+would predict</strong>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>chi2red = [ Σ((mag_i - wmean)² / mag_err_i²) ] / (n_obs - 1)
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>chi2red</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≈ 1</td>
+<td>The source is constant — variation is consistent with noise</td>
+</tr>
+<tr>
+<td>&gt;&gt; 1</td>
+<td>The source is genuinely variable</td>
+</tr>
+<tr>
+<td>&lt; 1</td>
+<td>The error bars may be overestimated</td>
+</tr>
+</tbody>
+</table>
+<p>This is one of the most important variability discriminators. A constant star has
+chi2red ≈ 1; an eclipsing binary might have chi2red of 50 or more.</p>
+<hr />
+<h3 id="roms-ratio-of-median-scatter-to-sigma">roms — ratio of median scatter to sigma<a class="headerlink" href="#roms-ratio-of-median-scatter-to-sigma" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>roms = median( |mag_i - wmean| / mag_err_i )
+</code></pre></div>
+<p>A robust alternative to chi2red. Where chi2red squares the deviations (making it
+sensitive to outliers), roms uses the median of absolute deviations. A few bad
+observations don't dominate the result.</p>
+<hr />
+<h3 id="wstd-error-weighted-standard-deviation">wstd — error-weighted standard deviation<a class="headerlink" href="#wstd-error-weighted-standard-deviation" title="Permanent link">&para;</a></h3>
+<p>Standard deviation of the magnitudes, weighted by measurement precision:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>wstd = √[ Σ(mag_i - wmean)² / mag_err_i² / Σ(1/mag_err_i²) ]
+</code></pre></div>
+<p>Measures the typical spread of the light curve around the weighted mean.</p>
+<hr />
+<h3 id="norm_peak_to_peak_amp-normalized-peak-to-peak-amplitude">norm_peak_to_peak_amp — normalized peak-to-peak amplitude<a class="headerlink" href="#norm_peak_to_peak_amp-normalized-peak-to-peak-amplitude" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>norm_peak_to_peak_amp = (max(mag) - min(mag)) / median(mag_err)
+</code></pre></div>
+<p>How large is the total brightness swing, measured in units of the typical measurement
+noise? A source that varies by 0.5 mag with typical errors of 0.05 mag has
+<code>norm_peak_to_peak_amp = 10</code>.</p>
+<p>Large values indicate high-amplitude variability.</p>
+<div class="admonition warning">
+<p class="admonition-title">Sensitivity to outliers</p>
+<p>Because this uses the maximum and minimum, a single bad observation can inflate it.
+Consider <code>norm_excess_var</code> or <code>iqr</code> for more robust amplitude estimates.</p>
+</div>
+<hr />
+<h3 id="norm_excess_var-normalized-excess-variance">norm_excess_var — normalized excess variance<a class="headerlink" href="#norm_excess_var-normalized-excess-variance" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>norm_excess_var = (var(mag) - mean(mag_err²)) / wmean²
+</code></pre></div>
+<p>The variance in excess of what noise alone predicts, normalized by the mean brightness
+squared. Subtracting <code>mean(mag_err²)</code> removes the noise floor contribution.</p>
+<ul>
+<li>Negative or near-zero → no excess variance; the source is consistent with being
+  constant</li>
+<li>Large positive → genuine variability beyond noise</li>
+</ul>
+<hr />
+<h3 id="median_abs_dev-median-absolute-deviation-mad">median_abs_dev — median absolute deviation (MAD)<a class="headerlink" href="#median_abs_dev-median-absolute-deviation-mad" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>median_abs_dev = median( |mag_i - median(mag)| )
+</code></pre></div>
+<p>The typical deviation of an observation from the median brightness. Unlike standard
+deviation, MAD is highly robust — a single extreme outlier changes it very little.</p>
+<p>A constant source has <code>median_abs_dev</code> close to 0.674 × σ (for Gaussian noise, MAD
+relates to standard deviation by this factor). Larger values indicate variability.</p>
+<hr />
+<h3 id="iqr-interquartile-range">iqr — interquartile range<a class="headerlink" href="#iqr-interquartile-range" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>iqr = 75th percentile(mag) - 25th percentile(mag)
+</code></pre></div>
+<p>The spread of the "middle 50%" of brightness values. Another robust spread measure.
+For Gaussian noise, <code>iqr ≈ 1.35 × σ</code>.</p>
+<hr />
+<h3 id="i60r-i70r-i80r-i90r-percentile-range-ratios">i60r, i70r, i80r, i90r — percentile range ratios<a class="headerlink" href="#i60r-i70r-i80r-i90r-percentile-range-ratios" title="Permanent link">&para;</a></h3>
+<p>These four statistics measure what fraction of the total amplitude is captured by the
+central 60%, 70%, 80%, and 90% of observations:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>i90r = (90th percentile(mag) - 10th percentile(mag)) / (max(mag) - min(mag))
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>i80r = (80th percentile(mag) - 20th percentile(mag)) / (max(mag) - min(mag))
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>...
+</code></pre></div>
+<p><strong>Intuition for eclipsing sources:</strong> An eclipsing binary spends most of its time at
+baseline brightness, with only brief dips during eclipse. Therefore:</p>
+<ul>
+<li>Most observations cluster near the baseline → small range for the central 90%</li>
+<li>A few observations dip deeply during eclipse → the total range (max - min) is large</li>
+<li>Result: <code>i90r</code> is <strong>small</strong> for eclipsing sources</li>
+</ul>
+<p>A source that varies continuously (like a pulsating star) has a more uniform
+distribution of magnitudes → <code>i90r</code> closer to 1.0.</p>
+<hr />
+<h3 id="skew-skewness">skew — skewness<a class="headerlink" href="#skew-skewness" title="Permanent link">&para;</a></h3>
+<p>Skewness measures the asymmetry of the magnitude distribution.</p>
+<ul>
+<li><code>skew &lt; 0</code> (negative): the tail extends toward <strong>bright</strong> values (smaller magnitude).
+  The star is usually faint, with occasional bright excursions.</li>
+<li><code>skew &gt; 0</code> (positive): the tail extends toward <strong>faint</strong> values (larger magnitude).
+  The star is usually bright, with occasional dim excursions (e.g., eclipses).</li>
+<li><code>skew ≈ 0</code>: symmetric distribution (e.g., a sine wave or Gaussian noise).</li>
+</ul>
+<p>Eclipsing sources typically have <code>skew &gt; 0</code> because most observations are at the bright
+baseline and the eclipses pull the tail toward larger magnitudes.</p>
+<hr />
+<h3 id="small_kurt-small-sample-kurtosis">small_kurt — small-sample kurtosis<a class="headerlink" href="#small_kurt-small-sample-kurtosis" title="Permanent link">&para;</a></h3>
+<p>Kurtosis measures how "heavy-tailed" the brightness distribution is compared to a
+Gaussian. The "small" qualifier refers to a bias correction for small sample sizes.</p>
+<ul>
+<li><code>small_kurt ≈ 0</code> (excess kurtosis): the distribution has Gaussian-like tails</li>
+<li><code>small_kurt &gt; 0</code> (leptokurtic): heavier tails than a Gaussian — more extreme values
+  than expected. Common in eclipsing sources (most values clustered near baseline,
+  plus extreme dips during eclipses).</li>
+<li><code>small_kurt &lt; 0</code> (platykurtic): lighter tails — flatter, more uniform distribution.</li>
+</ul>
+<hr />
+<h3 id="inv_von_neumann-inverse-von-neumann-ratio-1">inv_von_neumann — inverse Von Neumann ratio (1/η)<a class="headerlink" href="#inv_von_neumann-inverse-von-neumann-ratio-1" title="Permanent link">&para;</a></h3>
+<p>The Von Neumann ratio η measures autocorrelation in the time series:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>η = variance(successive differences) / variance(mag)
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  = mean[ (mag_{i+1} - mag_i)² ] / variance(mag)
+</code></pre></div>
+<p>For truly random (white noise) data, successive differences have the same variance as
+the data itself, so η ≈ 2.</p>
+<p>For a periodically variable source, consecutive observations are correlated (if the
+star is brightening now, it will likely still be bright at the next observation). This
+reduces η below 2.</p>
+<p>ml4em stores <strong>1/η</strong> (the inverse), so that:</p>
+<ul>
+<li><code>inv_von_neumann ≈ 0.5</code> → random, constant source</li>
+<li><code>inv_von_neumann &gt;&gt; 0.5</code> → strong temporal correlation, likely variable</li>
+</ul>
+<p>This convention makes larger values correspond to <em>more</em> variability, which is more
+intuitive for a classifier.</p>
+<hr />
+<h3 id="stetson_i-stetson-i-index">stetson_i — Stetson I index<a class="headerlink" href="#stetson_i-stetson-i-index" title="Permanent link">&para;</a></h3>
+<p>Named after Peter Stetson (1996). Measures correlated variability across pairs of
+observations.</p>
+<p>Positive values suggest the source is variable; values near zero suggest it is constant.
+This index was originally designed for comparing simultaneous multi-band observations
+but works on single-band time series as well.</p>
+<hr />
+<h3 id="stetson_j-stetson-j-index">stetson_j — Stetson J index<a class="headerlink" href="#stetson_j-stetson-j-index" title="Permanent link">&para;</a></h3>
+<p>A robust version of Stetson I that uses a sign-preserving weighting function to
+down-weight extreme outliers. Less sensitive to individual bad observations.</p>
+<p>Rule of thumb: <code>stetson_j &gt; 0.5</code> is often used as a variability threshold in
+literature.</p>
+<hr />
+<h3 id="stetson_k-stetson-k-index">stetson_k — Stetson K index<a class="headerlink" href="#stetson_k-stetson-k-index" title="Permanent link">&para;</a></h3>
+<p>Measures the kurtosis of the residual distribution (how the magnitudes deviate from
+the weighted mean), in a way that is robust to outliers.</p>
+<table>
+<thead>
+<tr>
+<th>stetson_k</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≈ 0.9</td>
+<td>Gaussian residuals → likely constant source</td>
+</tr>
+<tr>
+<td>&lt; 0.9</td>
+<td>Residuals more uniform than Gaussian (possibly periodic)</td>
+</tr>
+<tr>
+<td>&gt; 1.0</td>
+<td>Residuals more peaked than Gaussian</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="anderson_darling-anderson-darling-normality-test-statistic">anderson_darling — Anderson-Darling normality test statistic<a class="headerlink" href="#anderson_darling-anderson-darling-normality-test-statistic" title="Permanent link">&para;</a></h3>
+<p>Tests whether the magnitude distribution is consistent with a Gaussian (normal)
+distribution.</p>
+<ul>
+<li>Larger values → greater deviation from Gaussian → more likely to be variable</li>
+<li>A perfectly constant source with Gaussian noise has small Anderson-Darling values</li>
+</ul>
+<p>The Anderson-Darling test gives extra weight to the tails of the distribution, making
+it sensitive to extreme outliers (like eclipse dips).</p>
+<hr />
+<h3 id="shapiro_wilk-shapiro-wilk-normality-test-w-statistic">shapiro_wilk — Shapiro-Wilk normality test W statistic<a class="headerlink" href="#shapiro_wilk-shapiro-wilk-normality-test-w-statistic" title="Permanent link">&para;</a></h3>
+<p>Another test of whether the magnitude distribution is consistent with Gaussian noise.</p>
+<ul>
+<li>Values close to <strong>1.0</strong> → Gaussian-like → consistent with a constant source</li>
+<li>Values much less than <strong>1.0</strong> → non-Gaussian → likely variable</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The field name is <code>shapiro_wilk</code>, but the stored value is the W test statistic
+(between 0 and 1), not the p-value. Lower W = less Gaussian = more likely variable.</p>
+</div>
+<hr />
+<h2 id="code-connection">Code connection<a class="headerlink" href="#code-connection" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Implementation: <code>src/ml4em/features/statistics.py:StatisticsExtractor</code></li>
+<li>Backend: <code>periodfind.BasicStats</code> (Rust, compiled into the Docker image)</li>
+<li>Field name mapping: <code>_STAT_NAME_MAP</code> in <code>statistics.py</code> maps periodfind column names
+  (e.g. <code>"RoMS"</code>, <code>"WelchI"</code>) to <code>FeatureVector</code> field names (e.g. <code>"roms"</code>, <code>"stetson_i"</code>)</li>
+<li>All 22 fields are included in <code>models.SCALAR_FIELDS</code> and used by <code>XGBoostClassifier</code></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
