@@ -1,0 +1,110 @@
+site_name: ml4em
+site_description: Machine learning for electromagnetic light curve analysis
+site_url: https://maniacurgency42.github.io/ml4em/
+repo_url: https://github.com/ManiacUrgency42/ml4em
+repo_name: ml4em
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            members_order: source
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - Installation: installation.md
+
+  - Background:
+    - background/index.md
+    - Light Curves: background/light-curves.md
+    - Surveys (ZTF & Rubin): background/surveys.md
+    - Period Finding: background/period-finding.md
+    - Variability Statistics: background/variability-statistics.md
+    - The dm/dt Histogram: background/dmdt.md
+    - Gaia & Stellar Catalogs: background/gaia.md
+
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Design Principles: architecture/design-principles.md
+
+  - Data Contracts: data-contracts.md
+
+  - Layer Reference:
+    - Foundation: layers/foundation.md
+    - Data: layers/data.md
+    - Features: layers/features.md
+    - Models: layers/models.md
+    - Training: layers/training.md
+    - Inference: layers/inference.md
+
+  - Guides:
+    - Add a Data Source: guides/add-data-source.md
+    - Add an Extractor: guides/add-extractor.md
+    - Add a Model: guides/add-model.md
+    - Preparing Labels: guides/label-preparation.md
+
+  - Deployment:
+    - Docker Builds: deployment/docker.md
+    - GitHub Container Registry: deployment/ghcr.md
+    - MSI / HPC (Apptainer): deployment/hpc.md
+
+  - API Reference:
+    - Types: api/types.md
+    - Constants: api/constants.md
+    - Config: api/config.md
+    - Data: api/data.md
+    - Features: api/features.md
+    - Models: api/models.md
+    - Training: api/training.md
+    - Inference: api/inference.md
