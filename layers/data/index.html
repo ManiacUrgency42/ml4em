@@ -1127,6 +1127,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-the-pieces-connect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the pieces connect
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#protocol-lightcurvesource" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2019,6 +2030,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-the-pieces-connect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the pieces connect
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#protocol-lightcurvesource" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2162,10 +2184,22 @@ table, which format — is hidden inside the source implementation.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  simulation.py   SimulatedSource — Lcurve wrapper            [stub]
 </code></pre></div>
 <hr />
+<h2 id="how-the-pieces-connect">How the pieces connect<a class="headerlink" href="#how-the-pieces-connect" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ZTFSource.fetch_batch(source_ids)
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  │
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ├─→ Kowalski/penquins batched query           → raw observation documents
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ├─ catflags filter   (catflags == 0)           → drops bad observations
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  ├─ intra-night dedup (Δt &lt; 30 min)             → drops near-simultaneous obs
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  └─ band mapping      (1→g, 2→r, 3→i)
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>       │
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>       └─→ _doc_to_lightcurve()                 → list[LightCurve] (one per band)
+</code></pre></div>
+<p><strong>Entry point:</strong> <code>fetch_batch</code> — the feature layer calls this with a list of source IDs and gets a flat <code>list[LightCurve]</code> back. <code>fetch</code> is the single-source variant that calls <code>fetch_batch</code> internally.</p>
+<hr />
 <h2 id="protocol-lightcurvesource">Protocol — <code>LightCurveSource</code><a class="headerlink" href="#protocol-lightcurvesource" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurveSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurveSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
 </code></pre></div>
 <p>Any class with these two methods is a valid source. The feature layer accepts any
 compliant object without importing the concrete source class.</p>
@@ -2182,17 +2216,17 @@ request for all IDs rather than N separate requests.</p>
 with a query API. See <a href="../../background/surveys/#ztf">Surveys → ZTF</a>.</p>
 </div>
 <h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZTFSource</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">get_ztf_token</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ZTFSource</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">ztf</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">get_ztf_token</span><span class="p">())</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZTFSource</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">get_ztf_token</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ZTFSource</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">ztf</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">get_ztf_token</span><span class="p">())</span>
 </code></pre></div>
 <h3 id="batch-fetching">Batch fetching<a class="headerlink" href="#batch-fetching" title="Permanent link">&para;</a></h3>
 <p><code>fetch_batch</code> sends a single batched Kowalski <code>find</code> query for all source IDs, which
 is much faster than N individual requests:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_batch</span><span class="p">([</span><span class="s2">&quot;686149073900013696&quot;</span><span class="p">,</span> <span class="s2">&quot;686149073900013697&quot;</span><span class="p">])</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># → list[LightCurve] — one per (source_id, band) combination</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_batch</span><span class="p">([</span><span class="s2">&quot;686149073900013696&quot;</span><span class="p">,</span> <span class="s2">&quot;686149073900013697&quot;</span><span class="p">])</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># → list[LightCurve] — one per (source_id, band) combination</span>
 </code></pre></div>
 <h3 id="data-cleaning">Data cleaning<a class="headerlink" href="#data-cleaning" title="Permanent link">&para;</a></h3>
 <p><code>ZTFSource</code> applies two cleaning steps before returning data:</p>
@@ -2251,23 +2285,23 @@ binary light curves.</p>
 </ol>
 <p>No other files need to change. The feature layer will accept your new source because
 it only checks for the two methods at runtime.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MySource</span><span class="p">:</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">LightCurve</span><span class="p">(</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>            <span class="n">source_id</span><span class="o">=</span><span class="n">source_id</span><span class="p">,</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>            <span class="n">time</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">],</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>            <span class="n">mag</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">],</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>            <span class="n">mag_err</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mag_err&quot;</span><span class="p">],</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>            <span class="n">band</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>            <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>            <span class="n">ra</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>            <span class="n">dec</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>        <span class="p">)]</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">batch_query</span><span class="p">(</span><span class="n">source_ids</span><span class="p">)</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>        <span class="k">return</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MySource</span><span class="p">:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">LightCurve</span><span class="p">(</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>            <span class="n">source_id</span><span class="o">=</span><span class="n">source_id</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>            <span class="n">time</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">],</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>            <span class="n">mag</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">],</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>            <span class="n">mag_err</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mag_err&quot;</span><span class="p">],</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>            <span class="n">band</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>            <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>            <span class="n">ra</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>            <span class="n">dec</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>        <span class="p">)]</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">batch_query</span><span class="p">(</span><span class="n">source_ids</span><span class="p">)</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>        <span class="k">return</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
 </code></pre></div>
 <p>See <a href="../../guides/add-data-source/">Guide: Add a Data Source</a> for step-by-step instructions.</p>
 <hr />

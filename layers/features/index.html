@@ -1155,6 +1155,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-the-pieces-connect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the pieces connect
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#protocol-featureextractor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2091,6 +2102,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-the-pieces-connect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the pieces connect
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#protocol-featureextractor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2310,9 +2332,24 @@ length numerical representations that the model operates on.</p>
 Rust/CUDA library. The Python code sets up parameters and reshapes inputs/outputs;
 the actual number crunching happens in compiled code.</p>
 <hr />
+<h2 id="how-the-pieces-connect">How the pieces connect<a class="headerlink" href="#how-the-pieces-connect" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FeaturePipeline.run_batch(sources)              sources: list[list[LightCurve]]
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  │
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ├─ [&lt; min_observations] ───────────────────→ all-NaN FeatureVector  (skipped)
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  │
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  ├─→ StatisticsExtractor.extract(sources)    → list[dict]  22 scalar fields
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  ├─→ PeriodExtractor.extract(sources)        → list[dict]  15 fields (period + Fourier)
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  ├─→ DmdtExtractor.extract(sources)          → list[dict]  dmdt: 26×26 array
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  └─→ CatalogExtractor.extract(sources)       → list[dict]  4 Gaia fields
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        │
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        └─ merges dicts → FeatureVector per source
+</code></pre></div>
+<p><strong>Entry point:</strong> <code>FeaturePipeline.run_batch</code> — the extractors are called by it in order, never directly.</p>
+<p>If an extractor returns <code>{}</code> for a source (on error), the pipeline fills those fields with NaN.</p>
+<hr />
 <h2 id="protocol-featureextractor">Protocol — <code>FeatureExtractor</code><a class="headerlink" href="#protocol-featureextractor" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureExtractor</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span> <span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureExtractor</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span> <span class="o">...</span>
 </code></pre></div>
 <p><strong>Batch-first interface:</strong> the input is a list of sources, where each source is a list
 of <code>LightCurve</code> objects (one per band). The output is one dict per source mapping
@@ -2385,12 +2422,12 @@ explanation of all 22 statistics.</p>
 </tbody>
 </table>
 <p>The default production set (from scope-ml) is CE, AOV, LS, MHF. Configure via:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">period</span><span class="p">:</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">algorithms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">CE</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AOV</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">LS</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">MHF</span><span class="p p-Indicator">]</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">min_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.003</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">max_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30.0</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">n_freq_grid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">period</span><span class="p">:</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">algorithms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">CE</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AOV</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">LS</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">MHF</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">min_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.003</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">max_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30.0</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">n_freq_grid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
 </code></pre></div>
 <h3 id="agreement-scoring">Agreement scoring<a class="headerlink" href="#agreement-scoring" title="Permanent link">&para;</a></h3>
 <p>Each algorithm runs over all N sources in one batched call and returns its top period
@@ -2403,7 +2440,7 @@ candidates. Then <code>_agree()</code> runs across algorithms per source:</p>
 <h3 id="fourier-decomposition">Fourier decomposition<a class="headerlink" href="#fourier-decomposition" title="Permanent link">&para;</a></h3>
 <p>After period finding, <code>periodfind.FourierDecomposition().calc()</code> is run on the subset
 of sources with a valid period. Returns 14 features per source:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[power, BIC, offset, slope, A1, B1, A2, B2, A3, B3, A4, B4, A5, B5]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[power, BIC, offset, slope, A1, B1, A2, B2, A3, B3, A4, B4, A5, B5]
 </code></pre></div>
 <p>Mapped to <code>FeatureVector</code> fields: <code>f1_power</code>, <code>f1_bic</code>, <code>f1_a</code>, <code>f1_b</code>, <code>f1_amp</code>,
 <code>f1_phi0</code>, <code>f1_relamp1–4</code>, <code>f1_relphi1–4</code>.</p>
@@ -2417,8 +2454,8 @@ once in <code>__init__</code> using the config parameters and reused. Delegates 
 <code>periodfind.DmDt().calc(times, mags, dt_edges, dm_edges)</code>, returns an
 <code>(N, 26, 26)</code> float32 array, L2-normalized per source.</p>
 <p>To skip this extractor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">compute_dmdt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">compute_dmdt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 <p>See <a href="../../background/dmdt/">The dm/dt Histogram</a> for a full explanation.</p>
 <hr />
@@ -2432,28 +2469,28 @@ once in <code>__init__</code> using the config parameters and reused. Delegates 
 <h2 id="featurepipeline"><code>FeaturePipeline</code><a class="headerlink" href="#featurepipeline" title="Permanent link">&para;</a></h2>
 <p>Composes extractors in order and builds <code>FeatureVector</code> objects.</p>
 <h3 id="construction">Construction<a class="headerlink" href="#construction" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Standard ordering (statistics → period → dmdt → catalog)</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Custom extractor list</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="p">(</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">extractors</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="p">,</span> <span class="n">period</span><span class="p">],</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">min_observations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">compute_dmdt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Standard ordering (statistics → period → dmdt → catalog)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Custom extractor list</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="p">(</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">extractors</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="p">,</span> <span class="n">period</span><span class="p">],</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">min_observations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">compute_dmdt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">)</span>
 </code></pre></div>
 <h3 id="running">Running<a class="headerlink" href="#running" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">fvs</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_batch</span><span class="p">(</span><span class="n">grouped_lcs</span><span class="p">)</span>    <span class="c1"># list[list[LightCurve]] → list[FeatureVector]</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">fv</span>  <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_batch</span><span class="p">([</span><span class="n">lcs</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>       <span class="c1"># single source (batch of one)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">fvs</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_batch</span><span class="p">(</span><span class="n">grouped_lcs</span><span class="p">)</span>    <span class="c1"># list[list[LightCurve]] → list[FeatureVector]</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">fv</span>  <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_batch</span><span class="p">([</span><span class="n">lcs</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>       <span class="c1"># single source (batch of one)</span>
 </code></pre></div>
 <h3 id="batching-and-device-selection">Batching and device selection<a class="headerlink" href="#batching-and-device-selection" title="Permanent link">&para;</a></h3>
 <p><code>run_batch</code> calls <code>periodfind.set_device(device)</code> once before processing, then
 processes <code>grouped_lcs</code> in chunks of <code>feature_batch_size</code> (default 1000).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auto</span><span class="w">          </span><span class="c1"># &quot;cpu&quot; | &quot;gpu&quot; | &quot;auto&quot;</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">feature_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auto</span><span class="w">          </span><span class="c1"># &quot;cpu&quot; | &quot;gpu&quot; | &quot;auto&quot;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">feature_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 </code></pre></div>
 <p><code>device</code> controls whether periodfind uses CPU (Rust) or GPU (CUDA). <code>auto</code> uses GPU
 if available and falls back to CPU. This is orthogonal to <code>feature_batch_size</code> — batch
@@ -2473,16 +2510,16 @@ fields in <code>FeatureVector</code> are <code>np.nan</code>. This is intentiona
 <li>Keys in the returned dicts must match <code>FeatureVector</code> field names exactly</li>
 <li>Pass to <code>FeaturePipeline</code> constructor or add to <code>FeaturePipeline.default()</code></li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyExtractor</span><span class="p">:</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>        <span class="k">for</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>            <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>                <span class="n">value</span> <span class="o">=</span> <span class="n">compute_something</span><span class="p">(</span><span class="n">lcs</span><span class="p">)</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;my_feature&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>   <span class="c1"># never raise — return empty dict</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>        <span class="k">return</span> <span class="n">results</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyExtractor</span><span class="p">:</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>        <span class="k">for</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>            <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>                <span class="n">value</span> <span class="o">=</span> <span class="n">compute_something</span><span class="p">(</span><span class="n">lcs</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;my_feature&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>   <span class="c1"># never raise — return empty dict</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        <span class="k">return</span> <span class="n">results</span>
 </code></pre></div>
 <p>See <a href="../../guides/add-extractor/">Guide: Add an Extractor</a> for step-by-step instructions.</p>
 <hr />
