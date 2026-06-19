@@ -2144,6 +2144,14 @@
 
 
 <h1 id="data-layer">Data Layer<a class="headerlink" href="#data-layer" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Layer at a glance</p>
+<p><strong>Receives:</strong> <code>source_id</code> strings (survey-native identifiers)
+<strong>Produces:</strong> <code>list[LightCurve]</code> — one object per (source, band) combination
+<strong>Protocol:</strong> <code>LightCurveSource</code> → <code>fetch(source_id)</code>, <code>fetch_batch(source_ids)</code>
+<strong>Files:</strong> <code>data/base.py</code> · <code>data/ztf.py</code> · <code>data/rubin.py</code> · <code>data/simulation.py</code>
+<strong>Background:</strong> <a href="../../background/surveys/">Surveys (ZTF &amp; Rubin)</a> · <a href="../../background/light-curves/">Light Curves</a></p>
+</div>
 <p>The data layer's job is simple: given a source identifier, return a list of
 <code>LightCurve</code> objects. Everything about <em>how</em> that data is fetched — which API, which
 table, which format — is hidden inside the source implementation.</p>
@@ -2262,6 +2270,8 @@ it only checks for the two methods at runtime.</p>
 <a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>        <span class="k">return</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
 </code></pre></div>
 <p>See <a href="../../guides/add-data-source/">Guide: Add a Data Source</a> for step-by-step instructions.</p>
+<hr />
+<p><a class="md-button" href="../foundation/">← Foundation</a> <a class="md-button md-button--primary" href="../features/">Features →</a></p>
 
 
 

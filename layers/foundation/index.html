@@ -2178,6 +2178,13 @@
 
 
 <h1 id="foundation-layer">Foundation Layer<a class="headerlink" href="#foundation-layer" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Layer at a glance</p>
+<p><strong>Role:</strong> Shared vocabulary — no data flows <em>through</em> this layer; every other layer imports from it.
+<strong>Files:</strong> <code>types.py</code> · <code>constants.py</code> · <code>config/schema.py</code> · <code>config/loader.py</code>
+<strong>Provides:</strong> <code>LightCurve</code>, <code>FeatureVector</code>, <code>LabeledSample</code>, <code>Candidate</code>, <code>PipelineConfig</code>, survey constants
+<strong>Background:</strong> <a href="../../background/light-curves/">Light Curves</a> · <a href="../../background/surveys/">Surveys</a></p>
+</div>
 <p>The foundation layer is not a "layer" in the data-flow sense — nothing passes through
 it. It provides the shared vocabulary that all other layers use.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/
@@ -2408,6 +2415,8 @@ or a <code>.env</code> file:</p>
 </code></pre></div>
 <p>If the token is not found, these functions raise a clear error rather than silently
 passing an empty string.</p>
+<hr />
+<p><a class="md-button md-button--primary" href="../data/">Data layer →</a></p>
 
 
 

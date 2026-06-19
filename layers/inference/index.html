@@ -2056,6 +2056,14 @@
 
 
 <h1 id="inference-layer">Inference Layer<a class="headerlink" href="#inference-layer" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Layer at a glance</p>
+<p><strong>Receives:</strong> <code>list[FeatureVector]</code> + a saved model directory
+<strong>Produces:</strong> <code>list[Candidate]</code> — one per source, with probability, confidence tier, and period
+<strong>Protocol:</strong> <code>Predictor</code> → <code>predict(features)</code>
+<strong>Files:</strong> <code>inference/base.py</code> · <code>inference/loader.py</code> · <code>inference/predictor.py</code> · <code>inference/postprocess.py</code>
+<strong>Parallel to:</strong> <a href="../training/">Training layer</a> — shares <code>FeatureVector</code> input and <code>MLModel</code> contract, but neither imports from the other.</p>
+</div>
 <p>The inference layer loads a trained model and converts <code>FeatureVector</code> objects into
 <code>Candidate</code> predictions.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/inference/
@@ -2152,6 +2160,8 @@ the purity/completeness trade-off your analysis requires.</p>
 true positives will only appear in <code>"medium"</code> or <code>"low"</code>.</p>
 <p><strong>High completeness run:</strong> set <code>medium=0.3</code> to catch more true positives in the
 <code>"medium"</code> tier, accepting more false positives.</p>
+<hr />
+<p><a class="md-button" href="../models/">← Models</a> <a class="md-button" href="../training/">← Training</a></p>
 
 
 

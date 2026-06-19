@@ -2134,6 +2134,15 @@
 
 
 <h1 id="models-layer">Models Layer<a class="headerlink" href="#models-layer" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Layer at a glance</p>
+<p><strong>Role:</strong> Defines the shared contract between training and inference — does not perform either.
+<strong>Receives:</strong> <code>list[FeatureVector]</code> (via <code>predict_proba</code>)
+<strong>Produces:</strong> <code>np.ndarray</code> of shape <code>(N, 2)</code> — class probabilities
+<strong>Protocol:</strong> <code>MLModel</code> → <code>predict_proba(features)</code>, <code>save(path)</code>
+<strong>Files:</strong> <code>models/base.py</code> · <code>models/xgboost.py</code>
+<strong>Background:</strong> No domain-specific background needed — this is pure ML infrastructure.</p>
+</div>
 <p>The models layer defines the <strong>contract</strong> between training and inference. It does not
 perform training or inference itself — it provides the Protocol that both layers depend
 on, plus utilities for scalar feature extraction.</p>
@@ -2262,6 +2271,8 @@ compact and fast to load.</p>
 </code></pre></div>
 <p><strong>4.</strong> Training, inference, and postprocessing are unchanged.</p>
 <p>See <a href="../../guides/add-model/">Guide: Add a Model</a> for step-by-step instructions.</p>
+<hr />
+<p><a class="md-button" href="../features/">← Features</a> <a class="md-button md-button--primary" href="../training/">Training →</a> <a class="md-button md-button--primary" href="../inference/">Inference →</a></p>
 
 
 

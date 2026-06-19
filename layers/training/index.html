@@ -2078,6 +2078,15 @@
 
 
 <h1 id="training-layer">Training Layer<a class="headerlink" href="#training-layer" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Layer at a glance</p>
+<p><strong>Receives:</strong> <code>list[FeatureVector]</code> (from feature layer output files) + researcher-supplied <code>labels.csv</code>
+<strong>Produces:</strong> saved model directory (written by <code>model.save()</code>)
+<strong>Protocol:</strong> <code>Trainer</code> → <code>fit(dataset)</code>, <code>save(path)</code>
+<strong>Files:</strong> <code>training/base.py</code> · <code>training/dataset.py</code> · <code>training/trainer.py</code>
+<strong>Parallel to:</strong> <a href="../inference/">Inference layer</a> — shares <code>FeatureVector</code> input and <code>MLModel</code> contract, but neither imports from the other.
+<strong>Guide:</strong> <a href="../../guides/label-preparation/">Preparing Labels</a></p>
+</div>
 <p>The training layer loads labeled features, splits them into train/val/test sets, and
 fits a model. It is parallel to inference — neither layer imports from the other.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/training/
@@ -2186,6 +2195,8 @@ the model architecture is finalized.</p>
 to XGBoost in the traditional sense; early stopping uses <code>eval_set</code> instead).
 The <code>StandardTrainer</code> will dispatch appropriately per model type.</p>
 </div>
+<hr />
+<p><a class="md-button" href="../models/">← Models</a> <a class="md-button md-button--primary" href="../inference/">Inference →</a></p>
 
 
 

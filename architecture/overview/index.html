@@ -997,6 +997,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#navigate-to-a-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigate to a layer
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2023,6 +2034,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#navigate-to-a-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigate to a layer
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2210,6 +2232,64 @@ any other file — the feature layer accepts any object with those methods.</p>
 </tbody>
 </table>
 <p>See <a href="../../data-contracts/">Data Contracts</a> for full field tables.</p>
+<hr />
+<h2 id="navigate-to-a-layer">Navigate to a layer<a class="headerlink" href="#navigate-to-a-layer" title="Permanent link">&para;</a></h2>
+<p>Each row is a clickable link to the full layer reference page.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Layer</th>
+<th>Responsibility</th>
+<th>Receives</th>
+<th>Produces</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><a href="../../layers/foundation/"><strong>Foundation</strong></a></td>
+<td>Shared types, constants, config</td>
+<td>—</td>
+<td><code>LightCurve</code>, <code>FeatureVector</code>, <code>PipelineConfig</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="../../layers/data/"><strong>Data</strong></a></td>
+<td>Fetch light curves from surveys</td>
+<td><code>source_id</code></td>
+<td><code>list[LightCurve]</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="../../layers/features/"><strong>Features</strong></a></td>
+<td>Extract numerical features</td>
+<td><code>list[LightCurve]</code></td>
+<td><code>FeatureVector</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="../../layers/models/"><strong>Models</strong></a></td>
+<td>Define the ML model contract</td>
+<td><code>FeatureVector</code></td>
+<td><code>np.ndarray</code> (probabilities)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="../../layers/training/"><strong>Training</strong></a></td>
+<td>Load labels and fit a model</td>
+<td><code>FeatureVector</code> + labels CSV</td>
+<td>saved model file</td>
+</tr>
+<tr>
+<td>6</td>
+<td><a href="../../layers/inference/"><strong>Inference</strong></a></td>
+<td>Run a saved model on new data</td>
+<td><code>FeatureVector</code> + model file</td>
+<td><code>list[Candidate]</code></td>
+</tr>
+</tbody>
+</table>
 
 
 

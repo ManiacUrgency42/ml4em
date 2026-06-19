@@ -2288,6 +2288,14 @@
 
 
 <h1 id="feature-layer">Feature Layer<a class="headerlink" href="#feature-layer" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Layer at a glance</p>
+<p><strong>Receives:</strong> <code>list[list[LightCurve]]</code> — outer list is sources, inner list is bands per source
+<strong>Produces:</strong> <code>list[FeatureVector]</code> — one per source, with 43 scalar fields + 26×26 dm/dt image
+<strong>Protocol:</strong> <code>FeatureExtractor</code> → <code>extract(sources)</code>; composed by <code>FeaturePipeline</code>
+<strong>Files:</strong> <code>features/base.py</code> · <code>features/statistics.py</code> · <code>features/period.py</code> · <code>features/dmdt.py</code> · <code>features/catalog.py</code> · <code>features/pipeline.py</code>
+<strong>Background:</strong> <a href="../../background/variability-statistics/">Variability Statistics</a> · <a href="../../background/period-finding/">Period Finding</a> · <a href="../../background/dmdt/">The dm/dt Histogram</a> · <a href="../../background/gaia/">Gaia</a></p>
+</div>
 <p>The feature layer converts raw light curves into <code>FeatureVector</code> objects — the fixed-
 length numerical representations that the model operates on.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/features/
@@ -2477,6 +2485,8 @@ fields in <code>FeatureVector</code> are <code>np.nan</code>. This is intentiona
 <a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>        <span class="k">return</span> <span class="n">results</span>
 </code></pre></div>
 <p>See <a href="../../guides/add-extractor/">Guide: Add an Extractor</a> for step-by-step instructions.</p>
+<hr />
+<p><a class="md-button" href="../data/">← Data</a> <a class="md-button md-button--primary" href="../models/">Models →</a></p>
 
 
 
