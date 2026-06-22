@@ -2,8 +2,8 @@
 # ml4em — multi-stage Dockerfile
 #
 # Two named build targets:
-#   cpu  — Ubuntu 22.04, no CUDA. For local testing and CI.
-#   gpu  — CUDA 11.8 base. For MSI/HPC production via Apptainer.
+#   cpu  — python:3.11-slim-bookworm, no CUDA. For local testing and CI.
+#   gpu  — CUDA 11.8 / Ubuntu 22.04 base. For MSI/HPC production via Apptainer.
 #
 # Build:
 #   docker build --target cpu -t ml4em:cpu .
@@ -33,42 +33,37 @@
 
 # ==============================================================================
 # CPU image — local development / CI testing
+# python:3.11-bookworm (buildpack-deps base) ships with build-essential, git,
+# curl, and python3.11-dev pre-installed — no apt installs needed for toolchain.
 # ==============================================================================
-FROM ubuntu:22.04 AS cpu
+FROM python:3.11-bookworm AS cpu
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
-        python3.11 \
-        python3.11-dev \
-        python3-pip \
-        curl \
-        build-essential \
-        git \
-    && rm -rf /var/lib/apt/lists/*
+# Upgrade build tools to satisfy pyproject.toml: requires = ["setuptools>=77"]
+RUN pip install --upgrade pip setuptools wheel
 
 # Rust toolchain — required to build periodfind_cpu
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-RUN pip3 install --no-cache-dir maturin
+RUN python3.11 -m pip install --no-cache-dir maturin
 
 # ── Build periodfind_cpu (Rust, no CUDA) ─────────────────────────────────────
 COPY external/periodfind /build/periodfind
 RUN cd /build/periodfind/rust \
-    && maturin build --release \
-    && pip3 install --no-cache-dir target/wheels/*.whl
+    && maturin build --release --interpreter python3.11 \
+    && python3.11 -m pip install --no-cache-dir target/wheels/*.whl
 
 # ── Build periodfind (Cython — no nvcc found, CPU-only extensions) ────────────
 # setup.py checks for nvcc; skips CUDA extensions automatically if absent.
-RUN pip3 install --no-cache-dir /build/periodfind
+RUN python3.11 -m pip install --no-cache-dir /build/periodfind
 
-# ── Install ml4em (editable) ──────────────────────────────────────────────────
+# ── Install ml4em with test + ZTF extras (editable) ──────────────────────────
 # -e means Python imports directly from /app/ml4em/src rather than copying
 # files into site-packages. At runtime, bind-mount your live git checkout
 # over /app/ml4em and code changes are picked up without rebuilding the image.
+# [ztf,dev] installs penquins (ZTF data access) and pytest/ruff (test tooling).
 COPY . /app/ml4em
-RUN pip3 install --no-cache-dir -e /app/ml4em
+RUN python3.11 -m pip install --no-cache-dir -e /app/ml4em[ztf,dev]
 
 WORKDIR /app/ml4em
 
@@ -85,34 +80,38 @@ FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04 AS gpu
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y \
+RUN printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\n' \
+        > /etc/apt/apt.conf.d/80-retries \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
         python3.11 \
         python3.11-dev \
-        python3-pip \
         curl \
+        ca-certificates \
         build-essential \
         git \
     && rm -rf /var/lib/apt/lists/*
 
+# Bootstrap pip for Python 3.11 and upgrade build tools
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 \
+    && python3.11 -m pip install --upgrade pip setuptools wheel
+
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-RUN pip3 install --no-cache-dir maturin
+RUN python3.11 -m pip install --no-cache-dir maturin
 
 # ── Build periodfind_cpu (Rust) ───────────────────────────────────────────────
 COPY external/periodfind /build/periodfind
 RUN cd /build/periodfind/rust \
-    && maturin build --release \
-    && pip3 install --no-cache-dir target/wheels/*.whl
+    && maturin build --release --interpreter python3.11 \
+    && python3.11 -m pip install --no-cache-dir target/wheels/*.whl
 
 # ── Build periodfind (Cython + CUDA — nvcc IS present in this base image) ─────
-RUN pip3 install --no-cache-dir /build/periodfind
+RUN python3.11 -m pip install --no-cache-dir /build/periodfind
 
 # ── Install ml4em (editable) ──────────────────────────────────────────────────
-# -e means Python imports directly from /app/ml4em/src rather than copying
-# files into site-packages. At runtime, bind-mount your live git checkout
-# over /app/ml4em and code changes are picked up without rebuilding the image.
 COPY . /app/ml4em
-RUN pip3 install --no-cache-dir -e /app/ml4em
+RUN python3.11 -m pip install --no-cache-dir -e /app/ml4em
 
 WORKDIR /app/ml4em

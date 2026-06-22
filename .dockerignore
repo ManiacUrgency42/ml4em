@@ -1,0 +1,13 @@
+# Secrets — never bake into the image; pass at runtime via --env-file .env
+.env
+config.yaml
+
+# Build/runtime artefacts that don't belong in the image
+site/
+*.sif
+__pycache__
+**/__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.mypy_cache
