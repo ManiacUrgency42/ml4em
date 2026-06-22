@@ -1,5 +1,12 @@
 # Data Layer
 
+!!! abstract "Layer at a glance"
+    **Receives:** `source_id` strings (survey-native identifiers)
+    **Produces:** `list[LightCurve]` — one object per (source, band) combination
+    **Protocol:** `LightCurveSource` → `fetch(source_id)`, `fetch_batch(source_ids)`
+    **Files:** `data/base.py` · `data/ztf.py` · `data/rubin.py` · `data/simulation.py`
+    **Background:** [Surveys (ZTF & Rubin)](../background/surveys.md) · [Light Curves](../background/light-curves.md)
+
 The data layer's job is simple: given a source identifier, return a list of
 `LightCurve` objects. Everything about *how* that data is fetched — which API, which
 table, which format — is hidden inside the source implementation.
@@ -11,6 +18,23 @@ src/ml4em/data/
   rubin.py        RubinSource — Rubin DP1 via TAP             [stub]
   simulation.py   SimulatedSource — Lcurve wrapper            [stub]
 ```
+
+---
+
+## How the pieces connect
+
+```text
+ZTFSource.fetch_batch(source_ids)
+  │
+  ├─→ Kowalski/penquins batched query           → raw observation documents
+  ├─ catflags filter   (catflags == 0)           → drops bad observations
+  ├─ intra-night dedup (Δt < 30 min)             → drops near-simultaneous obs
+  └─ band mapping      (1→g, 2→r, 3→i)
+       │
+       └─→ _doc_to_lightcurve()                 → list[LightCurve] (one per band)
+```
+
+**Entry point:** `fetch_batch` — the feature layer calls this with a list of source IDs and gets a flat `list[LightCurve]` back. `fetch` is the single-source variant that calls `fetch_batch` internally.
 
 ---
 
@@ -147,3 +171,7 @@ class MySource:
 ```
 
 See [Guide: Add a Data Source](../guides/add-data-source.md) for step-by-step instructions.
+
+---
+
+[← Foundation](foundation.md){ .md-button } [Features →](features.md){ .md-button .md-button--primary }

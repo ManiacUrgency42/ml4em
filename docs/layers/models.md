@@ -1,5 +1,13 @@
 # Models Layer
 
+!!! abstract "Layer at a glance"
+    **Role:** Defines the shared contract between training and inference — does not perform either.
+    **Receives:** `list[FeatureVector]` (via `predict_proba`)
+    **Produces:** `np.ndarray` of shape `(N, 2)` — class probabilities
+    **Protocol:** `MLModel` → `predict_proba(features)`, `save(path)`
+    **Files:** `models/base.py` · `models/xgboost.py`
+    **Background:** No domain-specific background needed — this is pure ML infrastructure.
+
 The models layer defines the **contract** between training and inference. It does not
 perform training or inference itself — it provides the Protocol that both layers depend
 on, plus utilities for scalar feature extraction.
@@ -9,6 +17,23 @@ src/ml4em/models/
   base.py         MLModel Protocol + SCALAR_FIELDS utilities
   xgboost.py      XGBoostClassifier — reference implementation
 ```
+
+---
+
+## Position in the pipeline
+
+The models layer is a contract layer — it defines the interface that both training and inference depend on, without implementing either.
+
+```text
+Training layer              Models layer              Inference layer
+──────────────              ────────────              ───────────────
+StandardTrainer         →   MLModel (Protocol)   →   StandardPredictor
+  model.fit(train, val) ←── predict_proba()      ──→ model.predict_proba()
+  model.save(path)      ←── save(path)               load_model(path)
+                             XGBoostClassifier             └─→ .load()
+```
+
+`SCALAR_FIELDS` and `features_to_array` live here so all model implementations share the same stable feature ordering.
 
 ---
 
@@ -172,3 +197,7 @@ trainer = StandardTrainer(model, cfg.training)
 **4.** Training, inference, and postprocessing are unchanged.
 
 See [Guide: Add a Model](../guides/add-model.md) for step-by-step instructions.
+
+---
+
+[← Features](features.md){ .md-button } [Training →](training.md){ .md-button .md-button--primary } [Inference →](inference.md){ .md-button .md-button--primary }

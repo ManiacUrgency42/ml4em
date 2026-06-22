@@ -53,3 +53,10 @@ ignore = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["ml4em"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "integration: requires network access and credentials (skip with -m 'not integration')",
+]

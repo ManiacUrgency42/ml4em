@@ -1,5 +1,12 @@
 # Inference Layer
 
+!!! abstract "Layer at a glance"
+    **Receives:** `list[FeatureVector]` + a saved model directory
+    **Produces:** `list[Candidate]` — one per source, with probability, confidence tier, and period
+    **Protocol:** `Predictor` → `predict(features)`
+    **Files:** `inference/base.py` · `inference/loader.py` · `inference/predictor.py` · `inference/postprocess.py`
+    **Parallel to:** [Training layer](training.md) — shares `FeatureVector` input and `MLModel` contract, but neither imports from the other.
+
 The inference layer loads a trained model and converts `FeatureVector` objects into
 `Candidate` predictions.
 
@@ -10,6 +17,26 @@ src/ml4em/inference/
   predictor.py    StandardPredictor
   postprocess.py  probabilities_to_candidates            [fully implemented]
 ```
+
+---
+
+## How the pieces connect
+
+```text
+load_model("models/xgb_v1/")
+  └─ reads manifest.json → dispatches to XGBoostClassifier.load()
+  └─→ MLModel
+
+StandardPredictor(model, cfg.inference)
+  └─→ predict(feature_vectors)
+        ├─→ model.predict_proba(features)         → (N, 2) ndarray  [in batches]
+        └─→ probabilities_to_candidates(...)       → list[Candidate]
+              ├─ probs[:, 1]  positive-class probability per source
+              ├─ threshold comparison  →  "high" / "medium" / "low"
+              └─ copies source_id, ra, dec, period from each FeatureVector
+```
+
+**Entry point:** `StandardPredictor.predict` — everything else is called by it or by the one-time `load_model` setup before it runs.
 
 ---
 
@@ -114,3 +141,7 @@ true positives will only appear in `"medium"` or `"low"`.
 
 **High completeness run:** set `medium=0.3` to catch more true positives in the
 `"medium"` tier, accepting more false positives.
+
+---
+
+[← Models](models.md){ .md-button } [← Training](training.md){ .md-button }

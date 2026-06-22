@@ -61,21 +61,6 @@ class RubinSource:
     # Public interface  (satisfies LightCurveSource Protocol)
     # ------------------------------------------------------------------
 
-    def fetch(self, source_id: str) -> list[LightCurve]:
-        """Fetch all available bands for one dp1.Object.
-
-        Parameters
-        ----------
-        source_id:
-            dp1.Object.objectId cast to str.
-
-        Returns
-        -------
-        list[LightCurve]
-            One LightCurve per band that has observations.
-        """
-        return self.fetch_batch([source_id])
-
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
         """Fetch light curves for multiple dp1.Object objectIds.
 

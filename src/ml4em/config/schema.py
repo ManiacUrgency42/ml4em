@@ -52,13 +52,14 @@ class ZTFConfig(BaseModel):
     Load it via ml4em.config.get_ztf_token() → reads WDB_ZTF_TOKEN from env.
     """
 
-    host     : str = "kowalski.caltech.edu"
+    host     : str = "melman.caltech.edu"
     port     : int = 443
     protocol : str = "https"
     timeout  : int = 300   # seconds
 
-    # Source catalog to query for light curves
-    collection_sources : str = "ZTF_sources_20240515"
+    # Source catalog to query for light curves.
+    # ZTF_sources_84525009 is the largest available collection on melman (DR20).
+    collection_sources : str = "ZTF_sources_84525009"
 
     # Restrict to observations before this HJD (end of a specific data release).
     # None → use all available data.

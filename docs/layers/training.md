@@ -1,5 +1,13 @@
 # Training Layer
 
+!!! abstract "Layer at a glance"
+    **Receives:** `list[FeatureVector]` (from feature layer output files) + researcher-supplied `labels.csv`
+    **Produces:** saved model directory (written by `model.save()`)
+    **Protocol:** `Trainer` → `fit(dataset)`, `save(path)`
+    **Files:** `training/base.py` · `training/dataset.py` · `training/trainer.py`
+    **Parallel to:** [Inference layer](inference.md) — shares `FeatureVector` input and `MLModel` contract, but neither imports from the other.
+    **Guide:** [Preparing Labels](../guides/label-preparation.md)
+
 The training layer loads labeled features, splits them into train/val/test sets, and
 fits a model. It is parallel to inference — neither layer imports from the other.
 
@@ -9,6 +17,25 @@ src/ml4em/training/
   dataset.py      FeatureDataset — load features + join labels
   trainer.py      StandardTrainer
 ```
+
+---
+
+## How the pieces connect
+
+```text
+FeatureDataset.from_storage(cfg.storage, labels_path)
+  ├─ loads parquet files (written by FeaturePipeline)  → list[FeatureVector]
+  └─ joins labels.csv on source_id                     → list[LabeledSample]
+
+dataset.split(val_fraction=0.1, test_fraction=0.1, seed=42)
+  └─→ (train, val, test)  subsets of LabeledSample
+
+StandardTrainer(model, cfg.training)
+  ├─→ fit(dataset)   → model.fit(train, val)  [stub — NotImplementedError]
+  └─→ save(path)     → model.save(path)        [implemented]
+```
+
+**Entry points:** `FeatureDataset.from_storage` to load data; `StandardTrainer.fit` to train; `StandardTrainer.save` to persist the result.
 
 ---
 
@@ -106,3 +133,7 @@ trainer.save(path)     # delegates to model.save(path) — implemented
     XGBoost training may not need all of these parameters (`max_epochs` doesn't apply
     to XGBoost in the traditional sense; early stopping uses `eval_set` instead).
     The `StandardTrainer` will dispatch appropriately per model type.
+
+---
+
+[← Models](models.md){ .md-button } [Inference →](inference.md){ .md-button .md-button--primary }

@@ -49,23 +49,6 @@ class SimulatedSource:
     # Public interface  (satisfies LightCurveSource Protocol)
     # ------------------------------------------------------------------
 
-    def fetch(self, source_id: str) -> list[LightCurve]:
-        """Generate a synthetic light curve for one Lcurve model.
-
-        Parameters
-        ----------
-        source_id:
-            Path to an Lcurve model parameter file (.mod), or an integer
-            index into a pre-generated parameter grid (as str).
-
-        Returns
-        -------
-        list[LightCurve]
-            Synthetic LightCurve for the modelled WDB system.
-            Typically a one-element list (one simulated band).
-        """
-        return self.fetch_batch([source_id])
-
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
         """Generate synthetic light curves for multiple Lcurve models.
 

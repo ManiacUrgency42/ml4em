@@ -1,5 +1,12 @@
 # Feature Layer
 
+!!! abstract "Layer at a glance"
+    **Receives:** `list[list[LightCurve]]` — outer list is sources, inner list is bands per source
+    **Produces:** `list[FeatureVector]` — one per source, with 43 scalar fields + 26×26 dm/dt image
+    **Protocol:** `FeatureExtractor` → `extract(sources)`; composed by `FeaturePipeline`
+    **Files:** `features/base.py` · `features/statistics.py` · `features/period.py` · `features/dmdt.py` · `features/catalog.py` · `features/pipeline.py`
+    **Background:** [Variability Statistics](../background/variability-statistics.md) · [Period Finding](../background/period-finding.md) · [The dm/dt Histogram](../background/dmdt.md) · [Gaia](../background/gaia.md)
+
 The feature layer converts raw light curves into `FeatureVector` objects — the fixed-
 length numerical representations that the model operates on.
 
@@ -16,6 +23,27 @@ src/ml4em/features/
 All computationally intensive work is delegated to **periodfind**, a GPU-accelerated
 Rust/CUDA library. The Python code sets up parameters and reshapes inputs/outputs;
 the actual number crunching happens in compiled code.
+
+---
+
+## How the pieces connect
+
+```text
+FeaturePipeline.run_batch(sources)              sources: list[list[LightCurve]]
+  │
+  ├─ [< min_observations] ───────────────────→ all-NaN FeatureVector  (skipped)
+  │
+  ├─→ StatisticsExtractor.extract(sources)    → list[dict]  22 scalar fields
+  ├─→ PeriodExtractor.extract(sources)        → list[dict]  15 fields (period + Fourier)
+  ├─→ DmdtExtractor.extract(sources)          → list[dict]  dmdt: 26×26 array
+  └─→ CatalogExtractor.extract(sources)       → list[dict]  4 Gaia fields
+        │
+        └─ merges dicts → FeatureVector per source
+```
+
+**Entry point:** `FeaturePipeline.run_batch` — the extractors are called by it in order, never directly.
+
+If an extractor returns `{}` for a source (on error), the pipeline fills those fields with NaN.
 
 ---
 
@@ -222,3 +250,7 @@ class MyExtractor:
 ```
 
 See [Guide: Add an Extractor](../guides/add-extractor.md) for step-by-step instructions.
+
+---
+
+[← Data](data.md){ .md-button } [Models →](models.md){ .md-button .md-button--primary }

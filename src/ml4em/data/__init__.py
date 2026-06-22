@@ -1,7 +1,7 @@
 """Data source implementations for ml4em.
 
 Plug-and-play data sources via the LightCurveSource Protocol.
-Any object implementing fetch() and fetch_batch() is a valid source.
+Any object implementing fetch_batch() is a valid source.
 
 Sources
 -------

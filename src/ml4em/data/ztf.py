@@ -187,14 +187,6 @@ class ZTFSource:
     # Public interface  (satisfies LightCurveSource Protocol)
     # ------------------------------------------------------------------
 
-    def fetch(self, source_id: str) -> list[LightCurve]:
-        """Fetch all available bands for a single ZTF source _id.
-
-        Because each ZTF _id encodes one band, this typically returns a
-        one-element list.  Use fetch_batch to query multiple IDs at once.
-        """
-        return self.fetch_batch([source_id])
-
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
         """Fetch light curves for multiple ZTF source _ids in one query.
 

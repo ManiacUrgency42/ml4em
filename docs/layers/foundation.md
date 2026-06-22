@@ -1,5 +1,11 @@
 # Foundation Layer
 
+!!! abstract "Layer at a glance"
+    **Role:** Shared vocabulary — no data flows *through* this layer; every other layer imports from it.
+    **Files:** `types.py` · `constants.py` · `config/schema.py` · `config/loader.py`
+    **Provides:** `LightCurve`, `FeatureVector`, `LabeledSample`, `Candidate`, `PipelineConfig`, survey constants
+    **Background:** [Light Curves](../background/light-curves.md) · [Surveys](../background/surveys.md)
+
 The foundation layer is not a "layer" in the data-flow sense — nothing passes through
 it. It provides the shared vocabulary that all other layers use.
 
@@ -120,3 +126,7 @@ token = get_ztf_token()    # reads ML4EM_ZTF_TOKEN from env or .env
 
 If the token is not found, these functions raise a clear error rather than silently
 passing an empty string.
+
+---
+
+[Data layer →](data.md){ .md-button .md-button--primary }

@@ -136,3 +136,18 @@ Three dataclasses are the only objects that cross layer boundaries:
 | `Candidate` | Inference → output | Classification result for one source |
 
 See [Data Contracts](../data-contracts.md) for full field tables.
+
+---
+
+## Navigate to a layer
+
+Each row is a clickable link to the full layer reference page.
+
+| # | Layer | Responsibility | Receives | Produces |
+|---|-------|---------------|----------|---------|
+| 1 | [**Foundation**](../layers/foundation.md) | Shared types, constants, config | — | `LightCurve`, `FeatureVector`, `PipelineConfig` |
+| 2 | [**Data**](../layers/data.md) | Fetch light curves from surveys | `source_id` | `list[LightCurve]` |
+| 3 | [**Features**](../layers/features.md) | Extract numerical features | `list[LightCurve]` | `FeatureVector` |
+| 4 | [**Models**](../layers/models.md) | Define the ML model contract | `FeatureVector` | `np.ndarray` (probabilities) |
+| 5 | [**Training**](../layers/training.md) | Load labels and fit a model | `FeatureVector` + labels CSV | saved model file |
+| 6 | [**Inference**](../layers/inference.md) | Run a saved model on new data | `FeatureVector` + model file | `list[Candidate]` |

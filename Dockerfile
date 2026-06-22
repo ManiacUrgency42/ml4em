@@ -14,11 +14,18 @@
 #   docker push ghcr.io/<org>/ml4em:gpu
 #
 # MSI usage (Apptainer):
+#   # One-time pull (only needed when image changes):
 #   apptainer pull ml4em_gpu.sif docker://ghcr.io/<org>/ml4em:gpu
+#
+#   # Daily workflow — bind-mount your live git checkout, no rebuild needed:
 #   apptainer run --nv \
-#       --bind /scratch/$USER/data:/data \
+#       --bind /users/7/jin00404/ml4em:/app/ml4em \
+#       --bind /scratch.global/$USER/data:/data \
 #       ml4em_gpu.sif \
 #       python -m ml4em.run --config /data/config.yaml
+#
+#   # To pick up code changes: just git pull on MSI, no image rebuild.
+#   # Only rebuild the image when periodfind, CUDA, or pyproject.toml changes.
 #
 # Store .sif files in /scratch (not $HOME) — they are 5–8 GB.
 # ==============================================================================
@@ -56,7 +63,10 @@ RUN cd /build/periodfind/rust \
 # setup.py checks for nvcc; skips CUDA extensions automatically if absent.
 RUN pip3 install --no-cache-dir /build/periodfind
 
-# ── Install ml4em ─────────────────────────────────────────────────────────────
+# ── Install ml4em (editable) ──────────────────────────────────────────────────
+# -e means Python imports directly from /app/ml4em/src rather than copying
+# files into site-packages. At runtime, bind-mount your live git checkout
+# over /app/ml4em and code changes are picked up without rebuilding the image.
 COPY . /app/ml4em
 RUN pip3 install --no-cache-dir -e /app/ml4em
 
@@ -98,7 +108,10 @@ RUN cd /build/periodfind/rust \
 # ── Build periodfind (Cython + CUDA — nvcc IS present in this base image) ─────
 RUN pip3 install --no-cache-dir /build/periodfind
 
-# ── Install ml4em ─────────────────────────────────────────────────────────────
+# ── Install ml4em (editable) ──────────────────────────────────────────────────
+# -e means Python imports directly from /app/ml4em/src rather than copying
+# files into site-packages. At runtime, bind-mount your live git checkout
+# over /app/ml4em and code changes are picked up without rebuilding the image.
 COPY . /app/ml4em
 RUN pip3 install --no-cache-dir -e /app/ml4em
 
