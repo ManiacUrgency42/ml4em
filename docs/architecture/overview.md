@@ -5,8 +5,6 @@ well-defined Protocol interface, and strict dependency rules.
 
 ---
 
-## The six layers
-
 ```mermaid
 flowchart TD
     F["<b>FOUNDATION</b><br/>──────────────────────────<br/><b>Data contracts</b><br/>LightCurve · FeatureVector<br/>LabeledSample · Candidate<br/>──────────────────────────<br/><b>Survey constants</b> · <b>Pipeline config</b>"]
