@@ -2071,12 +2071,17 @@ well-defined Protocol interface, and strict dependency rules.</p>
 <hr />
 <h2 id="the-six-layers">The six layers<a class="headerlink" href="#the-six-layers" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
-    F["Foundation\ntypes.py · constants.py · config/\nData contracts · survey constants · pipeline config"]
-    D["Data — data/\nProtocol: LightCurveSource\nZTFSource · RubinSource"]
-    FE["Features — features/\nProtocol: FeatureExtractor\nStatisticsExtractor · PeriodExtractor\nDmdtExtractor · CatalogExtractor\nFeaturePipeline"]
-    M["Models — models/\nProtocol: MLModel\nXGBoostClassifier · SCALAR_FIELDS"]
-    T["Training — training/\nTrainer Protocol\nFeatureDataset · StandardTrainer"]
-    I["Inference — inference/\nPredictor Protocol\nload_model · StandardPredictor\nprobabilities_to_candidates"]
+    F["&lt;b&gt;FOUNDATION&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Data contracts&lt;/b&gt;&lt;br/&gt;LightCurve · FeatureVector&lt;br/&gt;LabeledSample · Candidate&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Survey constants&lt;/b&gt; · &lt;b&gt;Pipeline config&lt;/b&gt;"]
+
+    D["&lt;b&gt;DATA&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; LightCurveSource&lt;br/&gt;──────────────────────────&lt;br/&gt;ZTFSource · RubinSource"]
+
+    FE["&lt;b&gt;FEATURES&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; FeatureExtractor&lt;br/&gt;──────────────────────────&lt;br/&gt;StatisticsExtractor · PeriodExtractor&lt;br/&gt;DmdtExtractor · CatalogExtractor&lt;br/&gt;FeaturePipeline"]
+
+    M["&lt;b&gt;MODELS&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; MLModel&lt;br/&gt;──────────────────────────&lt;br/&gt;XGBoostClassifier · SCALAR_FIELDS"]
+
+    T["&lt;b&gt;TRAINING&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; Trainer&lt;br/&gt;──────────────────────────&lt;br/&gt;FeatureDataset · StandardTrainer"]
+
+    I["&lt;b&gt;INFERENCE&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; Predictor&lt;br/&gt;──────────────────────────&lt;br/&gt;load_model · StandardPredictor&lt;br/&gt;probabilities_to_candidates"]
 
     F --&gt; D
     D --&gt;|"list[LightCurve]"| FE
@@ -2090,24 +2095,24 @@ inference are parallel — neither imports from the other.</p>
 <h2 id="data-flow-one-source-end-to-end">Data flow — one source, end to end<a class="headerlink" href="#data-flow-one-source-end-to-end" title="Permanent link">&para;</a></h2>
 <p>Here is what happens to a single astronomical source as it passes through the pipeline:</p>
 <pre class="mermaid"><code>flowchart LR
-    A["source_id\n\"686149073900013696\""]
-    B["list[LightCurve]\nLightCurve(g) · LightCurve(r) · LightCurve(i)"]
-    C["FeatureVector\nmedian=18.4 · chi2red=52.3\nperiod=0.12 · dmdt=(26×26)"]
-    D["Candidate\nprobability=0.92\nconfidence=high\nperiod=0.12"]
+    A["&lt;b&gt;source_id&lt;/b&gt;&lt;br/&gt;686149073900013696"]
+    B["&lt;b&gt;list[LightCurve]&lt;/b&gt;&lt;br/&gt;LightCurve(g) · LightCurve(r) · LightCurve(i)"]
+    C["&lt;b&gt;FeatureVector&lt;/b&gt;&lt;br/&gt;median=18.4 · chi2red=52.3&lt;br/&gt;period=0.12 · dmdt=(26×26)"]
+    D["&lt;b&gt;Candidate&lt;/b&gt;&lt;br/&gt;probability=0.92&lt;br/&gt;confidence=high · period=0.12"]
 
-    A --&gt;|"ZTFSource\n.fetch_batch()"| B
-    B --&gt;|"FeaturePipeline\n.run_batch()"| C
-    C --&gt;|"StandardPredictor\n.predict()"| D</code></pre>
+    A --&gt;|"ZTFSource.fetch_batch()"| B
+    B --&gt;|"FeaturePipeline.run_batch()"| C
+    C --&gt;|"StandardPredictor.predict()"| D</code></pre>
 <hr />
 <h2 id="training-vs-inference-parallel-branches">Training vs. inference — parallel branches<a class="headerlink" href="#training-vs-inference-parallel-branches" title="Permanent link">&para;</a></h2>
 <p>Training and inference are <strong>parallel branches</strong> that share only the <code>FeatureVector</code>
 (input) and <code>MLModel</code> (the contract) from the models layer:</p>
 <pre class="mermaid"><code>flowchart TD
-    FV["list[FeatureVector]"]
-    M["MLModel\nshared contract"]
+    FV["&lt;b&gt;list[FeatureVector]&lt;/b&gt;"]
+    M["&lt;b&gt;MLModel&lt;/b&gt;&lt;br/&gt;shared contract"]
 
-    T["Training\nFeatureDataset · StandardTrainer\nmodel.fit() → model.save()"]
-    I["Inference\nload_model() → StandardPredictor\nmodel.predict_proba() → list[Candidate]"]
+    T["&lt;b&gt;TRAINING&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;FeatureDataset · StandardTrainer&lt;br/&gt;model.fit() → model.save()"]
+    I["&lt;b&gt;INFERENCE&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;load_model() → StandardPredictor&lt;br/&gt;model.predict_proba() → list[Candidate]"]
 
     FV --&gt; T &amp; I
     M --&gt; T &amp; I</code></pre>
