@@ -2079,8 +2079,8 @@
 
 <h1 id="inference-layer">Inference Layer<a class="headerlink" href="#inference-layer" title="Permanent link">&para;</a></h1>
 <p>Loads a trained model and converts <code>FeatureVector</code> objects into <code>Candidate</code> predictions. Parallel to the training layer — neither imports from the other.</p>
-<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + a saved model directory
-<strong>Emits:</strong> <code>list[Candidate]</code> — one per source, with probability, confidence tier, and period</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + a saved model directory</p>
+<p><strong>Emits:</strong> <code>list[Candidate]</code> — one per source, with probability, confidence tier, and period</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/inference/
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         Predictor Protocol
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  loader.py       load_model(path) → MLModel
@@ -2103,8 +2103,8 @@
 <hr />
 <h2 id="load-model"><code>load_model</code><a class="headerlink" href="#load-model" title="Permanent link">&para;</a></h2>
 <p>Reads a saved model directory and returns an <code>MLModel</code> instance. The only place in the inference layer that knows about concrete model types.</p>
-<p><strong>Consumes:</strong> Path to a saved model directory containing <code>manifest.json</code>
-<strong>Emits:</strong> <code>MLModel</code> instance</p>
+<p><strong>Consumes:</strong> Path to a saved model directory containing <code>manifest.json</code></p>
+<p><strong>Emits:</strong> <code>MLModel</code> instance</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
@@ -2121,8 +2121,8 @@
 <hr />
 <h2 id="standardpredictor"><code>StandardPredictor</code> <em>(shell)</em><a class="headerlink" href="#standardpredictor" title="Permanent link">&para;</a></h2>
 <p>Runs <code>model.predict_proba</code> in batches and passes results to <code>probabilities_to_candidates</code>.</p>
-<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + <code>MLModel</code>
-<strong>Emits:</strong> <code>list[Candidate]</code></p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + <code>MLModel</code></p>
+<p><strong>Emits:</strong> <code>list[Candidate]</code></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardPredictor</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">predictor</span> <span class="o">=</span> <span class="n">StandardPredictor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>
@@ -2134,8 +2134,8 @@
 <hr />
 <h2 id="probabilities-to-candidates"><code>probabilities_to_candidates</code><a class="headerlink" href="#probabilities-to-candidates" title="Permanent link">&para;</a></h2>
 <p>Converts raw model probabilities into <code>Candidate</code> objects. Fully implemented.</p>
-<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + <code>np.ndarray</code> of shape <code>(N,)</code> — P(positive class) per source
-<strong>Emits:</strong> <code>list[Candidate]</code> — one per source, in the same order as input</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + <code>np.ndarray</code> of shape <code>(N,)</code> — P(positive class) per source</p>
+<p><strong>Emits:</strong> <code>list[Candidate]</code> — one per source, in the same order as input</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">probabilities_to_candidates</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">candidates</span> <span class="o">=</span> <span class="n">probabilities_to_candidates</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>

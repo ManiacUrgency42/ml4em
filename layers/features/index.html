@@ -2223,8 +2223,8 @@
 
 <h1 id="feature-layer">Feature Layer<a class="headerlink" href="#feature-layer" title="Permanent link">&para;</a></h1>
 <p>Converts raw light curves into fixed-length numerical representations (<code>FeatureVector</code> objects) for the model. All computationally intensive work is delegated to <strong>periodfind</strong>, a GPU-accelerated Rust/CUDA library.</p>
-<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — outer list is sources, inner list is bands per source
-<strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source, with 43 scalar fields + 26×26 dm/dt image</p>
+<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — outer list is sources, inner list is bands per source</p>
+<p><strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source, with 43 scalar fields + 26×26 dm/dt image</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/features/
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         FeatureExtractor Protocol
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  statistics.py   StatisticsExtractor   [implemented]
@@ -2245,8 +2245,8 @@
 <hr />
 <h2 id="featureextractor"><code>FeatureExtractor</code> Protocol<a class="headerlink" href="#featureextractor" title="Permanent link">&para;</a></h2>
 <p>The contract every extractor must satisfy. Extractors are called by <code>FeaturePipeline</code> — never directly.</p>
-<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — one list of bands per source
-<strong>Emits:</strong> <code>list[dict[str, Any]]</code> — one dict per source mapping <code>FeatureVector</code> field names to values</p>
+<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — one list of bands per source</p>
+<p><strong>Emits:</strong> <code>list[dict[str, Any]]</code> — one dict per source mapping <code>FeatureVector</code> field names to values</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureExtractor</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span> <span class="o">...</span>
 </code></pre></div>
@@ -2254,8 +2254,8 @@
 <hr />
 <h2 id="featurepipeline"><code>FeaturePipeline</code><a class="headerlink" href="#featurepipeline" title="Permanent link">&para;</a></h2>
 <p>Composes extractors in order and assembles the resulting dicts into <code>FeatureVector</code> objects. This is the entry point for the feature layer.</p>
-<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — sources grouped by band
-<strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source; sources below <code>min_observations</code> return an all-NaN vector</p>
+<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — sources grouped by band</p>
+<p><strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source; sources below <code>min_observations</code> return an all-NaN vector</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeaturePipeline</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
@@ -2282,8 +2282,8 @@
 <hr />
 <h2 id="statisticsextractor"><code>StatisticsExtractor</code><a class="headerlink" href="#statisticsextractor" title="Permanent link">&para;</a></h2>
 <p>Computes 22 scalar light curve variability statistics using <code>periodfind.BasicStats</code>.</p>
-<p><strong>Consumes:</strong> Primary band light curve (the band with the most observations) per source
-<strong>Emits:</strong> 22 scalar fields in <code>FeatureVector</code> — see <a href="../../background/variability-statistics/">Variability Statistics</a> for definitions</p>
+<p><strong>Consumes:</strong> Primary band light curve (the band with the most observations) per source</p>
+<p><strong>Emits:</strong> 22 scalar fields in <code>FeatureVector</code> — see <a href="../../background/variability-statistics/">Variability Statistics</a> for definitions</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatisticsExtractor</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">StatisticsExtractor</span><span class="p">()</span>
@@ -2293,8 +2293,8 @@
 <hr />
 <h2 id="periodextractor"><code>PeriodExtractor</code><a class="headerlink" href="#periodextractor" title="Permanent link">&para;</a></h2>
 <p>Finds the dominant period using multiple algorithms and computes 14 Fourier decomposition features.</p>
-<p><strong>Consumes:</strong> Primary band light curve per source
-<strong>Emits:</strong> <code>period</code>, <code>period_algorithm</code>, and 14 Fourier fields (<code>f1_power</code>, <code>f1_bic</code>, <code>f1_a</code>, <code>f1_b</code>, <code>f1_amp</code>, <code>f1_phi0</code>, <code>f1_relamp1–4</code>, <code>f1_relphi1–4</code>)</p>
+<p><strong>Consumes:</strong> Primary band light curve per source</p>
+<p><strong>Emits:</strong> <code>period</code>, <code>period_algorithm</code>, and 14 Fourier fields (<code>f1_power</code>, <code>f1_bic</code>, <code>f1_a</code>, <code>f1_b</code>, <code>f1_amp</code>, <code>f1_phi0</code>, <code>f1_relamp1–4</code>, <code>f1_relphi1–4</code>)</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.period</span><span class="w"> </span><span class="kn">import</span> <span class="n">PeriodExtractor</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
@@ -2366,8 +2366,8 @@
 <hr />
 <h2 id="dmdtextractor"><code>DmdtExtractor</code><a class="headerlink" href="#dmdtextractor" title="Permanent link">&para;</a></h2>
 <p>Computes a 26×26 Δmag/Δt pairwise histogram using <code>periodfind.DmDt</code>.</p>
-<p><strong>Consumes:</strong> Primary band light curve per source
-<strong>Emits:</strong> <code>dmdt</code> field in <code>FeatureVector</code> — shape <code>(26, 26)</code> float32 array, L2-normalized per source</p>
+<p><strong>Consumes:</strong> Primary band light curve per source</p>
+<p><strong>Emits:</strong> <code>dmdt</code> field in <code>FeatureVector</code> — shape <code>(26, 26)</code> float32 array, L2-normalized per source</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.dmdt</span><span class="w"> </span><span class="kn">import</span> <span class="n">DmdtExtractor</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
@@ -2382,8 +2382,8 @@
 <hr />
 <h2 id="catalogextractor"><code>CatalogExtractor</code> <em>(stub)</em><a class="headerlink" href="#catalogextractor" title="Permanent link">&para;</a></h2>
 <p>Will cross-match each source against Gaia EDR3 within 2 arcseconds and return 4 astrometric features.</p>
-<p><strong>Consumes:</strong> <code>(ra, dec)</code> from each source's <code>LightCurve</code>
-<strong>Emits:</strong> <code>gaia_parallax</code>, <code>gaia_parallax_error</code>, <code>gaia_bp_rp</code>, <code>gaia_ruwe</code></p>
+<p><strong>Consumes:</strong> <code>(ra, dec)</code> from each source's <code>LightCurve</code></p>
+<p><strong>Emits:</strong> <code>gaia_parallax</code>, <code>gaia_parallax_error</code>, <code>gaia_bp_rp</code>, <code>gaia_ruwe</code></p>
 <p>Planned backends: astroquery TAP+ or Kowalski Gaia cone search.</p>
 <blockquote>
 <p><strong>Status:</strong> returns empty dicts for all sources — all 4 Gaia fields remain <code>np.nan</code>.</p>

@@ -2101,8 +2101,8 @@
 
 <h1 id="data-layer">Data Layer<a class="headerlink" href="#data-layer" title="Permanent link">&para;</a></h1>
 <p>Fetches raw photometric observations from survey databases and returns them as <code>LightCurve</code> objects. The feature layer is the sole consumer — everything about <em>how</em> data is fetched is hidden inside the source implementation.</p>
-<p><strong>Consumes:</strong> <code>source_id</code> strings — survey-native identifiers
-<strong>Emits:</strong> <code>list[LightCurve]</code> — one object per (source, band)</p>
+<p><strong>Consumes:</strong> <code>source_id</code> strings — survey-native identifiers</p>
+<p><strong>Emits:</strong> <code>list[LightCurve]</code> — one object per (source, band)</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/data/
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         LightCurveSource Protocol
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  ztf.py          ZTFSource          [implemented]
@@ -2119,8 +2119,8 @@
 <hr />
 <h2 id="lightcurvesource"><code>LightCurveSource</code> Protocol<a class="headerlink" href="#lightcurvesource" title="Permanent link">&para;</a></h2>
 <p>The contract every data source must satisfy. Any class with a compatible <code>fetch_batch</code> method qualifies — no base class or registration required.</p>
-<p><strong>Consumes:</strong> <code>list[str]</code> — source ID strings
-<strong>Emits:</strong> <code>list[LightCurve]</code> — all light curves across all requested sources and bands</p>
+<p><strong>Consumes:</strong> <code>list[str]</code> — source ID strings</p>
+<p><strong>Emits:</strong> <code>list[LightCurve]</code> — all light curves across all requested sources and bands</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurveSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
 </code></pre></div>
@@ -2130,8 +2130,8 @@
 <hr />
 <h2 id="ztfsource"><code>ZTFSource</code><a class="headerlink" href="#ztfsource" title="Permanent link">&para;</a></h2>
 <p>Fetches ZTF photometric light curves from the Kowalski database via the <code>penquins</code> client. Issues a single batched query for all requested IDs.</p>
-<p><strong>Consumes:</strong> ZTF integer source IDs cast to <code>str</code>
-<strong>Emits:</strong> <code>list[LightCurve]</code> — one per (source, band) that survives quality filtering</p>
+<p><strong>Consumes:</strong> ZTF integer source IDs cast to <code>str</code></p>
+<p><strong>Emits:</strong> <code>list[LightCurve]</code> — one per (source, band) that survives quality filtering</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZTFSource</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">get_ztf_token</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -2188,8 +2188,8 @@
 <hr />
 <h2 id="rubinsource"><code>RubinSource</code> <em>(stub)</em><a class="headerlink" href="#rubinsource" title="Permanent link">&para;</a></h2>
 <p>Will query Rubin DP1 via the TAP protocol using <code>pyvo</code>.</p>
-<p><strong>Consumes:</strong> Rubin <code>objectId</code> strings
-<strong>Emits:</strong> <code>list[LightCurve]</code> — up to 6 per source (bands: u, g, r, i, z, y)</p>
+<p><strong>Consumes:</strong> Rubin <code>objectId</code> strings</p>
+<p><strong>Emits:</strong> <code>list[LightCurve]</code> — up to 6 per source (bands: u, g, r, i, z, y)</p>
 <p>Planned query joins <code>dp1.Object</code>, <code>dp1.ForcedSource</code>, and <code>dp1.Visit</code> on <code>objectId</code>, converting <code>psfFlux</code> (nanojanskies) to AB magnitudes.</p>
 <blockquote>
 <p><strong>Status:</strong> raises <code>NotImplementedError</code> — pending Rubin DP1 schema confirmation.</p>
