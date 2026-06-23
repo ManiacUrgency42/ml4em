@@ -9,12 +9,17 @@ well-defined Protocol interface, and strict dependency rules.
 
 ```mermaid
 flowchart TD
-    F["Foundation\ntypes.py · constants.py · config/\nData contracts · survey constants · pipeline config"]
-    D["Data — data/\nProtocol: LightCurveSource\nZTFSource · RubinSource"]
-    FE["Features — features/\nProtocol: FeatureExtractor\nStatisticsExtractor · PeriodExtractor\nDmdtExtractor · CatalogExtractor\nFeaturePipeline"]
-    M["Models — models/\nProtocol: MLModel\nXGBoostClassifier · SCALAR_FIELDS"]
-    T["Training — training/\nTrainer Protocol\nFeatureDataset · StandardTrainer"]
-    I["Inference — inference/\nPredictor Protocol\nload_model · StandardPredictor\nprobabilities_to_candidates"]
+    F["<b>FOUNDATION</b><br/>──────────────────────────<br/><b>Data contracts</b><br/>LightCurve · FeatureVector<br/>LabeledSample · Candidate<br/>──────────────────────────<br/><b>Survey constants</b> · <b>Pipeline config</b>"]
+
+    D["<b>DATA</b><br/>──────────────────────────<br/><b>Protocol:</b> LightCurveSource<br/>──────────────────────────<br/>ZTFSource · RubinSource"]
+
+    FE["<b>FEATURES</b><br/>──────────────────────────<br/><b>Protocol:</b> FeatureExtractor<br/>──────────────────────────<br/>StatisticsExtractor · PeriodExtractor<br/>DmdtExtractor · CatalogExtractor<br/>FeaturePipeline"]
+
+    M["<b>MODELS</b><br/>──────────────────────────<br/><b>Protocol:</b> MLModel<br/>──────────────────────────<br/>XGBoostClassifier · SCALAR_FIELDS"]
+
+    T["<b>TRAINING</b><br/>──────────────────────────<br/><b>Protocol:</b> Trainer<br/>──────────────────────────<br/>FeatureDataset · StandardTrainer"]
+
+    I["<b>INFERENCE</b><br/>──────────────────────────<br/><b>Protocol:</b> Predictor<br/>──────────────────────────<br/>load_model · StandardPredictor<br/>probabilities_to_candidates"]
 
     F --> D
     D -->|"list[LightCurve]"| FE
@@ -35,14 +40,14 @@ Here is what happens to a single astronomical source as it passes through the pi
 
 ```mermaid
 flowchart LR
-    A["source_id\n\"686149073900013696\""]
-    B["list[LightCurve]\nLightCurve(g) · LightCurve(r) · LightCurve(i)"]
-    C["FeatureVector\nmedian=18.4 · chi2red=52.3\nperiod=0.12 · dmdt=(26×26)"]
-    D["Candidate\nprobability=0.92\nconfidence=high\nperiod=0.12"]
+    A["<b>source_id</b><br/>686149073900013696"]
+    B["<b>list[LightCurve]</b><br/>LightCurve(g) · LightCurve(r) · LightCurve(i)"]
+    C["<b>FeatureVector</b><br/>median=18.4 · chi2red=52.3<br/>period=0.12 · dmdt=(26×26)"]
+    D["<b>Candidate</b><br/>probability=0.92<br/>confidence=high · period=0.12"]
 
-    A -->|"ZTFSource\n.fetch_batch()"| B
-    B -->|"FeaturePipeline\n.run_batch()"| C
-    C -->|"StandardPredictor\n.predict()"| D
+    A -->|"ZTFSource.fetch_batch()"| B
+    B -->|"FeaturePipeline.run_batch()"| C
+    C -->|"StandardPredictor.predict()"| D
 ```
 
 ---
@@ -54,11 +59,11 @@ Training and inference are **parallel branches** that share only the `FeatureVec
 
 ```mermaid
 flowchart TD
-    FV["list[FeatureVector]"]
-    M["MLModel\nshared contract"]
+    FV["<b>list[FeatureVector]</b>"]
+    M["<b>MLModel</b><br/>shared contract"]
 
-    T["Training\nFeatureDataset · StandardTrainer\nmodel.fit() → model.save()"]
-    I["Inference\nload_model() → StandardPredictor\nmodel.predict_proba() → list[Candidate]"]
+    T["<b>TRAINING</b><br/>──────────────────────────<br/>FeatureDataset · StandardTrainer<br/>model.fit() → model.save()"]
+    I["<b>INFERENCE</b><br/>──────────────────────────<br/>load_model() → StandardPredictor<br/>model.predict_proba() → list[Candidate]"]
 
     FV --> T & I
     M --> T & I
