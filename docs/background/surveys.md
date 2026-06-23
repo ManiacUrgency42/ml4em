@@ -124,20 +124,6 @@ mag = -2.5 × log₁₀(psfFlux / 3631e9)
 
 ---
 
-## SimulatedSource *(stub)*
-
-`SimulatedSource` will wrap **Lcurve**, Tom Marsh's physics-based white dwarf binary
-light curve modelling code. It generates synthetic light curves given orbital parameters
-(masses, radii, inclination, etc.) with realistic noise injected.
-
-This is used to generate training data for WDB detection without needing actual labeled
-observations. The `source_id` will be either a path to an Lcurve `.mod` parameter file
-or a grid index.
-
-Status: stub pending Lcurve integration.
-
----
-
 ## Gaia
 
 Gaia is covered separately in [Gaia & Stellar Catalogs](gaia.md) because it is used

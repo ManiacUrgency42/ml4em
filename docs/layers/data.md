@@ -93,12 +93,9 @@ Planned query joins `dp1.Object`, `dp1.ForcedSource`, and `dp1.Visit` on `object
 
 ## `SimulatedSource` *(stub)* { #simulatedsource }
 
-Will wrap Tom Marsh's **Lcurve** code to produce physics-based synthetic white dwarf binary light curves for training.
+Not yet implemented.
 
-**Consumes:** Path to a `.mod` Lcurve parameter file, or a parameter grid index
-**Emits:** `list[LightCurve]` — simulated photometry with injected Gaussian noise
-
-> **Status:** raises `NotImplementedError` — pending Lcurve integration.
+> **Status:** raises `NotImplementedError`.
 
 ---
 

@@ -5,7 +5,7 @@ Provides the shared vocabulary for the entire pipeline — the four data contrac
 ```
 src/ml4em/
   types.py        Data contracts (LightCurve, FeatureVector, LabeledSample, Candidate)
-  constants.py    Survey constants, dm/dt bin parameters, physical constants
+  constants.py    Survey constants, dm/dt bin parameters
   config/
     schema.py     Pydantic models — PipelineConfig and sub-configs
     loader.py     YAML loader and env-var secret accessors
@@ -33,18 +33,6 @@ Defines the four dataclasses that cross layer boundaries. See [Data Contracts](.
 ---
 
 ## `constants.py` — Shared constants { #constants }
-
-### Physical constants
-
-Used by `SimulatedSource` for orbital mechanics:
-
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `G` | 6.674×10⁻¹¹ m³ kg⁻¹ s⁻² | Gravitational constant |
-| `C` | 2.998×10⁸ m s⁻¹ | Speed of light |
-| `MSUN` | 1.988×10³⁰ kg | Solar mass |
-| `RSUN` | 6.957×10⁸ m | Solar radius |
-| `MTSUN_SI` | G × MSUN / C³ | Solar mass in seconds |
 
 ### dm/dt histogram parameters
 
