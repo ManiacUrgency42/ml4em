@@ -4,14 +4,8 @@ Survey and pipeline constants for ml4em.
 Every fixed value used anywhere in the codebase is defined here with its
 unit and source.  Magic numbers must not appear in any other module.
 
-These constants are science-case agnostic (survey parameters, histogram
-binning, cross-match geometry).  Science-case-specific physical constants
-(e.g. WD mass range, WDB period bounds) belong in the downstream
-application (e.g. wdb-ml), NOT here.
-
 Sections
 --------
-Physical constants (SI)    — fundamental, used by any EM science case
 dm/dt histogram parameters — fixed binning (changing invalidates saved features)
 ZTF survey parameters
 Rubin survey parameters
@@ -19,17 +13,6 @@ Cross-match parameters
 """
 
 import numpy as np
-
-# ---------------------------------------------------------------------------
-# Physical constants  (SI units, consistent with LALSuite / astropy)
-# ---------------------------------------------------------------------------
-
-G       : float = 6.674_30e-11    # gravitational constant        m³ kg⁻¹ s⁻²
-C       : float = 2.997_924_58e8  # speed of light                m s⁻¹
-MSUN    : float = 1.988_416e30    # solar mass                    kg
-RSUN    : float = 6.957_00e8      # solar radius                  m
-MTSUN_SI: float = G * MSUN / C**3 # solar mass in seconds        ~4.926e-6 s
-
 
 # ---------------------------------------------------------------------------
 # dm/dt histogram parameters

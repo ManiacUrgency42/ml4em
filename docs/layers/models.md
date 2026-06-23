@@ -1,43 +1,32 @@
 # Models Layer
 
-!!! abstract "Layer at a glance"
-    **Role:** Defines the shared contract between training and inference — does not perform either.
-    **Receives:** `list[FeatureVector]` (via `predict_proba`)
-    **Produces:** `np.ndarray` of shape `(N, 2)` — class probabilities
-    **Protocol:** `MLModel` → `predict_proba(features)`, `save(path)`
-    **Files:** `models/base.py` · `models/xgboost.py`
-    **Background:** No domain-specific background needed — this is pure ML infrastructure.
+Defines the contract between training and inference. The models layer does not perform training or inference — it provides the `MLModel` Protocol that both layers depend on, plus utilities for extracting scalar features from `FeatureVector` objects.
 
-The models layer defines the **contract** between training and inference. It does not
-perform training or inference itself — it provides the Protocol that both layers depend
-on, plus utilities for scalar feature extraction.
+**Consumes:** `list[FeatureVector]` (via `predict_proba`)
+
+**Emits:** `np.ndarray` of shape `(N, 2)` — per-class probabilities
 
 ```
 src/ml4em/models/
-  base.py         MLModel Protocol + SCALAR_FIELDS utilities
-  xgboost.py      XGBoostClassifier — reference implementation
+  base.py       MLModel Protocol + SCALAR_FIELDS utilities
+  xgboost.py    XGBoostClassifier — reference implementation
 ```
+
+## Contents
+
+- [MLModel Protocol](#mlmodel)
+- [SCALAR\_FIELDS and features\_to\_array](#scalar-fields)
+- [XGBoostClassifier](#xgboostclassifier)
 
 ---
 
-## Position in the pipeline
+## `MLModel` Protocol { #mlmodel }
 
-The models layer is a contract layer — it defines the interface that both training and inference depend on, without implementing either.
+The contract every model must satisfy. Any class with compatible `predict_proba` and `save` methods is a valid `MLModel`.
 
-```text
-Training layer              Models layer              Inference layer
-──────────────              ────────────              ───────────────
-StandardTrainer         →   MLModel (Protocol)   →   StandardPredictor
-  model.fit(train, val) ←── predict_proba()      ──→ model.predict_proba()
-  model.save(path)      ←── save(path)               load_model(path)
-                             XGBoostClassifier             └─→ .load()
-```
+**Consumes:** `list[FeatureVector]`
 
-`SCALAR_FIELDS` and `features_to_array` live here so all model implementations share the same stable feature ordering.
-
----
-
-## Protocol — `MLModel`
+**Emits:** `np.ndarray` shape `(N, 2)` — `[:, 0]` is P(background), `[:, 1]` is P(positive class)
 
 ```python
 class MLModel(Protocol):
@@ -45,83 +34,58 @@ class MLModel(Protocol):
     def save(self, path: str) -> None: ...
 ```
 
-Any class implementing these two methods satisfies `MLModel`.
-
-**`predict_proba(features)`** returns an `(N, 2)` array of class probabilities. Column
-0 = P(background), column 1 = P(positive class). The inference layer uses column 1.
-
-**`save(path)`** writes the model to a directory. The directory must contain a
-`manifest.json` file with at least `{"model_class": "ClassName"}` so that `load_model`
-knows how to reconstruct it.
-
-**Why is `load` not on the Protocol?** Because different model backends serialize
-differently (joblib for XGBoost, `torch.save` for neural nets). The dispatch lives in
-`inference/loader.py` which uses the manifest to call the right `@classmethod load()`.
+`save` must write a `manifest.json` containing at least `{"model_class": "ClassName"}` so that `inference.load_model` can reconstruct the model. `load` is not on the Protocol because backends serialize differently (`joblib` for XGBoost, `torch.save` for neural nets) — dispatch lives in `inference/loader.py`.
 
 ---
 
-## Scalar field utilities
+## `SCALAR_FIELDS` and `features_to_array` { #scalar-fields }
 
-Defined in `models/base.py`, available to any model that operates on scalar features:
+Defined in `models/base.py`. Shared by all model implementations that operate on scalar features.
 
 ### `SCALAR_FIELDS`
 
-An ordered list of 43 float field names from `FeatureVector` — everything except
-`source_id`, `survey`, `period_algorithm`, and `dmdt`.
+An ordered list of 43 float field names from `FeatureVector` — everything except `source_id`, `survey`, `period_algorithm`, and `dmdt`.
 
 ```python
 from ml4em.models import SCALAR_FIELDS, N_SCALAR_FEATURES
+
 print(N_SCALAR_FEATURES)   # 43
 print(SCALAR_FIELDS[:5])   # ['n_obs', 'median', 'wmean', 'chi2red', 'roms']
 ```
 
-!!! warning "Field order is stable — do not reorder"
-    The ordering of `SCALAR_FIELDS` is fixed. A model trained on one ordering cannot
-    be used with a different ordering. Changing `SCALAR_FIELDS` without retraining all
-    existing models will produce silently wrong predictions.
+!!! warning "Field order is fixed"
+    The ordering of `SCALAR_FIELDS` is stable across versions. A model trained on one ordering cannot be used with a different ordering. Never reorder `SCALAR_FIELDS` without retraining.
 
 ### `features_to_array`
 
 ```python
 from ml4em.models import features_to_array
 
-X = features_to_array(feature_vectors)   # (N, 43) float32 array
+X = features_to_array(feature_vectors)   # np.ndarray, shape (N, 43), dtype float32
 ```
 
-Extracts the 43 scalar fields from a list of `FeatureVector` objects in the order
-defined by `SCALAR_FIELDS`. NaN values are preserved (XGBoost handles them natively).
+Extracts the 43 scalar fields in `SCALAR_FIELDS` order. `np.nan` values are preserved — XGBoost handles them natively.
 
 ---
 
-## `XGBoostClassifier` — reference implementation
+## `XGBoostClassifier` { #xgboostclassifier }
 
-`XGBoostClassifier` is the reference implementation of `MLModel`. It demonstrates the
-correct pattern for a new model. It is **not** the committed model for any science case
-— treat it as a template.
+The reference implementation of `MLModel`. Demonstrates the correct pattern for implementing a new model. It is not the committed model for any science case — treat it as a template.
 
-!!! info "What is XGBoost? (for astrophysicists)"
-    XGBoost (eXtreme Gradient Boosting) is an ensemble method that trains many simple
-    decision trees in sequence, where each tree corrects the errors of the previous ones.
-    The result is a strong classifier built from many weak ones.
+**Consumes:** `list[FeatureVector]` — uses the 43 scalar fields only (ignores `dmdt`)
 
-    It has no sense of sequence or spatial structure — it sees the 43 scalar features as
-    a flat feature vector and learns a boundary in that 43-dimensional space. This is why
-    it ignores the `dmdt` image.
-
-### Configuration
+**Emits:** `np.ndarray` shape `(N, 2)` — class probabilities
 
 ```python
 from ml4em.models import XGBoostClassifier
 from ml4em.models.xgboost import XGBoostConfig
 
 model = XGBoostClassifier(config=XGBoostConfig(
-    n_estimators=500,     # number of boosting rounds (trees)
-    max_depth=6,          # maximum depth of each tree
-    learning_rate=0.05,   # step size shrinkage (eta)
-    subsample=0.8,        # fraction of training samples per tree
-    colsample_bytree=0.8, # fraction of features per tree
-    min_child_weight=1,   # minimum sum of weights in a leaf
-    use_gpu=False,        # True to use GPU training (tree_method="gpu_hist")
+    n_estimators=500,
+    max_depth=6,
+    learning_rate=0.05,
+    subsample=0.8,
+    colsample_bytree=0.8,
 ))
 ```
 
@@ -136,67 +100,19 @@ model.save("models/xgb_v1/")
 model = XGBoostClassifier.load("models/xgb_v1/")
 ```
 
-The `.ubj` format (Universal Binary JSON) is XGBoost's native binary format —
-compact and fast to load.
+### `XGBoostConfig` parameters
 
----
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `n_estimators` | 500 | Number of boosting rounds (trees) |
+| `max_depth` | 6 | Maximum depth of each tree |
+| `learning_rate` | 0.05 | Step size shrinkage (eta) |
+| `subsample` | 0.8 | Fraction of training samples per tree |
+| `colsample_bytree` | 0.8 | Fraction of features sampled per tree |
+| `min_child_weight` | 1 | Minimum sum of weights in a leaf |
+| `use_gpu` | `False` | Use GPU training (`tree_method="gpu_hist"`) |
 
-## Adding a new model
-
-Four steps, one new file:
-
-**1.** Create `src/ml4em/models/my_model.py`:
-
-```python
-@dataclass
-class MyModelConfig:
-    hidden_dim: int = 256
-    dropout: float = 0.3
-
-class MyModel:
-    def __init__(self, config: MyModelConfig = MyModelConfig()):
-        self.config = config
-        self._model = build_network(config)  # your architecture
-
-    def predict_proba(self, features: list[FeatureVector]) -> np.ndarray:
-        X = features_to_array(features)      # (N, 43)
-        # or use dmdt: features[i].dmdt      # (26, 26)
-        return self._model.predict_proba(X)  # (N, 2)
-
-    def save(self, path: str) -> None:
-        os.makedirs(path, exist_ok=True)
-        torch.save(self._model.state_dict(), f"{path}/model.pt")
-        with open(f"{path}/manifest.json", "w") as f:
-            json.dump({"model_class": "MyModel"}, f)
-
-    @classmethod
-    def load(cls, path: str) -> "MyModel":
-        manifest = json.load(open(f"{path}/manifest.json"))
-        model = cls()
-        model._model.load_state_dict(torch.load(f"{path}/model.pt"))
-        return model
-```
-
-**2.** Register in `src/ml4em/inference/loader.py`:
-
-```python
-_MODEL_REGISTRY = {
-    "XGBoostClassifier": "ml4em.models.xgboost",
-    "MyModel": "ml4em.models.my_model",      # add this
-}
-```
-
-**3.** Use it — swap one import and one constructor:
-
-```python
-from ml4em.models.my_model import MyModel, MyModelConfig
-model = MyModel(config=MyModelConfig(hidden_dim=512))
-trainer = StandardTrainer(model, cfg.training)
-```
-
-**4.** Training, inference, and postprocessing are unchanged.
-
-See [Guide: Add a Model](../guides/add-model.md) for step-by-step instructions.
+See [Guide: Add a Model](../guides/add-model.md) to add a new model backend.
 
 ---
 
