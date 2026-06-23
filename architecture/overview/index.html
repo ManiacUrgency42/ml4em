@@ -2094,7 +2094,7 @@ inference are parallel — neither imports from the other.</p>
 <hr />
 <h2 id="data-flow-one-source-end-to-end">Data flow — one source, end to end<a class="headerlink" href="#data-flow-one-source-end-to-end" title="Permanent link">&para;</a></h2>
 <p>Here is what happens to a single astronomical source as it passes through the pipeline:</p>
-<pre class="mermaid"><code>flowchart LR
+<pre class="mermaid"><code>flowchart TD
     A["&lt;b&gt;source_id&lt;/b&gt;&lt;br/&gt;686149073900013696"]
     B["&lt;b&gt;list[LightCurve]&lt;/b&gt;&lt;br/&gt;LightCurve(g) · LightCurve(r) · LightCurve(i)"]
     C["&lt;b&gt;FeatureVector&lt;/b&gt;&lt;br/&gt;median=18.4 · chi2red=52.3&lt;br/&gt;period=0.12 · dmdt=(26×26)"]
