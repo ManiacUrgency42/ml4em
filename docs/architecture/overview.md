@@ -39,7 +39,7 @@ inference are parallel — neither imports from the other.
 Here is what happens to a single astronomical source as it passes through the pipeline:
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["<b>source_id</b><br/>686149073900013696"]
     B["<b>list[LightCurve]</b><br/>LightCurve(g) · LightCurve(r) · LightCurve(i)"]
     C["<b>FeatureVector</b><br/>median=18.4 · chi2red=52.3<br/>period=0.12 · dmdt=(26×26)"]
