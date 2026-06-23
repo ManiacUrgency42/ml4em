@@ -1,176 +1,104 @@
 # Data Layer
 
-!!! abstract "Layer at a glance"
-    **Receives:** `source_id` strings (survey-native identifiers)
-    **Produces:** `list[LightCurve]` — one object per (source, band) combination
-    **Protocol:** `LightCurveSource` → `fetch(source_id)`, `fetch_batch(source_ids)`
-    **Files:** `data/base.py` · `data/ztf.py` · `data/rubin.py` · `data/simulation.py`
-    **Background:** [Surveys (ZTF & Rubin)](../background/surveys.md) · [Light Curves](../background/light-curves.md)
+Fetches raw photometric observations from survey databases and returns them as `LightCurve` objects. The feature layer is the sole consumer — everything about *how* data is fetched is hidden inside the source implementation.
 
-The data layer's job is simple: given a source identifier, return a list of
-`LightCurve` objects. Everything about *how* that data is fetched — which API, which
-table, which format — is hidden inside the source implementation.
+**Consumes:** `source_id` strings — survey-native identifiers
+**Emits:** `list[LightCurve]` — one object per (source, band)
 
 ```
 src/ml4em/data/
   base.py         LightCurveSource Protocol
-  ztf.py          ZTFSource   — Kowalski/penquins client      [implemented]
-  rubin.py        RubinSource — Rubin DP1 via TAP             [stub]
-  simulation.py   SimulatedSource — Lcurve wrapper            [stub]
+  ztf.py          ZTFSource          [implemented]
+  rubin.py        RubinSource        [stub]
+  simulation.py   SimulatedSource    [stub]
 ```
+
+## Contents
+
+- [LightCurveSource Protocol](#lightcurvesource)
+- [ZTFSource](#ztfsource)
+- [RubinSource (stub)](#rubinsource)
+- [SimulatedSource (stub)](#simulatedsource)
 
 ---
 
-## How the pieces connect
+## `LightCurveSource` Protocol { #lightcurvesource }
 
-```text
-ZTFSource.fetch_batch(source_ids)
-  │
-  ├─→ Kowalski/penquins batched query           → raw observation documents
-  ├─ catflags filter   (catflags == 0)           → drops bad observations
-  ├─ intra-night dedup (Δt < 30 min)             → drops near-simultaneous obs
-  └─ band mapping      (1→g, 2→r, 3→i)
-       │
-       └─→ _doc_to_lightcurve()                 → list[LightCurve] (one per band)
-```
+The contract every data source must satisfy. Any class with a compatible `fetch_batch` method qualifies — no base class or registration required.
 
-**Entry point:** `fetch_batch` — the feature layer calls this with a list of source IDs and gets a flat `list[LightCurve]` back. `fetch` is the single-source variant that calls `fetch_batch` internally.
-
----
-
-## Protocol — `LightCurveSource`
+**Consumes:** `list[str]` — source ID strings
+**Emits:** `list[LightCurve]` — all light curves across all requested sources and bands
 
 ```python
 class LightCurveSource(Protocol):
-    def fetch(self, source_id: str) -> list[LightCurve]: ...
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]: ...
 ```
 
-Any class with these two methods is a valid source. The feature layer accepts any
-compliant object without importing the concrete source class.
+Pass a one-element list to fetch a single source:
 
-**`fetch(source_id)`** → returns all bands for one source as a flat list of
-`LightCurve` objects (one per band available).
-
-**`fetch_batch(source_ids)`** → batch version. Implementations should make one network
-request for all IDs rather than N separate requests.
+```python
+lcs = source.fetch_batch([single_id])
+```
 
 ---
 
-## `ZTFSource`
+## `ZTFSource` { #ztfsource }
 
-Fetches ZTF light curves from the Kowalski database via the `penquins` Python client.
+Fetches ZTF photometric light curves from the Kowalski database via the `penquins` client. Issues a single batched query for all requested IDs.
 
-!!! info "What is Kowalski?"
-    Kowalski is ZTF's data access service — a MongoDB database of ZTF observations
-    with a query API. See [Surveys → ZTF](../background/surveys.md#ztf).
-
-### Setup
+**Consumes:** ZTF integer source IDs cast to `str`
+**Emits:** `list[LightCurve]` — one per (source, band) that survives quality filtering
 
 ```python
 from ml4em.data import ZTFSource
 from ml4em.config import load_config, get_ztf_token
 
-cfg = load_config()
-source = ZTFSource(cfg.sources.ztf, token=get_ztf_token())
-```
-
-### Batch fetching
-
-`fetch_batch` sends a single batched Kowalski `find` query for all source IDs, which
-is much faster than N individual requests:
-
-```python
+source = ZTFSource(load_config().sources.ztf, token=get_ztf_token())
 lcs = source.fetch_batch(["686149073900013696", "686149073900013697"])
-# → list[LightCurve] — one per (source_id, band) combination
 ```
 
 ### Data cleaning
 
-`ZTFSource` applies two cleaning steps before returning data:
+Two filtering steps are applied before returning:
 
-1. **catflags filtering:** observations where `catflags != 0` are discarded. These are
-   flagged as unreliable by the ZTF pipeline (bad seeing, cosmic rays, etc.).
-
-2. **Intra-night duplicate removal:** observations within 30 minutes
-   (`ZTF_MIN_CADENCE_DAYS`) of an earlier observation in the same night are removed.
-   This prevents the nightly cadence from creating spurious short-period signals.
-
-!!! info "What are catflags?"
-    ZTF attaches a quality flag integer to each observation. `catflags != 0` means
-    one or more quality conditions failed. See [Surveys → ZTF](../background/surveys.md#catflags).
+| Step | Condition | Effect |
+|------|-----------|--------|
+| catflags filter | `catflags != 0` | Drops observations flagged bad by the ZTF pipeline |
+| Intra-night dedup | Δt < 30 min between same-night observations | Drops near-simultaneous repeat observations |
 
 ### Band mapping
 
-ZTF uses integer filter codes internally: `1 → g`, `2 → r`, `3 → i`. `ZTFSource`
-converts these to the string band codes used in `LightCurve.band`.
+ZTF stores filter codes as integers. `ZTFSource` converts them to the string band codes used in `LightCurve.band`:
+
+| Integer | Band |
+|---------|------|
+| 1 | `g` |
+| 2 | `r` |
+| 3 | `i` |
 
 ---
 
-## `RubinSource` *(stub)*
+## `RubinSource` *(stub)* { #rubinsource }
 
-Will query Rubin DP1 via TAP using `pyvo`.
+Will query Rubin DP1 via the TAP protocol using `pyvo`.
 
-!!! info "What is TAP?"
-    TAP (Table Access Protocol) is a standard SQL-like web API for astronomical data.
-    See [Surveys → Rubin](../background/surveys.md#tap).
+**Consumes:** Rubin `objectId` strings
+**Emits:** `list[LightCurve]` — up to 6 per source (bands: u, g, r, i, z, y)
 
-Planned implementation:
-- JOIN `dp1.Object ⋈ dp1.ForcedSource ⋈ dp1.Visit` on `objectId`
-- Filter by band using the visit metadata
-- Convert `psfFlux` (nanojanskies) to magnitude
-- Return up to 6 `LightCurve` objects per `objectId` (one per band: u, g, r, i, z, y)
+Planned query joins `dp1.Object`, `dp1.ForcedSource`, and `dp1.Visit` on `objectId`, converting `psfFlux` (nanojanskies) to AB magnitudes.
 
-Status: raises `NotImplementedError`. Pending DP1 schema confirmation.
+> **Status:** raises `NotImplementedError` — pending Rubin DP1 schema confirmation.
 
 ---
 
-## `SimulatedSource` *(stub)*
+## `SimulatedSource` *(stub)* { #simulatedsource }
 
-Will wrap Tom Marsh's **Lcurve** code to produce physics-based synthetic white dwarf
-binary light curves.
+Will wrap Tom Marsh's **Lcurve** code to produce physics-based synthetic white dwarf binary light curves for training.
 
-- `source_id` will be a path to a `.mod` Lcurve parameter file or a grid index
-- The simulation models orbital mechanics (eclipses, reflection, ellipsoidal variation)
-  given parameters like masses, radii, inclination
-- Gaussian photon noise is injected to simulate real measurement conditions
-- Used to generate training data for WDB detection without needing labeled survey data
+**Consumes:** Path to a `.mod` Lcurve parameter file, or a parameter grid index
+**Emits:** `list[LightCurve]` — simulated photometry with injected Gaussian noise
 
-Status: raises `NotImplementedError`. Pending Lcurve integration.
-
----
-
-## Adding a new source
-
-1. Create `src/ml4em/data/my_source.py`
-2. Implement `fetch(source_id)` and `fetch_batch(source_ids)`
-3. Return `list[LightCurve]` — map your survey's time system to MJD
-4. Optionally export from `data/__init__.py` for convenience
-
-No other files need to change. The feature layer will accept your new source because
-it only checks for the two methods at runtime.
-
-```python
-class MySource:
-    def fetch(self, source_id: str) -> list[LightCurve]:
-        raw = my_api.query(source_id)
-        return [LightCurve(
-            source_id=source_id,
-            time=raw["mjd"],
-            mag=raw["mag"],
-            mag_err=raw["mag_err"],
-            band=raw["band"],
-            survey="my_survey",
-            ra=raw["ra"],
-            dec=raw["dec"],
-        )]
-
-    def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
-        raw = my_api.batch_query(source_ids)
-        return [...]
-```
-
-See [Guide: Add a Data Source](../guides/add-data-source.md) for step-by-step instructions.
+> **Status:** raises `NotImplementedError` — pending Lcurve integration.
 
 ---
 

@@ -1,46 +1,30 @@
 # Inference Layer
 
-!!! abstract "Layer at a glance"
-    **Receives:** `list[FeatureVector]` + a saved model directory
-    **Produces:** `list[Candidate]` — one per source, with probability, confidence tier, and period
-    **Protocol:** `Predictor` → `predict(features)`
-    **Files:** `inference/base.py` · `inference/loader.py` · `inference/predictor.py` · `inference/postprocess.py`
-    **Parallel to:** [Training layer](training.md) — shares `FeatureVector` input and `MLModel` contract, but neither imports from the other.
+Loads a trained model and converts `FeatureVector` objects into `Candidate` predictions. Parallel to the training layer — neither imports from the other.
 
-The inference layer loads a trained model and converts `FeatureVector` objects into
-`Candidate` predictions.
+**Consumes:** `list[FeatureVector]` + a saved model directory
+**Emits:** `list[Candidate]` — one per source, with probability, confidence tier, and period
 
 ```
 src/ml4em/inference/
   base.py         Predictor Protocol
   loader.py       load_model(path) → MLModel
-  predictor.py    StandardPredictor
-  postprocess.py  probabilities_to_candidates            [fully implemented]
+  predictor.py    StandardPredictor   [shell]
+  postprocess.py  probabilities_to_candidates   [implemented]
 ```
+
+## Contents
+
+- [Predictor Protocol](#predictor)
+- [load\_model](#load-model)
+- [StandardPredictor (shell)](#standardpredictor)
+- [probabilities\_to\_candidates](#probabilities-to-candidates)
 
 ---
 
-## How the pieces connect
+## `Predictor` Protocol { #predictor }
 
-```text
-load_model("models/xgb_v1/")
-  └─ reads manifest.json → dispatches to XGBoostClassifier.load()
-  └─→ MLModel
-
-StandardPredictor(model, cfg.inference)
-  └─→ predict(feature_vectors)
-        ├─→ model.predict_proba(features)         → (N, 2) ndarray  [in batches]
-        └─→ probabilities_to_candidates(...)       → list[Candidate]
-              ├─ probs[:, 1]  positive-class probability per source
-              ├─ threshold comparison  →  "high" / "medium" / "low"
-              └─ copies source_id, ra, dec, period from each FeatureVector
-```
-
-**Entry point:** `StandardPredictor.predict` — everything else is called by it or by the one-time `load_model` setup before it runs.
-
----
-
-## Protocol — `Predictor`
+The contract every predictor must satisfy.
 
 ```python
 class Predictor(Protocol):
@@ -49,7 +33,12 @@ class Predictor(Protocol):
 
 ---
 
-## `load_model`
+## `load_model` { #load-model }
+
+Reads a saved model directory and returns an `MLModel` instance. The only place in the inference layer that knows about concrete model types.
+
+**Consumes:** Path to a saved model directory containing `manifest.json`
+**Emits:** `MLModel` instance
 
 ```python
 from ml4em.inference import load_model
@@ -57,15 +46,13 @@ from ml4em.inference import load_model
 model = load_model("models/xgb_v1/")
 ```
 
-`load_model` reads `{path}/manifest.json`, finds `"model_class"`, and dispatches to
-the appropriate `@classmethod load()`:
+Reads `{path}/manifest.json`, finds `"model_class"`, and dispatches to the appropriate `@classmethod load()`:
 
 ```json
-// models/xgb_v1/manifest.json
 {"model_class": "XGBoostClassifier"}
 ```
 
-The model registry in `inference/loader.py` maps class names to their module paths:
+The model registry in `inference/loader.py` maps class names to module paths:
 
 ```python
 _MODEL_REGISTRY = {
@@ -73,15 +60,16 @@ _MODEL_REGISTRY = {
 }
 ```
 
-This is the **only place** that knows about concrete model types. Everything else in
-the inference layer is model-agnostic.
-
-To register a new model: add one entry to `_MODEL_REGISTRY`. See
-[Guide: Add a Model](../guides/add-model.md).
+To register a new model, add one entry to `_MODEL_REGISTRY`. See [Guide: Add a Model](../guides/add-model.md).
 
 ---
 
-## `StandardPredictor` *(shell)*
+## `StandardPredictor` *(shell)* { #standardpredictor }
+
+Runs `model.predict_proba` in batches and passes results to `probabilities_to_candidates`.
+
+**Consumes:** `list[FeatureVector]` + `MLModel`
+**Emits:** `list[Candidate]`
 
 ```python
 from ml4em.inference import StandardPredictor
@@ -90,19 +78,16 @@ predictor = StandardPredictor(model, cfg.inference)
 candidates = predictor.predict(feature_vectors)
 ```
 
-Calls `model.predict_proba(features)` in batches of `cfg.inference.batch_size`, then
-passes the resulting probabilities to `postprocess.probabilities_to_candidates`.
-
-!!! note "Status"
-    `StandardPredictor.predict` is a shell pending completion of the model
-    implementation. `probabilities_to_candidates` (the postprocessing step) is fully
-    implemented.
+> **Status:** `predict` is a shell — pending completion of the model implementation. `probabilities_to_candidates` (called internally) is fully implemented.
 
 ---
 
-## `probabilities_to_candidates` — fully implemented
+## `probabilities_to_candidates` { #probabilities-to-candidates }
 
-Converts raw model probabilities into `Candidate` objects:
+Converts raw model probabilities into `Candidate` objects. Fully implemented.
+
+**Consumes:** `list[FeatureVector]` + `np.ndarray` of shape `(N,)` — P(positive class) per source
+**Emits:** `list[Candidate]` — one per source, in the same order as input
 
 ```python
 from ml4em.inference.postprocess import probabilities_to_candidates
@@ -111,16 +96,13 @@ candidates = probabilities_to_candidates(features, probs, cfg.inference)
 ```
 
 Steps:
-1. Takes `probs[:, 1]` — the positive-class probability from the `(N, 2)` output array
-2. Assigns confidence tier (`"high"` / `"medium"` / `"low"`) based on thresholds
-3. Copies `source_id`, `ra`, `dec`, `survey`, `period`, `period_algorithm` from each
-   `FeatureVector`
-4. Returns one `Candidate` (frozen dataclass) per source
+1. Assigns a confidence tier based on `cfg.inference.confidence_thresholds`
+2. Copies `source_id`, `ra`, `dec`, `survey`, `period`, `period_algorithm` from each `FeatureVector`
+3. Returns one frozen `Candidate` per source
 
 ### Confidence tier assignment
 
 ```yaml
-# config.yaml
 inference:
   confidence_thresholds:
     high: 0.9
@@ -128,19 +110,12 @@ inference:
 ```
 
 | Probability | Confidence |
-|------------|------------|
-| ≥ high threshold | `"high"` |
-| ≥ medium threshold | `"medium"` |
-| below medium threshold | `"low"` |
+|-------------|------------|
+| ≥ `high` threshold | `"high"` |
+| ≥ `medium` threshold | `"medium"` |
+| below `medium` threshold | `"low"` |
 
-The thresholds are tunable. There is no hardcoded science meaning — set them to match
-the purity/completeness trade-off your analysis requires.
-
-**High purity run:** set `high=0.95` to minimize false positives, accepting that some
-true positives will only appear in `"medium"` or `"low"`.
-
-**High completeness run:** set `medium=0.3` to catch more true positives in the
-`"medium"` tier, accepting more false positives.
+Tune thresholds to match your purity/completeness requirements. Raising `high` reduces false positives; lowering `medium` increases recall at the cost of more false positives.
 
 ---
 

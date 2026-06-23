@@ -1,37 +1,42 @@
 # Foundation Layer
 
-!!! abstract "Layer at a glance"
-    **Role:** Shared vocabulary — no data flows *through* this layer; every other layer imports from it.
-    **Files:** `types.py` · `constants.py` · `config/schema.py` · `config/loader.py`
-    **Provides:** `LightCurve`, `FeatureVector`, `LabeledSample`, `Candidate`, `PipelineConfig`, survey constants
-    **Background:** [Light Curves](../background/light-curves.md) · [Surveys](../background/surveys.md)
-
-The foundation layer is not a "layer" in the data-flow sense — nothing passes through
-it. It provides the shared vocabulary that all other layers use.
+Provides the shared vocabulary for the entire pipeline — the four data contracts, shared constants, and configuration schema. Nothing flows *through* this layer; every other layer imports *from* it.
 
 ```
 src/ml4em/
   types.py        Data contracts (LightCurve, FeatureVector, LabeledSample, Candidate)
   constants.py    Survey constants, dm/dt bin parameters, physical constants
   config/
-    schema.py     Pydantic models — PipelineConfig and all sub-configs
-    loader.py     YAML loader + env-var secret accessors
+    schema.py     Pydantic models — PipelineConfig and sub-configs
+    loader.py     YAML loader and env-var secret accessors
 ```
 
+## Contents
+
+- [types.py — Data contracts](#types)
+- [constants.py — Shared constants](#constants)
+- [config/ — Pipeline configuration](#config)
+
 ---
 
-## `types.py` — Data contracts
+## `types.py` — Data contracts { #types }
 
-Defines the four shared dataclasses. See [Data Contracts](../data-contracts.md) for the
-full field tables and explanations.
+Defines the four dataclasses that cross layer boundaries. See [Data Contracts](../data-contracts.md) for full field tables.
+
+| Type | Produced by | Consumed by |
+|------|-------------|-------------|
+| `LightCurve` | Data layer | Feature layer |
+| `FeatureVector` | Feature layer | Models, Training, Inference |
+| `LabeledSample` | Training dataset | Training layer |
+| `Candidate` | Inference layer | Caller |
 
 ---
 
-## `constants.py` — Shared constants { #constants-py }
+## `constants.py` — Shared constants { #constants }
 
 ### Physical constants
 
-Used by `SimulatedSource` for orbital mechanics calculations:
+Used by `SimulatedSource` for orbital mechanics:
 
 | Constant | Value | Description |
 |----------|-------|-------------|
@@ -39,12 +44,11 @@ Used by `SimulatedSource` for orbital mechanics calculations:
 | `C` | 2.998×10⁸ m s⁻¹ | Speed of light |
 | `MSUN` | 1.988×10³⁰ kg | Solar mass |
 | `RSUN` | 6.957×10⁸ m | Solar radius |
-| `MTSUN_SI` | G × MSUN / C³ | Solar mass in seconds (used in GW calculations) |
+| `MTSUN_SI` | G × MSUN / C³ | Solar mass in seconds |
 
 ### dm/dt histogram parameters
 
-These define the default bin edges for the `DmdtExtractor`. They can be overridden via
-`config.yaml` under `features.dmdt`.
+Default bin edges for `DmdtExtractor`. Override via `features.dmdt` in `config.yaml`.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
@@ -60,57 +64,48 @@ These define the default bin edges for the `DmdtExtractor`. They can be overridd
 | Constant | Value | Description |
 |----------|-------|-------------|
 | `ZTF_BANDS` | `("g", "r", "i")` | ZTF photometric bands |
-| `ZTF_SIDEREAL_DAY` | 0.99727 days | Earth's rotation period relative to stars |
-| `ZTF_MIN_CADENCE_DAYS` | 30/1440 (30 min) | Intra-night duplicate threshold |
+| `ZTF_SIDEREAL_DAY` | 0.99727 days | Sidereal day length |
+| `ZTF_MIN_CADENCE_DAYS` | 30/1440 | Intra-night duplicate threshold (30 min) |
 | `ZTF_DR16_MAX_HJD` | 2,459,951.5 | Maximum HJD in ZTF Data Release 16 |
 | `RUBIN_BANDS` | `("u", "g", "r", "i", "z", "y")` | Rubin photometric bands |
-
-### Cross-match parameters
-
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `XMATCH_RADIUS_ARCSEC` | 2.0 arcsec | Gaia search radius |
-| `GAIA_RUWE_CLEAN` | 1.4 | RUWE threshold for "clean" astrometric solution |
+| `XMATCH_RADIUS_ARCSEC` | 2.0 | Gaia cross-match search radius |
+| `GAIA_RUWE_CLEAN` | 1.4 | RUWE threshold for a clean astrometric solution |
 
 ---
 
-## `config/` — Pipeline configuration
+## `config/` — Pipeline configuration { #config }
 
-### `PipelineConfig` — the pipeline as configuration
+### `PipelineConfig`
 
-`PipelineConfig` maps one-to-one onto the pipeline layers:
+Each section of `PipelineConfig` maps directly to a layer:
 
 | Config section | Controls |
 |---------------|---------|
-| `PipelineConfig.sources.ztf` | `ZTFSource` — connection + data quality |
-| `PipelineConfig.sources.rubin` | `RubinSource` — TAP endpoint + table names |
-| `PipelineConfig.features` | `FeaturePipeline` and all extractors |
-| `PipelineConfig.features.period` | `PeriodExtractor` — algorithm selection, period grid |
-| `PipelineConfig.features.dmdt` | `DmdtExtractor` — bin parameters |
-| `PipelineConfig.features.catalog` | `CatalogExtractor` — search radius |
-| `PipelineConfig.storage` | File paths used by all layers |
-| `PipelineConfig.training` | `StandardTrainer` — loop parameters only |
-| `PipelineConfig.inference` | `StandardPredictor` — batch size, confidence thresholds |
+| `sources.ztf` | `ZTFSource` — connection + data quality |
+| `sources.rubin` | `RubinSource` — TAP endpoint + table names |
+| `features` | `FeaturePipeline` and all extractors |
+| `features.period` | `PeriodExtractor` — algorithm selection, period grid |
+| `features.dmdt` | `DmdtExtractor` — bin parameters |
+| `features.catalog` | `CatalogExtractor` — search radius |
+| `storage` | File paths used by all layers |
+| `training` | `StandardTrainer` — loop parameters |
+| `inference` | `StandardPredictor` — batch size, confidence thresholds |
 
-**What is NOT in `PipelineConfig`:** model architecture hyperparameters (tree depth,
-number of estimators, dropout). Those live in per-model config dataclasses
-(`XGBoostConfig`, etc.) and are set in code. See
-[Design Principles](../architecture/design-principles.md#2-code-controls-architecture-config-controls-parameters).
+Model architecture hyperparameters (tree depth, estimators, dropout) are **not** in `PipelineConfig` — they live in per-model config dataclasses set in code. See [Design Principles](../architecture/design-principles.md#2-code-controls-architecture-config-controls-parameters).
 
-### `loader.py` — loading config
+### Loading config
 
 ```python
-from ml4em.config import load_config
+from ml4em.config import load_config, load_default_config
 
-cfg = load_config("config.yaml")              # load from file
-cfg = load_config()                           # looks for "config.yaml" in cwd
-cfg = load_default_config()                  # programmatic defaults, no file needed
+cfg = load_config("config.yaml")   # from file
+cfg = load_config()                # looks for config.yaml in cwd
+cfg = load_default_config()        # programmatic defaults, no file needed
 ```
 
-### Secrets — API tokens
+### API tokens
 
-Tokens are **never stored in `config.yaml`**. They are read from environment variables
-or a `.env` file:
+Tokens are never stored in `config.yaml`. Set them as environment variables or in a `.env` file:
 
 ```bash
 # .env  (never commit this file)
@@ -124,8 +119,7 @@ from ml4em.config import get_ztf_token, get_rubin_token
 token = get_ztf_token()    # reads ML4EM_ZTF_TOKEN from env or .env
 ```
 
-If the token is not found, these functions raise a clear error rather than silently
-passing an empty string.
+Raises a clear error if the token is not found.
 
 ---
 
