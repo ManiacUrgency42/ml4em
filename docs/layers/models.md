@@ -3,6 +3,7 @@
 Defines the contract between training and inference. The models layer does not perform training or inference — it provides the `MLModel` Protocol that both layers depend on, plus utilities for extracting scalar features from `FeatureVector` objects.
 
 **Consumes:** `list[FeatureVector]` (via `predict_proba`)
+
 **Emits:** `np.ndarray` of shape `(N, 2)` — per-class probabilities
 
 ```
@@ -24,6 +25,7 @@ src/ml4em/models/
 The contract every model must satisfy. Any class with compatible `predict_proba` and `save` methods is a valid `MLModel`.
 
 **Consumes:** `list[FeatureVector]`
+
 **Emits:** `np.ndarray` shape `(N, 2)` — `[:, 0]` is P(background), `[:, 1]` is P(positive class)
 
 ```python
@@ -71,6 +73,7 @@ Extracts the 43 scalar fields in `SCALAR_FIELDS` order. `np.nan` values are pres
 The reference implementation of `MLModel`. Demonstrates the correct pattern for implementing a new model. It is not the committed model for any science case — treat it as a template.
 
 **Consumes:** `list[FeatureVector]` — uses the 43 scalar fields only (ignores `dmdt`)
+
 **Emits:** `np.ndarray` shape `(N, 2)` — class probabilities
 
 ```python

@@ -3,6 +3,7 @@
 Converts raw light curves into fixed-length numerical representations (`FeatureVector` objects) for the model. All computationally intensive work is delegated to **periodfind**, a GPU-accelerated Rust/CUDA library.
 
 **Consumes:** `list[list[LightCurve]]` — outer list is sources, inner list is bands per source
+
 **Emits:** `list[FeatureVector]` — one per source, with 43 scalar fields + 26×26 dm/dt image
 
 ```
@@ -31,6 +32,7 @@ src/ml4em/features/
 The contract every extractor must satisfy. Extractors are called by `FeaturePipeline` — never directly.
 
 **Consumes:** `list[list[LightCurve]]` — one list of bands per source
+
 **Emits:** `list[dict[str, Any]]` — one dict per source mapping `FeatureVector` field names to values
 
 ```python
@@ -47,6 +49,7 @@ class FeatureExtractor(Protocol):
 Composes extractors in order and assembles the resulting dicts into `FeatureVector` objects. This is the entry point for the feature layer.
 
 **Consumes:** `list[list[LightCurve]]` — sources grouped by band
+
 **Emits:** `list[FeatureVector]` — one per source; sources below `min_observations` return an all-NaN vector
 
 ```python
@@ -90,6 +93,7 @@ Sources with fewer than `min_observations` observations in their primary band (d
 Computes 22 scalar light curve variability statistics using `periodfind.BasicStats`.
 
 **Consumes:** Primary band light curve (the band with the most observations) per source
+
 **Emits:** 22 scalar fields in `FeatureVector` — see [Variability Statistics](../background/variability-statistics.md) for definitions
 
 ```python
@@ -108,6 +112,7 @@ Casts time/mag/error arrays to float32, then calls `periodfind.BasicStats().calc
 Finds the dominant period using multiple algorithms and computes 14 Fourier decomposition features.
 
 **Consumes:** Primary band light curve per source
+
 **Emits:** `period`, `period_algorithm`, and 14 Fourier fields (`f1_power`, `f1_bic`, `f1_a`, `f1_b`, `f1_amp`, `f1_phi0`, `f1_relamp1–4`, `f1_relphi1–4`)
 
 ```python
@@ -165,6 +170,7 @@ After period finding, `periodfind.FourierDecomposition().calc()` runs on sources
 Computes a 26×26 Δmag/Δt pairwise histogram using `periodfind.DmDt`.
 
 **Consumes:** Primary band light curve per source
+
 **Emits:** `dmdt` field in `FeatureVector` — shape `(26, 26)` float32 array, L2-normalized per source
 
 ```python
@@ -191,6 +197,7 @@ See [The dm/dt Histogram](../background/dmdt.md) for a full explanation.
 Will cross-match each source against Gaia EDR3 within 2 arcseconds and return 4 astrometric features.
 
 **Consumes:** `(ra, dec)` from each source's `LightCurve`
+
 **Emits:** `gaia_parallax`, `gaia_parallax_error`, `gaia_bp_rp`, `gaia_ruwe`
 
 Planned backends: astroquery TAP+ or Kowalski Gaia cone search.

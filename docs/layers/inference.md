@@ -3,6 +3,7 @@
 Loads a trained model and converts `FeatureVector` objects into `Candidate` predictions. Parallel to the training layer — neither imports from the other.
 
 **Consumes:** `list[FeatureVector]` + a saved model directory
+
 **Emits:** `list[Candidate]` — one per source, with probability, confidence tier, and period
 
 ```
@@ -38,6 +39,7 @@ class Predictor(Protocol):
 Reads a saved model directory and returns an `MLModel` instance. The only place in the inference layer that knows about concrete model types.
 
 **Consumes:** Path to a saved model directory containing `manifest.json`
+
 **Emits:** `MLModel` instance
 
 ```python
@@ -69,6 +71,7 @@ To register a new model, add one entry to `_MODEL_REGISTRY`. See [Guide: Add a M
 Runs `model.predict_proba` in batches and passes results to `probabilities_to_candidates`.
 
 **Consumes:** `list[FeatureVector]` + `MLModel`
+
 **Emits:** `list[Candidate]`
 
 ```python
@@ -87,6 +90,7 @@ candidates = predictor.predict(feature_vectors)
 Converts raw model probabilities into `Candidate` objects. Fully implemented.
 
 **Consumes:** `list[FeatureVector]` + `np.ndarray` of shape `(N,)` — P(positive class) per source
+
 **Emits:** `list[Candidate]` — one per source, in the same order as input
 
 ```python

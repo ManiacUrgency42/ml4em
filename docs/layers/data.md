@@ -3,6 +3,7 @@
 Fetches raw photometric observations from survey databases and returns them as `LightCurve` objects. The feature layer is the sole consumer — everything about *how* data is fetched is hidden inside the source implementation.
 
 **Consumes:** `source_id` strings — survey-native identifiers
+
 **Emits:** `list[LightCurve]` — one object per (source, band)
 
 ```
@@ -27,6 +28,7 @@ src/ml4em/data/
 The contract every data source must satisfy. Any class with a compatible `fetch_batch` method qualifies — no base class or registration required.
 
 **Consumes:** `list[str]` — source ID strings
+
 **Emits:** `list[LightCurve]` — all light curves across all requested sources and bands
 
 ```python
@@ -47,6 +49,7 @@ lcs = source.fetch_batch([single_id])
 Fetches ZTF photometric light curves from the Kowalski database via the `penquins` client. Issues a single batched query for all requested IDs.
 
 **Consumes:** ZTF integer source IDs cast to `str`
+
 **Emits:** `list[LightCurve]` — one per (source, band) that survives quality filtering
 
 ```python
@@ -83,6 +86,7 @@ ZTF stores filter codes as integers. `ZTFSource` converts them to the string ban
 Will query Rubin DP1 via the TAP protocol using `pyvo`.
 
 **Consumes:** Rubin `objectId` strings
+
 **Emits:** `list[LightCurve]` — up to 6 per source (bands: u, g, r, i, z, y)
 
 Planned query joins `dp1.Object`, `dp1.ForcedSource`, and `dp1.Visit` on `objectId`, converting `psfFlux` (nanojanskies) to AB magnitudes.
