@@ -2722,8 +2722,8 @@ is automatically a Predictor.</p>
         <p>Model loader — reconstruct any saved MLModel from disk.</p>
 <h3 id="ml4em.inference.loader--design">Design<a class="headerlink" href="#ml4em.inference.loader--design" title="Permanent link">&para;</a></h3>
 <p>Each MLModel.save() writes a manifest.json alongside the model weights:</p>
-<div class="highlight"><pre><span></span><code>{path}/manifest.json   {&quot;model_class&quot;: &quot;DNNClassifier&quot;}
-{path}/weights.pt      (PyTorch)  or  {path}/model.ubj  (XGBoost)
+<div class="highlight"><pre><span></span><code>{path}/manifest.json   {&quot;model_class&quot;: &quot;LogisticExampleClassifier&quot;}
+{path}/weights.pt      (PyTorch state_dict)
 </code></pre></div>
 <p>load_model() reads the manifest, resolves the class, and delegates to
 that class's classmethod load().</p>
@@ -2786,7 +2786,8 @@ ValueError
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/ml4em/inference/loader.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-40">40</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
 <span class="normal"><a href="#__codelineno-0-41">41</a></span>
 <span class="normal"><a href="#__codelineno-0-42">42</a></span>
 <span class="normal"><a href="#__codelineno-0-43">43</a></span>
@@ -2841,64 +2842,63 @@ ValueError
 <span class="normal"><a href="#__codelineno-0-92">92</a></span>
 <span class="normal"><a href="#__codelineno-0-93">93</a></span>
 <span class="normal"><a href="#__codelineno-0-94">94</a></span>
-<span class="normal"><a href="#__codelineno-0-95">95</a></span>
-<span class="normal"><a href="#__codelineno-0-96">96</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_model</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MLModel</span><span class="p">:</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a previously saved MLModel from a directory.</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    Reads {path}/manifest.json to determine the model class, then calls</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    that class&#39;s classmethod load(path) to reconstruct the model.</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">    path:</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        Directory written by an MLModel.save() call.</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        Must contain manifest.json with a &quot;model_class&quot; key.</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    MLModel</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        The reconstructed model, ready for predict_proba().</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    Raises</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    ------</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    FileNotFoundError</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">        If path or manifest.json does not exist.</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    KeyError</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">        If manifest.json does not contain &quot;model_class&quot;.</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    ValueError</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">        If the model class is not in _MODEL_REGISTRY.</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;manifest.json&quot;</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">manifest_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>            <span class="sa">f</span><span class="s2">&quot;manifest.json not found at </span><span class="si">{</span><span class="n">manifest_path</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>            <span class="s2">&quot;The model directory must be written by MLModel.save().&quot;</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="p">)</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="n">manifest</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="n">class_name</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_class&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="k">if</span> <span class="n">class_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>            <span class="sa">f</span><span class="s2">&quot;&#39;model_class&#39; key missing from </span><span class="si">{</span><span class="n">manifest_path</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>            <span class="sa">f</span><span class="s2">&quot;Found keys: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="p">)</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="n">module_path</span> <span class="o">=</span> <span class="n">_MODEL_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="k">if</span> <span class="n">module_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>            <span class="sa">f</span><span class="s2">&quot;Unknown model class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39;.</span><span class="se">\n</span><span class="s2">&quot;</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>            <span class="sa">f</span><span class="s2">&quot;Registered classes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_MODEL_REGISTRY</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>            <span class="s2">&quot;To add a new model, register it in inference/loader.py _MODEL_REGISTRY.&quot;</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="p">)</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="c1"># Dynamic import — avoids circular imports and keeps inference layer</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="c1"># independent of specific model implementations at module load time.</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_path</span><span class="p">)</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-95">95</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_model</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MLModel</span><span class="p">:</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a previously saved MLModel from a directory.</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    Reads {path}/manifest.json to determine the model class, then calls</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    that class&#39;s classmethod load(path) to reconstruct the model.</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    path:</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        Directory written by an MLModel.save() call.</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        Must contain manifest.json with a &quot;model_class&quot; key.</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    MLModel</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        The reconstructed model, ready for predict_proba().</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    Raises</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    ------</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    FileNotFoundError</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">        If path or manifest.json does not exist.</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    KeyError</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">        If manifest.json does not contain &quot;model_class&quot;.</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    ValueError</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">        If the model class is not in _MODEL_REGISTRY.</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;manifest.json&quot;</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">manifest_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>            <span class="sa">f</span><span class="s2">&quot;manifest.json not found at </span><span class="si">{</span><span class="n">manifest_path</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>            <span class="s2">&quot;The model directory must be written by MLModel.save().&quot;</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="p">)</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="n">manifest</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="n">class_name</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_class&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">if</span> <span class="n">class_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>            <span class="sa">f</span><span class="s2">&quot;&#39;model_class&#39; key missing from </span><span class="si">{</span><span class="n">manifest_path</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>            <span class="sa">f</span><span class="s2">&quot;Found keys: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="p">)</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="n">module_path</span> <span class="o">=</span> <span class="n">_MODEL_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">if</span> <span class="n">module_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>            <span class="sa">f</span><span class="s2">&quot;Unknown model class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39;.</span><span class="se">\n</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>            <span class="sa">f</span><span class="s2">&quot;Registered classes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_MODEL_REGISTRY</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>            <span class="s2">&quot;To add a new model, register it in inference/loader.py _MODEL_REGISTRY.&quot;</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="p">)</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="c1"># Dynamic import — avoids circular imports and keeps inference layer</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="c1"># independent of specific model implementations at module load time.</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_path</span><span class="p">)</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

@@ -585,10 +585,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-pull-the-docker-image" class="md-nav__link">
+  <a href="#3-add-your-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Pull the Docker image
+        3. Add your catalog
       
     </span>
   </a>
@@ -596,10 +596,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-run-feature-extraction" class="md-nav__link">
+  <a href="#4-pull-the-cpu-image-local-testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Run feature extraction
+        4. Pull the CPU image (local testing)
       
     </span>
   </a>
@@ -607,10 +607,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-run-inference" class="md-nav__link">
+  <a href="#5-run-the-demo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Run inference
+        5. Run the demo
       
     </span>
   </a>
@@ -622,6 +622,17 @@
     <span class="md-ellipsis">
       
         6. Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-on-msi-gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running on MSI (GPU)
       
     </span>
   </a>
@@ -1848,10 +1859,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-pull-the-docker-image" class="md-nav__link">
+  <a href="#3-add-your-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Pull the Docker image
+        3. Add your catalog
       
     </span>
   </a>
@@ -1859,10 +1870,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-run-feature-extraction" class="md-nav__link">
+  <a href="#4-pull-the-cpu-image-local-testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Run feature extraction
+        4. Pull the CPU image (local testing)
       
     </span>
   </a>
@@ -1870,10 +1881,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-run-inference" class="md-nav__link">
+  <a href="#5-run-the-demo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Run inference
+        5. Run the demo
       
     </span>
   </a>
@@ -1885,6 +1896,17 @@
     <span class="md-ellipsis">
       
         6. Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-on-msi-gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running on MSI (GPU)
       
     </span>
   </a>
@@ -1912,83 +1934,73 @@
 
 
 <h1 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Work in progress</p>
-<p>The training loop is not yet implemented. This page will be filled in once
-end-to-end execution is working. The steps below are correct for cloning and
-configuring; the run commands are placeholders.</p>
-</div>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://docs.docker.com/get-docker/">Docker</a></li>
-<li>A ZTF or Rubin API token — set in a <code>.env</code> file (see <a href="../deployment/">Deployment</a>)</li>
+<li><a href="https://docs.docker.com/get-docker/">Docker</a> — for local CPU testing</li>
+<li>A Kowalski ZTF token — set in a <code>.env</code> file (see below)</li>
 </ul>
 <h2 id="1-clone">1. Clone<a class="headerlink" href="#1-clone" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>&lt;ml4em-repo-url&gt;
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>ml4em
 </code></pre></div>
-<p>The <code>--recurse-submodules</code> flag is required because <code>periodfind</code> (the GPU period-finding
+<p><code>--recurse-submodules</code> is required because <code>periodfind</code> (the GPU period-finding
 library) lives at <code>external/periodfind</code> as a git submodule.</p>
 <h2 id="2-configure">2. Configure<a class="headerlink" href="#2-configure" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cp<span class="w"> </span>config.example.yaml<span class="w"> </span>config.yaml
 </code></pre></div>
-<p>Open <code>config.yaml</code> and fill in the ZTF or Rubin connection details. API tokens go in a
-<code>.env</code> file (not in <code>config.yaml</code>):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># .env</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_token_here
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nv">ML4EM_RUBIN_TOKEN</span><span class="o">=</span>your_token_here
+<p>Open <code>config.yaml</code> and verify the ZTF connection settings. Your Kowalski token goes
+in a <code>.env</code> file, not in <code>config.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># .env  (gitignored — never commit this)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_kowalski_token_here
 </code></pre></div>
-<p>See <a href="../deployment/">Deployment</a> for where to get these.</p>
-<h2 id="3-pull-the-docker-image">3. Pull the Docker image<a class="headerlink" href="#3-pull-the-docker-image" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># CPU image (for local development)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/&lt;org&gt;/ml4em:cpu
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># GPU image (for HPC / feature extraction at scale)</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/&lt;org&gt;/ml4em:gpu
+<h2 id="3-add-your-catalog">3. Add your catalog<a class="headerlink" href="#3-add-your-catalog" title="Permanent link">&para;</a></h2>
+<p>Place your WDB source catalog at the path set by <code>storage.catalog_path</code>
+(default: <code>data/wdb_sources.csv</code>). The file must have at minimum <code>ra</code> and <code>dec</code>
+columns in decimal degrees:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>obj_id,ra,dec
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>WDB_001,123.456,-45.678
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>...
 </code></pre></div>
-<h2 id="4-run-feature-extraction">4. Run feature extraction<a class="headerlink" href="#4-run-feature-extraction" title="Permanent link">&para;</a></h2>
-<div class="admonition note">
-<p class="admonition-title">TODO</p>
-<p>Command placeholder — fill in once <code>ml4em.run</code> entry point is implemented.</p>
-</div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># docker run --rm \</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1">#   -v $(pwd)/config.yaml:/config.yaml \</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">#   -v $(pwd)/data:/data \</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1">#   ghcr.io/&lt;org&gt;/ml4em:cpu \</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1">#   python -m ml4em.run --config /config.yaml extract</span>
+<h2 id="4-pull-the-cpu-image-local-testing">4. Pull the CPU image (local testing)<a class="headerlink" href="#4-pull-the-cpu-image-local-testing" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu
 </code></pre></div>
-<h2 id="5-run-inference">5. Run inference<a class="headerlink" href="#5-run-inference" title="Permanent link">&para;</a></h2>
-<div class="admonition note">
-<p class="admonition-title">TODO</p>
-<p>Command placeholder — fill in once the training loop and predictor are implemented.</p>
-</div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># docker run --rm \</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1">#   -v $(pwd)/config.yaml:/config.yaml \</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">#   -v $(pwd)/data:/data \</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1">#   ghcr.io/&lt;org&gt;/ml4em:cpu \</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1">#   python -m ml4em.run --config /config.yaml predict</span>
+<h2 id="5-run-the-demo">5. Run the demo<a class="headerlink" href="#5-run-the-demo" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/app/ml4em<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/data:/data<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>--env-file<span class="w"> </span>.env<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>ghcr.io/maniacurgency42/ml4em:cpu<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span>config.yaml
 </code></pre></div>
+<p>This runs the full end-to-end pipeline:</p>
+<ol>
+<li>Reads <code>wdb_sources.csv</code> — the WDB catalog of target sky positions</li>
+<li>Queries ZTF via Kowalski cone search — positives within 2 arcsec, negatives at 2–30 arcsec</li>
+<li>Extracts features (statistics, periods, dm/dt histograms)</li>
+<li>Trains a <code>LogisticExampleClassifier</code> on the labeled sources</li>
+<li>Saves the model and runs inference on the test set</li>
+<li>Prints results grouped by confidence tier (high / medium / low)</li>
+</ol>
 <h2 id="6-output">6. Output<a class="headerlink" href="#6-output" title="Permanent link">&para;</a></h2>
-<p>The inference layer produces a <code>candidates.parquet</code> file with one row per source:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>features/demo.parquet        — extracted feature vectors (reusable)
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>models/logistic_demo/        — saved model weights and manifest
+</code></pre></div>
+<p>Inference results are printed to stdout. Each source shows:</p>
 <table>
 <thead>
 <tr>
-<th>Column</th>
+<th>Field</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>source_id</code></td>
-<td>Survey-native identifier</td>
-</tr>
-<tr>
-<td><code>ra</code>, <code>dec</code></td>
-<td>Sky position in decimal degrees</td>
+<td>ZTF integer source ID</td>
 </tr>
 <tr>
 <td><code>probability</code></td>
-<td>P(positive class) in [0, 1]</td>
+<td>P(WDB) in [0, 1]</td>
 </tr>
 <tr>
 <td><code>confidence</code></td>
@@ -1996,15 +2008,17 @@ library) lives at <code>external/periodfind</code> as a git submodule.</p>
 </tr>
 <tr>
 <td><code>period</code></td>
-<td>Dominant period in days (from feature layer)</td>
+<td>Dominant period in days</td>
 </tr>
 <tr>
 <td><code>period_algorithm</code></td>
-<td>Which algorithm(s) found the period</td>
+<td>Which algorithm(s) agreed on the period</td>
 </tr>
 </tbody>
 </table>
-<p>Confidence tiers are set by <code>inference.confidence_thresholds</code> in <code>config.yaml</code>.</p>
+<p>Confidence thresholds are set by <code>inference.confidence_thresholds</code> in <code>config.yaml</code>.</p>
+<h2 id="running-on-msi-gpu">Running on MSI (GPU)<a class="headerlink" href="#running-on-msi-gpu" title="Permanent link">&para;</a></h2>
+<p>For production runs on MSI with GPU-accelerated feature extraction, see <a href="../deployment/">Deployment</a>.</p>
 
 
 
