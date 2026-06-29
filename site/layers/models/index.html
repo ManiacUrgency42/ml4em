@@ -1183,10 +1183,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#position-in-the-pipeline" class="md-nav__link">
+  <a href="#contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Position in the pipeline
+        Contents
       
     </span>
   </a>
@@ -1194,10 +1194,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protocol-mlmodel" class="md-nav__link">
+  <a href="#mlmodel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol — MLModel
+        MLModel Protocol
       
     </span>
   </a>
@@ -1205,15 +1205,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#scalar-field-utilities" class="md-nav__link">
+  <a href="#scalar-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scalar field utilities
+        SCALAR_FIELDS and features_to_array
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Scalar field utilities">
+    <nav class="md-nav" aria-label="SCALAR_FIELDS and features_to_array">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1244,27 +1244,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#xgboostclassifier-reference-implementation" class="md-nav__link">
+  <a href="#xgboostclassifier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        XGBoostClassifier — reference implementation
+        XGBoostClassifier
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="XGBoostClassifier — reference implementation">
+    <nav class="md-nav" aria-label="XGBoostClassifier">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#save-and-load" class="md-nav__link">
@@ -1277,19 +1266,19 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-a-new-model" class="md-nav__link">
+          <li class="md-nav__item">
+  <a href="#xgboostconfig-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding a new model
+        XGBoostConfig parameters
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2025,10 +2014,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#position-in-the-pipeline" class="md-nav__link">
+  <a href="#contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Position in the pipeline
+        Contents
       
     </span>
   </a>
@@ -2036,10 +2025,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protocol-mlmodel" class="md-nav__link">
+  <a href="#mlmodel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol — MLModel
+        MLModel Protocol
       
     </span>
   </a>
@@ -2047,15 +2036,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#scalar-field-utilities" class="md-nav__link">
+  <a href="#scalar-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scalar field utilities
+        SCALAR_FIELDS and features_to_array
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Scalar field utilities">
+    <nav class="md-nav" aria-label="SCALAR_FIELDS and features_to_array">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2086,27 +2075,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#xgboostclassifier-reference-implementation" class="md-nav__link">
+  <a href="#xgboostclassifier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        XGBoostClassifier — reference implementation
+        XGBoostClassifier
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="XGBoostClassifier — reference implementation">
+    <nav class="md-nav" aria-label="XGBoostClassifier">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#save-and-load" class="md-nav__link">
@@ -2119,19 +2097,19 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-a-new-model" class="md-nav__link">
+          <li class="md-nav__item">
+  <a href="#xgboostconfig-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding a new model
+        XGBoostConfig parameters
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2156,154 +2134,121 @@
 
 
 <h1 id="models-layer">Models Layer<a class="headerlink" href="#models-layer" title="Permanent link">&para;</a></h1>
-<div class="admonition abstract">
-<p class="admonition-title">Layer at a glance</p>
-<p><strong>Role:</strong> Defines the shared contract between training and inference — does not perform either.
-<strong>Receives:</strong> <code>list[FeatureVector]</code> (via <code>predict_proba</code>)
-<strong>Produces:</strong> <code>np.ndarray</code> of shape <code>(N, 2)</code> — class probabilities
-<strong>Protocol:</strong> <code>MLModel</code> → <code>predict_proba(features)</code>, <code>save(path)</code>
-<strong>Files:</strong> <code>models/base.py</code> · <code>models/xgboost.py</code>
-<strong>Background:</strong> No domain-specific background needed — this is pure ML infrastructure.</p>
-</div>
-<p>The models layer defines the <strong>contract</strong> between training and inference. It does not
-perform training or inference itself — it provides the Protocol that both layers depend
-on, plus utilities for scalar feature extraction.</p>
+<p>Defines the contract between training and inference. The models layer does not perform training or inference — it provides the <code>MLModel</code> Protocol that both layers depend on, plus utilities for extracting scalar features from <code>FeatureVector</code> objects.</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> (via <code>predict_proba</code>)</p>
+<p><strong>Emits:</strong> <code>np.ndarray</code> of shape <code>(N, 2)</code> — per-class probabilities</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/models/
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         MLModel Protocol + SCALAR_FIELDS utilities
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  xgboost.py      XGBoostClassifier — reference implementation
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py       MLModel Protocol + SCALAR_FIELDS utilities
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  xgboost.py    XGBoostClassifier — reference implementation
 </code></pre></div>
+<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#mlmodel">MLModel Protocol</a></li>
+<li><a href="#scalar-fields">SCALAR_FIELDS and features_to_array</a></li>
+<li><a href="#xgboostclassifier">XGBoostClassifier</a></li>
+</ul>
 <hr />
-<h2 id="position-in-the-pipeline">Position in the pipeline<a class="headerlink" href="#position-in-the-pipeline" title="Permanent link">&para;</a></h2>
-<p>The models layer is a contract layer — it defines the interface that both training and inference depend on, without implementing either.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Training layer              Models layer              Inference layer
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>──────────────              ────────────              ───────────────
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>StandardTrainer         →   MLModel (Protocol)   →   StandardPredictor
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  model.fit(train, val) ←── predict_proba()      ──→ model.predict_proba()
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  model.save(path)      ←── save(path)               load_model(path)
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                             XGBoostClassifier             └─→ .load()
+<h2 id="mlmodel"><code>MLModel</code> Protocol<a class="headerlink" href="#mlmodel" title="Permanent link">&para;</a></h2>
+<p>The contract every model must satisfy. Any class with compatible <code>predict_proba</code> and <code>save</code> methods is a valid <code>MLModel</code>.</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code></p>
+<p><strong>Emits:</strong> <code>np.ndarray</code> shape <code>(N, 2)</code> — <code>[:, 0]</code> is P(background), <code>[:, 1]</code> is P(positive class)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MLModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
-<p><code>SCALAR_FIELDS</code> and <code>features_to_array</code> live here so all model implementations share the same stable feature ordering.</p>
+<p><code>save</code> must write a <code>manifest.json</code> containing at least <code>{"model_class": "ClassName"}</code> so that <code>inference.load_model</code> can reconstruct the model. <code>load</code> is not on the Protocol because backends serialize differently (<code>joblib</code> for XGBoost, <code>torch.save</code> for neural nets) — dispatch lives in <code>inference/loader.py</code>.</p>
 <hr />
-<h2 id="protocol-mlmodel">Protocol — <code>MLModel</code><a class="headerlink" href="#protocol-mlmodel" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MLModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-</code></pre></div>
-<p>Any class implementing these two methods satisfies <code>MLModel</code>.</p>
-<p><strong><code>predict_proba(features)</code></strong> returns an <code>(N, 2)</code> array of class probabilities. Column
-0 = P(background), column 1 = P(positive class). The inference layer uses column 1.</p>
-<p><strong><code>save(path)</code></strong> writes the model to a directory. The directory must contain a
-<code>manifest.json</code> file with at least <code>{"model_class": "ClassName"}</code> so that <code>load_model</code>
-knows how to reconstruct it.</p>
-<p><strong>Why is <code>load</code> not on the Protocol?</strong> Because different model backends serialize
-differently (joblib for XGBoost, <code>torch.save</code> for neural nets). The dispatch lives in
-<code>inference/loader.py</code> which uses the manifest to call the right <code>@classmethod load()</code>.</p>
-<hr />
-<h2 id="scalar-field-utilities">Scalar field utilities<a class="headerlink" href="#scalar-field-utilities" title="Permanent link">&para;</a></h2>
-<p>Defined in <code>models/base.py</code>, available to any model that operates on scalar features:</p>
+<h2 id="scalar-fields"><code>SCALAR_FIELDS</code> and <code>features_to_array</code><a class="headerlink" href="#scalar-fields" title="Permanent link">&para;</a></h2>
+<p>Defined in <code>models/base.py</code>. Shared by all model implementations that operate on scalar features.</p>
 <h3 id="scalar_fields"><code>SCALAR_FIELDS</code><a class="headerlink" href="#scalar_fields" title="Permanent link">&para;</a></h3>
-<p>An ordered list of 43 float field names from <code>FeatureVector</code> — everything except
-<code>source_id</code>, <code>survey</code>, <code>period_algorithm</code>, and <code>dmdt</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCALAR_FIELDS</span><span class="p">,</span> <span class="n">N_SCALAR_FEATURES</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">N_SCALAR_FEATURES</span><span class="p">)</span>   <span class="c1"># 43</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">SCALAR_FIELDS</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>   <span class="c1"># [&#39;n_obs&#39;, &#39;median&#39;, &#39;wmean&#39;, &#39;chi2red&#39;, &#39;roms&#39;]</span>
+<p>An ordered list of 43 float field names from <code>FeatureVector</code> — everything except <code>source_id</code>, <code>survey</code>, <code>period_algorithm</code>, and <code>dmdt</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCALAR_FIELDS</span><span class="p">,</span> <span class="n">N_SCALAR_FEATURES</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">N_SCALAR_FEATURES</span><span class="p">)</span>   <span class="c1"># 43</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">SCALAR_FIELDS</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>   <span class="c1"># [&#39;n_obs&#39;, &#39;median&#39;, &#39;wmean&#39;, &#39;chi2red&#39;, &#39;roms&#39;]</span>
 </code></pre></div>
 <div class="admonition warning">
-<p class="admonition-title">Field order is stable — do not reorder</p>
-<p>The ordering of <code>SCALAR_FIELDS</code> is fixed. A model trained on one ordering cannot
-be used with a different ordering. Changing <code>SCALAR_FIELDS</code> without retraining all
-existing models will produce silently wrong predictions.</p>
+<p class="admonition-title">Field order is fixed</p>
+<p>The ordering of <code>SCALAR_FIELDS</code> is stable across versions. A model trained on one ordering cannot be used with a different ordering. Never reorder <code>SCALAR_FIELDS</code> without retraining.</p>
 </div>
 <h3 id="features_to_array"><code>features_to_array</code><a class="headerlink" href="#features_to_array" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">features_to_array</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>   <span class="c1"># (N, 43) float32 array</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">features_to_array</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>   <span class="c1"># np.ndarray, shape (N, 43), dtype float32</span>
 </code></pre></div>
-<p>Extracts the 43 scalar fields from a list of <code>FeatureVector</code> objects in the order
-defined by <code>SCALAR_FIELDS</code>. NaN values are preserved (XGBoost handles them natively).</p>
+<p>Extracts the 43 scalar fields in <code>SCALAR_FIELDS</code> order. <code>np.nan</code> values are preserved — XGBoost handles them natively.</p>
 <hr />
-<h2 id="xgboostclassifier-reference-implementation"><code>XGBoostClassifier</code> — reference implementation<a class="headerlink" href="#xgboostclassifier-reference-implementation" title="Permanent link">&para;</a></h2>
-<p><code>XGBoostClassifier</code> is the reference implementation of <code>MLModel</code>. It demonstrates the
-correct pattern for a new model. It is <strong>not</strong> the committed model for any science case
-— treat it as a template.</p>
-<div class="admonition info">
-<p class="admonition-title">What is XGBoost? (for astrophysicists)</p>
-<p>XGBoost (eXtreme Gradient Boosting) is an ensemble method that trains many simple
-decision trees in sequence, where each tree corrects the errors of the previous ones.
-The result is a strong classifier built from many weak ones.</p>
-<p>It has no sense of sequence or spatial structure — it sees the 43 scalar features as
-a flat feature vector and learns a boundary in that 43-dimensional space. This is why
-it ignores the <code>dmdt</code> image.</p>
-</div>
-<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBoostClassifier</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models.xgboost</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBoostConfig</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">model</span> <span class="o">=</span> <span class="n">XGBoostClassifier</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">XGBoostConfig</span><span class="p">(</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>     <span class="c1"># number of boosting rounds (trees)</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>          <span class="c1"># maximum depth of each tree</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>   <span class="c1"># step size shrinkage (eta)</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">subsample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>        <span class="c1"># fraction of training samples per tree</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="c1"># fraction of features per tree</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">min_child_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>   <span class="c1"># minimum sum of weights in a leaf</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>        <span class="c1"># True to use GPU training (tree_method=&quot;gpu_hist&quot;)</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">))</span>
+<h2 id="xgboostclassifier"><code>XGBoostClassifier</code><a class="headerlink" href="#xgboostclassifier" title="Permanent link">&para;</a></h2>
+<p>The reference implementation of <code>MLModel</code>. Demonstrates the correct pattern for implementing a new model. It is not the committed model for any science case — treat it as a template.</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> — uses the 43 scalar fields only (ignores <code>dmdt</code>)</p>
+<p><strong>Emits:</strong> <code>np.ndarray</code> shape <code>(N, 2)</code> — class probabilities</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBoostClassifier</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models.xgboost</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBoostConfig</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">model</span> <span class="o">=</span> <span class="n">XGBoostClassifier</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">XGBoostConfig</span><span class="p">(</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">subsample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">))</span>
 </code></pre></div>
 <h3 id="save-and-load">Save and load<a class="headerlink" href="#save-and-load" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># Creates:</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">#   models/xgb_v1/model.ubj       (XGBoost binary format)</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">#   models/xgb_v1/manifest.json   ({&quot;model_class&quot;: &quot;XGBoostClassifier&quot;})</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">XGBoostClassifier</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># Creates:</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">#   models/xgb_v1/model.ubj       (XGBoost binary format)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1">#   models/xgb_v1/manifest.json   ({&quot;model_class&quot;: &quot;XGBoostClassifier&quot;})</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">XGBoostClassifier</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>The <code>.ubj</code> format (Universal Binary JSON) is XGBoost's native binary format —
-compact and fast to load.</p>
-<hr />
-<h2 id="adding-a-new-model">Adding a new model<a class="headerlink" href="#adding-a-new-model" title="Permanent link">&para;</a></h2>
-<p>Four steps, one new file:</p>
-<p><strong>1.</strong> Create <code>src/ml4em/models/my_model.py</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyModelConfig</span><span class="p">:</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">:</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MyModelConfig</span> <span class="o">=</span> <span class="n">MyModelConfig</span><span class="p">()):</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">build_network</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>  <span class="c1"># your architecture</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>        <span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>      <span class="c1"># (N, 43)</span>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>        <span class="c1"># or use dmdt: features[i].dmdt      # (26, 26)</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># (N, 2)</span>
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/model.pt&quot;</span><span class="p">)</span>
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/manifest.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;model_class&quot;</span><span class="p">:</span> <span class="s2">&quot;MyModel&quot;</span><span class="p">},</span> <span class="n">f</span><span class="p">)</span>
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MyModel&quot;</span><span class="p">:</span>
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>        <span class="n">manifest</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/manifest.json&quot;</span><span class="p">))</span>
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>        <span class="n">model</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/model.pt&quot;</span><span class="p">))</span>
-<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>        <span class="k">return</span> <span class="n">model</span>
-</code></pre></div>
-<p><strong>2.</strong> Register in <code>src/ml4em/inference/loader.py</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">_MODEL_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="s2">&quot;XGBoostClassifier&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.xgboost&quot;</span><span class="p">,</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="s2">&quot;MyModel&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.my_model&quot;</span><span class="p">,</span>      <span class="c1"># add this</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
-</code></pre></div>
-<p><strong>3.</strong> Use it — swap one import and one constructor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models.my_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyModel</span><span class="p">,</span> <span class="n">MyModelConfig</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">MyModelConfig</span><span class="p">(</span><span class="n">hidden_dim</span><span class="o">=</span><span class="mi">512</span><span class="p">))</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">StandardTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">training</span><span class="p">)</span>
-</code></pre></div>
-<p><strong>4.</strong> Training, inference, and postprocessing are unchanged.</p>
-<p>See <a href="../../guides/add-model/">Guide: Add a Model</a> for step-by-step instructions.</p>
+<h3 id="xgboostconfig-parameters"><code>XGBoostConfig</code> parameters<a class="headerlink" href="#xgboostconfig-parameters" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n_estimators</code></td>
+<td>500</td>
+<td>Number of boosting rounds (trees)</td>
+</tr>
+<tr>
+<td><code>max_depth</code></td>
+<td>6</td>
+<td>Maximum depth of each tree</td>
+</tr>
+<tr>
+<td><code>learning_rate</code></td>
+<td>0.05</td>
+<td>Step size shrinkage (eta)</td>
+</tr>
+<tr>
+<td><code>subsample</code></td>
+<td>0.8</td>
+<td>Fraction of training samples per tree</td>
+</tr>
+<tr>
+<td><code>colsample_bytree</code></td>
+<td>0.8</td>
+<td>Fraction of features sampled per tree</td>
+</tr>
+<tr>
+<td><code>min_child_weight</code></td>
+<td>1</td>
+<td>Minimum sum of weights in a leaf</td>
+</tr>
+<tr>
+<td><code>use_gpu</code></td>
+<td><code>False</code></td>
+<td>Use GPU training (<code>tree_method="gpu_hist"</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../../guides/add-model/">Guide: Add a Model</a> to add a new model backend.</p>
 <hr />
 <p><a class="md-button" href="../features/">← Features</a> <a class="md-button md-button--primary" href="../training/">Training →</a> <a class="md-button md-button--primary" href="../inference/">Inference →</a></p>
 

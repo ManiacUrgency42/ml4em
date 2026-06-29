@@ -7,8 +7,8 @@
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) (recommended — see [Installation](installation.md))
-- A ZTF or Rubin API token (see [Installation → API tokens](installation.md#api-tokens))
+- [Docker](https://docs.docker.com/get-docker/)
+- A ZTF or Rubin API token — set in a `.env` file (see [Deployment](deployment.md))
 
 ## 1. Clone
 
@@ -35,7 +35,7 @@ ML4EM_ZTF_TOKEN=your_token_here
 ML4EM_RUBIN_TOKEN=your_token_here
 ```
 
-See [Installation → API tokens](installation.md#api-tokens) for where to get these.
+See [Deployment](deployment.md) for where to get these.
 
 ## 3. Pull the Docker image
 

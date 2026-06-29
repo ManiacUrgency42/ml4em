@@ -1211,10 +1211,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-the-pieces-connect" class="md-nav__link">
+  <a href="#contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How the pieces connect
+        Contents
       
     </span>
   </a>
@@ -1222,10 +1222,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protocol-trainer" class="md-nav__link">
+  <a href="#trainer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol — Trainer
+        Trainer Protocol
       
     </span>
   </a>
@@ -1255,22 +1255,28 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#loading-and-splitting" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standardtrainer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading and splitting
+        StandardTrainer (shell)
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="StandardTrainer (shell)">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#class-imbalance" class="md-nav__link">
+  <a href="#cfgtraining-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Class imbalance
+        cfg.training parameters
       
     </span>
   </a>
@@ -1279,17 +1285,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#standardtrainer-shell" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        StandardTrainer (shell)
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1997,10 +1992,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-the-pieces-connect" class="md-nav__link">
+  <a href="#contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How the pieces connect
+        Contents
       
     </span>
   </a>
@@ -2008,10 +2003,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protocol-trainer" class="md-nav__link">
+  <a href="#trainer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol — Trainer
+        Trainer Protocol
       
     </span>
   </a>
@@ -2041,22 +2036,28 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#loading-and-splitting" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standardtrainer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading and splitting
+        StandardTrainer (shell)
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="StandardTrainer (shell)">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#class-imbalance" class="md-nav__link">
+  <a href="#cfgtraining-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Class imbalance
+        cfg.training parameters
       
     </span>
   </a>
@@ -2065,17 +2066,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#standardtrainer-shell" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        StandardTrainer (shell)
-      
-    </span>
-  </a>
   
 </li>
       
@@ -2100,90 +2090,64 @@
 
 
 <h1 id="training-layer">Training Layer<a class="headerlink" href="#training-layer" title="Permanent link">&para;</a></h1>
-<div class="admonition abstract">
-<p class="admonition-title">Layer at a glance</p>
-<p><strong>Receives:</strong> <code>list[FeatureVector]</code> (from feature layer output files) + researcher-supplied <code>labels.csv</code>
-<strong>Produces:</strong> saved model directory (written by <code>model.save()</code>)
-<strong>Protocol:</strong> <code>Trainer</code> → <code>fit(dataset)</code>, <code>save(path)</code>
-<strong>Files:</strong> <code>training/base.py</code> · <code>training/dataset.py</code> · <code>training/trainer.py</code>
-<strong>Parallel to:</strong> <a href="../inference/">Inference layer</a> — shares <code>FeatureVector</code> input and <code>MLModel</code> contract, but neither imports from the other.
-<strong>Guide:</strong> <a href="../../guides/label-preparation/">Preparing Labels</a></p>
-</div>
-<p>The training layer loads labeled features, splits them into train/val/test sets, and
-fits a model. It is parallel to inference — neither layer imports from the other.</p>
+<p>Loads labeled feature vectors, splits them into train/val/test sets, and fits a model. Parallel to the inference layer — neither imports from the other.</p>
+<p><strong>Consumes:</strong> <code>FeatureVector</code> parquet files (written by <code>FeaturePipeline</code>) + researcher-supplied <code>labels.csv</code></p>
+<p><strong>Emits:</strong> Saved model directory (via <code>model.save()</code>)</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/training/
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         Trainer Protocol
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  dataset.py      FeatureDataset — load features + join labels
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  trainer.py      StandardTrainer
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py       Trainer Protocol
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  dataset.py    FeatureDataset — load features + join labels
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  trainer.py    StandardTrainer
 </code></pre></div>
+<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#trainer">Trainer Protocol</a></li>
+<li><a href="#featuredataset">FeatureDataset</a></li>
+<li><a href="#standardtrainer">StandardTrainer (shell)</a></li>
+</ul>
 <hr />
-<h2 id="how-the-pieces-connect">How the pieces connect<a class="headerlink" href="#how-the-pieces-connect" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FeatureDataset.from_storage(cfg.storage, labels_path)
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ├─ loads parquet files (written by FeaturePipeline)  → list[FeatureVector]
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  └─ joins labels.csv on source_id                     → list[LabeledSample]
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>dataset.split(val_fraction=0.1, test_fraction=0.1, seed=42)
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  └─→ (train, val, test)  subsets of LabeledSample
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>StandardTrainer(model, cfg.training)
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  ├─→ fit(dataset)   → model.fit(train, val)  [stub — NotImplementedError]
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  └─→ save(path)     → model.save(path)        [implemented]
-</code></pre></div>
-<p><strong>Entry points:</strong> <code>FeatureDataset.from_storage</code> to load data; <code>StandardTrainer.fit</code> to train; <code>StandardTrainer.save</code> to persist the result.</p>
-<hr />
-<h2 id="protocol-trainer">Protocol — <code>Trainer</code><a class="headerlink" href="#protocol-trainer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Trainer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">FeatureDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<h2 id="trainer"><code>Trainer</code> Protocol<a class="headerlink" href="#trainer" title="Permanent link">&para;</a></h2>
+<p>The contract every trainer must satisfy.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Trainer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">FeatureDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
 <hr />
 <h2 id="featuredataset"><code>FeatureDataset</code><a class="headerlink" href="#featuredataset" title="Permanent link">&para;</a></h2>
-<p>Loads <code>FeatureVector</code> objects from parquet files written by <code>FeaturePipeline</code> and
-joins them with a researcher-supplied labels CSV.</p>
+<p>Loads <code>FeatureVector</code> objects from parquet files and joins them with a researcher-supplied labels CSV.</p>
+<p><strong>Consumes:</strong> Parquet feature files + <code>labels.csv</code></p>
+<p><strong>Emits:</strong> <code>list[LabeledSample]</code> — <code>FeatureVector</code> + integer label, joined on <code>source_id</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureDataset</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">FeatureDataset</span><span class="o">.</span><span class="n">from_storage</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="n">labels_path</span><span class="o">=</span><span class="s2">&quot;labels.csv&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">class_counts</span><span class="p">())</span>       <span class="c1"># {0: 5000, 1: 320}</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">positive_fraction</span><span class="p">())</span>  <span class="c1"># 0.060</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">val_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">test_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</code></pre></div>
 <h3 id="labels-csv-format">Labels CSV format<a class="headerlink" href="#labels-csv-format" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>source_id,label
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>686149073900013696,1
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>686149073900013697,0
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>686149073900013698,0
 </code></pre></div>
 <ul>
-<li><code>source_id</code>: the same string ID used in <code>LightCurve.source_id</code></li>
-<li><code>label</code>: <code>1</code> = positive class (what you're looking for), <code>0</code> = background</li>
+<li><code>source_id</code>: same string ID as <code>LightCurve.source_id</code></li>
+<li><code>label</code>: <code>1</code> = positive class, <code>0</code> = background</li>
+<li>Sources present in only one of (features, labels) are silently skipped</li>
 </ul>
-<p>Labels are <strong>never generated by ml4em</strong>. They must come from an external source — for
-example, a cross-match against a spectroscopic white dwarf catalog. See
-<a href="../../guides/label-preparation/">Preparing Labels</a>.</p>
-<p>Sources present in only one of (features, labels) are silently skipped.</p>
-<h3 id="loading-and-splitting">Loading and splitting<a class="headerlink" href="#loading-and-splitting" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureDataset</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">FeatureDataset</span><span class="o">.</span><span class="n">from_storage</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="n">labels_path</span><span class="o">=</span><span class="s2">&quot;labels.csv&quot;</span><span class="p">)</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Inspect class balance</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">class_counts</span><span class="p">())</span>       <span class="c1"># {0: 5000, 1: 320}</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">positive_fraction</span><span class="p">())</span>  <span class="c1"># 0.060</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Split into train / val / test</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">val_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">test_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</code></pre></div>
-<h3 id="class-imbalance">Class imbalance<a class="headerlink" href="#class-imbalance" title="Permanent link">&para;</a></h3>
-<p>Rare astrophysical objects (like white dwarf binaries) are genuinely rare. In a typical
-field sample, the positive class might be 1–5% of all sources.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">dataset</span><span class="o">.</span><span class="n">positive_fraction</span><span class="p">()</span>  <span class="c1"># → 0.04  (4% positive)</span>
-</code></pre></div>
-<p>This imbalance affects training: a model that predicts "background" for everything
-would be 96% accurate but completely useless. Handling class imbalance is left to the
-model implementation (XGBoost has a <code>scale_pos_weight</code> parameter for this; neural nets
-can use class-weighted loss).</p>
+<p>Labels are never generated by ml4em. See <a href="../../guides/label-preparation/">Preparing Labels</a> for sourcing them from external catalogs.</p>
 <hr />
-<h2 id="standardtrainer-shell"><code>StandardTrainer</code> <em>(shell)</em><a class="headerlink" href="#standardtrainer-shell" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardTrainer</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">StandardTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">training</span><span class="p">)</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>   <span class="c1"># → NotImplementedError (training loop pending)</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>     <span class="c1"># delegates to model.save(path) — implemented</span>
+<h2 id="standardtrainer"><code>StandardTrainer</code> <em>(shell)</em><a class="headerlink" href="#standardtrainer" title="Permanent link">&para;</a></h2>
+<p>Orchestrates training: calls <code>model.fit(train, val)</code> and delegates <code>save</code> to <code>model.save(path)</code>.</p>
+<p><strong>Consumes:</strong> <code>FeatureDataset</code> + <code>MLModel</code></p>
+<p><strong>Emits:</strong> Saved model directory</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardTrainer</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">StandardTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">training</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>   <span class="c1"># NotImplementedError — training loop pending</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>     <span class="c1"># delegates to model.save(path) — implemented</span>
 </code></pre></div>
-<p><code>cfg.training</code> controls loop parameters:</p>
+<h3 id="cfgtraining-parameters"><code>cfg.training</code> parameters<a class="headerlink" href="#cfgtraining-parameters" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2194,7 +2158,7 @@ can use class-weighted loss).</p>
 <tbody>
 <tr>
 <td><code>learning_rate</code></td>
-<td>Step size for gradient descent (used by neural net trainers)</td>
+<td>Step size for gradient descent (neural net trainers)</td>
 </tr>
 <tr>
 <td><code>batch_size</code></td>
@@ -2206,7 +2170,7 @@ can use class-weighted loss).</p>
 </tr>
 <tr>
 <td><code>patience</code></td>
-<td>Early stopping: stop after this many epochs with no val improvement</td>
+<td>Early stopping: halt after this many epochs with no val improvement</td>
 </tr>
 <tr>
 <td><code>val_fraction</code></td>
@@ -2222,15 +2186,9 @@ can use class-weighted loss).</p>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">Status</p>
-<p>The training loop (<code>fit</code>) is a stub raising <code>NotImplementedError</code>. <code>save</code> works
-and delegates to <code>model.save(path)</code>. The training loop will be implemented once
-the model architecture is finalized.</p>
-<p>XGBoost training may not need all of these parameters (<code>max_epochs</code> doesn't apply
-to XGBoost in the traditional sense; early stopping uses <code>eval_set</code> instead).
-The <code>StandardTrainer</code> will dispatch appropriately per model type.</p>
-</div>
+<blockquote>
+<p><strong>Status:</strong> <code>fit</code> raises <code>NotImplementedError</code> — training loop pending model architecture finalization. <code>save</code> is fully implemented.</p>
+</blockquote>
 <hr />
 <p><a class="md-button" href="../models/">← Models</a> <a class="md-button md-button--primary" href="../inference/">Inference →</a></p>
 

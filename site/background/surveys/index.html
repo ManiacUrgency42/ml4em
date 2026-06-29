@@ -893,17 +893,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#simulatedsource-stub" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SimulatedSource (stub)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#gaia" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2246,17 +2235,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#simulatedsource-stub" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SimulatedSource (stub)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#gaia" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2394,15 +2372,6 @@ objects:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mag = -2.5 × log₁₀(psfFlux / 3631e9)
 </code></pre></div>
 <p>(3631 Jy is the zero-point for the AB magnitude system used by Rubin.)</p>
-<hr />
-<h2 id="simulatedsource-stub">SimulatedSource <em>(stub)</em><a class="headerlink" href="#simulatedsource-stub" title="Permanent link">&para;</a></h2>
-<p><code>SimulatedSource</code> will wrap <strong>Lcurve</strong>, Tom Marsh's physics-based white dwarf binary
-light curve modelling code. It generates synthetic light curves given orbital parameters
-(masses, radii, inclination, etc.) with realistic noise injected.</p>
-<p>This is used to generate training data for WDB detection without needing actual labeled
-observations. The <code>source_id</code> will be either a path to an Lcurve <code>.mod</code> parameter file
-or a grid index.</p>
-<p>Status: stub pending Lcurve integration.</p>
 <hr />
 <h2 id="gaia">Gaia<a class="headerlink" href="#gaia" title="Permanent link">&para;</a></h2>
 <p>Gaia is covered separately in <a href="../gaia/">Gaia &amp; Stellar Catalogs</a> because it is used

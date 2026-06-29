@@ -1239,10 +1239,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-the-pieces-connect" class="md-nav__link">
+  <a href="#contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How the pieces connect
+        Contents
       
     </span>
   </a>
@@ -1250,10 +1250,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protocol-predictor" class="md-nav__link">
+  <a href="#predictor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol — Predictor
+        Predictor Protocol
       
     </span>
   </a>
@@ -1261,7 +1261,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#load_model" class="md-nav__link">
+  <a href="#load-model" class="md-nav__link">
     <span class="md-ellipsis">
       
         load_model
@@ -1272,7 +1272,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standardpredictor-shell" class="md-nav__link">
+  <a href="#standardpredictor" class="md-nav__link">
     <span class="md-ellipsis">
       
         StandardPredictor (shell)
@@ -1283,15 +1283,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#probabilities_to_candidates-fully-implemented" class="md-nav__link">
+  <a href="#probabilities-to-candidates" class="md-nav__link">
     <span class="md-ellipsis">
       
-        probabilities_to_candidates — fully implemented
+        probabilities_to_candidates
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="probabilities_to_candidates — fully implemented">
+    <nav class="md-nav" aria-label="probabilities_to_candidates">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1986,10 +1986,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-the-pieces-connect" class="md-nav__link">
+  <a href="#contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How the pieces connect
+        Contents
       
     </span>
   </a>
@@ -1997,10 +1997,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protocol-predictor" class="md-nav__link">
+  <a href="#predictor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol — Predictor
+        Predictor Protocol
       
     </span>
   </a>
@@ -2008,7 +2008,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#load_model" class="md-nav__link">
+  <a href="#load-model" class="md-nav__link">
     <span class="md-ellipsis">
       
         load_model
@@ -2019,7 +2019,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standardpredictor-shell" class="md-nav__link">
+  <a href="#standardpredictor" class="md-nav__link">
     <span class="md-ellipsis">
       
         StandardPredictor (shell)
@@ -2030,15 +2030,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#probabilities_to_candidates-fully-implemented" class="md-nav__link">
+  <a href="#probabilities-to-candidates" class="md-nav__link">
     <span class="md-ellipsis">
       
-        probabilities_to_candidates — fully implemented
+        probabilities_to_candidates
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="probabilities_to_candidates — fully implemented">
+    <nav class="md-nav" aria-label="probabilities_to_candidates">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2078,96 +2078,77 @@
 
 
 <h1 id="inference-layer">Inference Layer<a class="headerlink" href="#inference-layer" title="Permanent link">&para;</a></h1>
-<div class="admonition abstract">
-<p class="admonition-title">Layer at a glance</p>
-<p><strong>Receives:</strong> <code>list[FeatureVector]</code> + a saved model directory
-<strong>Produces:</strong> <code>list[Candidate]</code> — one per source, with probability, confidence tier, and period
-<strong>Protocol:</strong> <code>Predictor</code> → <code>predict(features)</code>
-<strong>Files:</strong> <code>inference/base.py</code> · <code>inference/loader.py</code> · <code>inference/predictor.py</code> · <code>inference/postprocess.py</code>
-<strong>Parallel to:</strong> <a href="../training/">Training layer</a> — shares <code>FeatureVector</code> input and <code>MLModel</code> contract, but neither imports from the other.</p>
-</div>
-<p>The inference layer loads a trained model and converts <code>FeatureVector</code> objects into
-<code>Candidate</code> predictions.</p>
+<p>Loads a trained model and converts <code>FeatureVector</code> objects into <code>Candidate</code> predictions. Parallel to the training layer — neither imports from the other.</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + a saved model directory</p>
+<p><strong>Emits:</strong> <code>list[Candidate]</code> — one per source, with probability, confidence tier, and period</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/inference/
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         Predictor Protocol
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  loader.py       load_model(path) → MLModel
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  predictor.py    StandardPredictor
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  postprocess.py  probabilities_to_candidates            [fully implemented]
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  predictor.py    StandardPredictor   [shell]
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  postprocess.py  probabilities_to_candidates   [implemented]
+</code></pre></div>
+<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#predictor">Predictor Protocol</a></li>
+<li><a href="#load-model">load_model</a></li>
+<li><a href="#standardpredictor">StandardPredictor (shell)</a></li>
+<li><a href="#probabilities-to-candidates">probabilities_to_candidates</a></li>
+</ul>
+<hr />
+<h2 id="predictor"><code>Predictor</code> Protocol<a class="headerlink" href="#predictor" title="Permanent link">&para;</a></h2>
+<p>The contract every predictor must satisfy.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Predictor</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]:</span> <span class="o">...</span>
 </code></pre></div>
 <hr />
-<h2 id="how-the-pieces-connect">How the pieces connect<a class="headerlink" href="#how-the-pieces-connect" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>load_model(&quot;models/xgb_v1/&quot;)
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  └─ reads manifest.json → dispatches to XGBoostClassifier.load()
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  └─→ MLModel
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>StandardPredictor(model, cfg.inference)
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  └─→ predict(feature_vectors)
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        ├─→ model.predict_proba(features)         → (N, 2) ndarray  [in batches]
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        └─→ probabilities_to_candidates(...)       → list[Candidate]
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>              ├─ probs[:, 1]  positive-class probability per source
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>              ├─ threshold comparison  →  &quot;high&quot; / &quot;medium&quot; / &quot;low&quot;
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>              └─ copies source_id, ra, dec, period from each FeatureVector
+<h2 id="load-model"><code>load_model</code><a class="headerlink" href="#load-model" title="Permanent link">&para;</a></h2>
+<p>Reads a saved model directory and returns an <code>MLModel</code> instance. The only place in the inference layer that knows about concrete model types.</p>
+<p><strong>Consumes:</strong> Path to a saved model directory containing <code>manifest.json</code></p>
+<p><strong>Emits:</strong> <code>MLModel</code> instance</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p><strong>Entry point:</strong> <code>StandardPredictor.predict</code> — everything else is called by it or by the one-time <code>load_model</code> setup before it runs.</p>
+<p>Reads <code>{path}/manifest.json</code>, finds <code>"model_class"</code>, and dispatches to the appropriate <code>@classmethod load()</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span><span class="nt">&quot;model_class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XGBoostClassifier&quot;</span><span class="p">}</span>
+</code></pre></div>
+<p>The model registry in <code>inference/loader.py</code> maps class names to module paths:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">_MODEL_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="s2">&quot;XGBoostClassifier&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.xgboost&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>To register a new model, add one entry to <code>_MODEL_REGISTRY</code>. See <a href="../../guides/add-model/">Guide: Add a Model</a>.</p>
 <hr />
-<h2 id="protocol-predictor">Protocol — <code>Predictor</code><a class="headerlink" href="#protocol-predictor" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Predictor</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]:</span> <span class="o">...</span>
+<h2 id="standardpredictor"><code>StandardPredictor</code> <em>(shell)</em><a class="headerlink" href="#standardpredictor" title="Permanent link">&para;</a></h2>
+<p>Runs <code>model.predict_proba</code> in batches and passes results to <code>probabilities_to_candidates</code>.</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + <code>MLModel</code></p>
+<p><strong>Emits:</strong> <code>list[Candidate]</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardPredictor</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">predictor</span> <span class="o">=</span> <span class="n">StandardPredictor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">candidates</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>
 </code></pre></div>
+<blockquote>
+<p><strong>Status:</strong> <code>predict</code> is a shell — pending completion of the model implementation. <code>probabilities_to_candidates</code> (called internally) is fully implemented.</p>
+</blockquote>
 <hr />
-<h2 id="load_model"><code>load_model</code><a class="headerlink" href="#load_model" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;models/xgb_v1/&quot;</span><span class="p">)</span>
-</code></pre></div>
-<p><code>load_model</code> reads <code>{path}/manifest.json</code>, finds <code>"model_class"</code>, and dispatches to
-the appropriate <code>@classmethod load()</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// models/xgb_v1/manifest.json</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="p">{</span><span class="nt">&quot;model_class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XGBoostClassifier&quot;</span><span class="p">}</span>
-</code></pre></div>
-<p>The model registry in <code>inference/loader.py</code> maps class names to their module paths:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">_MODEL_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;XGBoostClassifier&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.xgboost&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">}</span>
-</code></pre></div>
-<p>This is the <strong>only place</strong> that knows about concrete model types. Everything else in
-the inference layer is model-agnostic.</p>
-<p>To register a new model: add one entry to <code>_MODEL_REGISTRY</code>. See
-<a href="../../guides/add-model/">Guide: Add a Model</a>.</p>
-<hr />
-<h2 id="standardpredictor-shell"><code>StandardPredictor</code> <em>(shell)</em><a class="headerlink" href="#standardpredictor-shell" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardPredictor</span>
+<h2 id="probabilities-to-candidates"><code>probabilities_to_candidates</code><a class="headerlink" href="#probabilities-to-candidates" title="Permanent link">&para;</a></h2>
+<p>Converts raw model probabilities into <code>Candidate</code> objects. Fully implemented.</p>
+<p><strong>Consumes:</strong> <code>list[FeatureVector]</code> + <code>np.ndarray</code> of shape <code>(N,)</code> — P(positive class) per source</p>
+<p><strong>Emits:</strong> <code>list[Candidate]</code> — one per source, in the same order as input</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">probabilities_to_candidates</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">predictor</span> <span class="o">=</span> <span class="n">StandardPredictor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">candidates</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>
-</code></pre></div>
-<p>Calls <code>model.predict_proba(features)</code> in batches of <code>cfg.inference.batch_size</code>, then
-passes the resulting probabilities to <code>postprocess.probabilities_to_candidates</code>.</p>
-<div class="admonition note">
-<p class="admonition-title">Status</p>
-<p><code>StandardPredictor.predict</code> is a shell pending completion of the model
-implementation. <code>probabilities_to_candidates</code> (the postprocessing step) is fully
-implemented.</p>
-</div>
-<hr />
-<h2 id="probabilities_to_candidates-fully-implemented"><code>probabilities_to_candidates</code> — fully implemented<a class="headerlink" href="#probabilities_to_candidates-fully-implemented" title="Permanent link">&para;</a></h2>
-<p>Converts raw model probabilities into <code>Candidate</code> objects:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">probabilities_to_candidates</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">candidates</span> <span class="o">=</span> <span class="n">probabilities_to_candidates</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">candidates</span> <span class="o">=</span> <span class="n">probabilities_to_candidates</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>
 </code></pre></div>
 <p>Steps:
-1. Takes <code>probs[:, 1]</code> — the positive-class probability from the <code>(N, 2)</code> output array
-2. Assigns confidence tier (<code>"high"</code> / <code>"medium"</code> / <code>"low"</code>) based on thresholds
-3. Copies <code>source_id</code>, <code>ra</code>, <code>dec</code>, <code>survey</code>, <code>period</code>, <code>period_algorithm</code> from each
-   <code>FeatureVector</code>
-4. Returns one <code>Candidate</code> (frozen dataclass) per source</p>
+1. Assigns a confidence tier based on <code>cfg.inference.confidence_thresholds</code>
+2. Copies <code>source_id</code>, <code>ra</code>, <code>dec</code>, <code>survey</code>, <code>period</code>, <code>period_algorithm</code> from each <code>FeatureVector</code>
+3. Returns one frozen <code>Candidate</code> per source</p>
 <h3 id="confidence-tier-assignment">Confidence tier assignment<a class="headerlink" href="#confidence-tier-assignment" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># config.yaml</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nt">inference</span><span class="p">:</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">confidence_thresholds</span><span class="p">:</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">inference</span><span class="p">:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">confidence_thresholds</span><span class="p">:</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
 </code></pre></div>
 <table>
 <thead>
@@ -2178,25 +2159,20 @@ implemented.</p>
 </thead>
 <tbody>
 <tr>
-<td>≥ high threshold</td>
+<td>≥ <code>high</code> threshold</td>
 <td><code>"high"</code></td>
 </tr>
 <tr>
-<td>≥ medium threshold</td>
+<td>≥ <code>medium</code> threshold</td>
 <td><code>"medium"</code></td>
 </tr>
 <tr>
-<td>below medium threshold</td>
+<td>below <code>medium</code> threshold</td>
 <td><code>"low"</code></td>
 </tr>
 </tbody>
 </table>
-<p>The thresholds are tunable. There is no hardcoded science meaning — set them to match
-the purity/completeness trade-off your analysis requires.</p>
-<p><strong>High purity run:</strong> set <code>high=0.95</code> to minimize false positives, accepting that some
-true positives will only appear in <code>"medium"</code> or <code>"low"</code>.</p>
-<p><strong>High completeness run:</strong> set <code>medium=0.3</code> to catch more true positives in the
-<code>"medium"</code> tier, accepting more false positives.</p>
+<p>Tune thresholds to match your purity/completeness requirements. Raising <code>high</code> reduces false positives; lowering <code>medium</code> increases recall at the cost of more false positives.</p>
 <hr />
 <p><a class="md-button" href="../models/">← Models</a> <a class="md-button" href="../training/">← Training</a></p>
 

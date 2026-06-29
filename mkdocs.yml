@@ -70,7 +70,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Quick Start: quickstart.md
-  - Installation: installation.md
+  - Deployment: deployment.md
 
   - Background:
     - background/index.md
@@ -101,10 +101,6 @@ nav:
     - Add a Model: guides/add-model.md
     - Preparing Labels: guides/label-preparation.md
 
-  - Deployment:
-    - Docker Builds: deployment/docker.md
-    - GitHub Container Registry: deployment/ghcr.md
-    - MSI / HPC (Apptainer): deployment/hpc.md
 
   - API Reference:
     - Types: api/types.md
