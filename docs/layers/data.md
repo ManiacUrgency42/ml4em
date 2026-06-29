@@ -60,6 +60,20 @@ source = ZTFSource(load_config().sources.ztf, token=get_ztf_token())
 lcs = source.fetch_batch(["686149073900013696", "686149073900013697"])
 ```
 
+### `fetch_by_position(ra, dec, radius_arcsec)`
+
+Cone search — resolves a sky coordinate to ZTF light curves directly, without knowing the source `_id` in advance. Use this when your input is a catalog of (ra, dec) positions (e.g. `data/wdb_sources.csv`) rather than ZTF IDs.
+
+**Consumes:** `ra`, `dec` in decimal degrees (J2000); `radius_arcsec` (default 2.0)
+
+**Emits:** `list[LightCurve]` — all matching sources within the cone, all bands, same cleaning as `fetch_batch`
+
+```python
+lcs = source.fetch_by_position(ra=256.123, dec=45.678, radius_arcsec=2.0)
+```
+
+Default radius is 2.0 arcsec — appropriate for isolated stars. Increase to 5–10 arcsec in crowded fields.
+
 ### Data cleaning
 
 Two filtering steps are applied before returning:

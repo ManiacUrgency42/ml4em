@@ -75,9 +75,38 @@ Each section of `PipelineConfig` maps directly to a layer:
 | `features.period` | `PeriodExtractor` — algorithm selection, period grid |
 | `features.dmdt` | `DmdtExtractor` — bin parameters |
 | `features.catalog` | `CatalogExtractor` — search radius |
-| `storage` | File paths used by all layers |
+| `storage` | `StorageConfig` — input file paths and output directories |
 | `training` | `StandardTrainer` — loop parameters |
 | `inference` | `StandardPredictor` — batch size, confidence thresholds |
+
+### `StorageConfig`
+
+All file paths used by the pipeline. Relative paths resolve from wherever you run the process. On MSI, override with absolute scratch paths in `config.yaml` — no environment variables, no magic.
+
+**Input files** (must exist before running):
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `catalog_path` | `data/wdb_sources.csv` | CSV of known target sources with `ra`, `dec` columns. Used by `prepare_labels.py` to look up ZTF IDs via cone search. |
+| `labels_path` | `data/labels.csv` | CSV produced by `prepare_labels.py`. Columns: `source_id`, `label` (0 or 1). Read by the training layer. |
+
+**Output directories** (created automatically):
+
+| Field | Default | Written by |
+|-------|---------|------------|
+| `features_dir` | `features/` | Feature layer |
+| `models_dir` | `models/` | Training layer |
+| `predictions_dir` | `predictions/` | Inference layer |
+
+On MSI, override the two input paths in `config.yaml`:
+
+```yaml
+storage:
+  catalog_path: /scratch.global/jin00404/ml4em/data/wdb_sources.csv
+  labels_path:  /scratch.global/jin00404/ml4em/data/labels.csv
+```
+
+The `data/` directory, `config.yaml`, and all output directories are gitignored and never committed.
 
 Model architecture hyperparameters (tree depth, estimators, dropout) are **not** in `PipelineConfig` — they live in per-model config dataclasses set in code. See [Design Principles](../architecture/design-principles.md#2-code-controls-architecture-config-controls-parameters).
 
