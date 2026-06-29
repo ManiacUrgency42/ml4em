@@ -18,11 +18,11 @@ Adding a new model
 3. Register the class name in inference/loader.py _MODEL_REGISTRY.
 4. That's it — MyModel automatically satisfies MLModel without registration.
 
-See models/xgboost.py for a reference implementation.
+See models/logistic_example.py for a reference implementation.
 
 load() is NOT on this Protocol
 -------------------------------
-Each model loads itself differently (torch, joblib, custom serialisation).
+Each model loads itself differently (torch state_dict, custom serialisation).
 The inference/loader.py load_model() function dispatches to the right class
 by reading manifest.json written by save().
 

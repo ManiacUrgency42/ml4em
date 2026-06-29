@@ -32,7 +32,7 @@ rubin = ["pyvo>=1.5", "pyarrow>=12.0"]
 catalog = ["astropy>=5.2"]
 
 # ML
-training  = ["torch>=2.0", "scikit-learn>=1.3"]
+training  = ["torch>=2.0", "pyarrow>=12.0", "pandas>=2.0"]
 inference = ["torch>=2.0"]
 
 # Development

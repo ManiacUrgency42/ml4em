@@ -18,8 +18,9 @@ The integer _id uniquely identifies one (sky position, filter) pair.
 Filters: 1 → g, 2 → r, 3 → i.
 
 To get multi-band coverage for a sky position, query multiple _ids
-(one per band) that correspond to the same coordinates — either via
-a prior cone search or from a field/CCD/quad scan.
+(one per band) that correspond to the same coordinates.  Use
+fetch_by_position(ra, dec) to resolve a sky coordinate to light curves
+directly via a Kowalski cone search.
 """
 
 from __future__ import annotations
@@ -186,6 +187,83 @@ class ZTFSource:
     # ------------------------------------------------------------------
     # Public interface  (satisfies LightCurveSource Protocol)
     # ------------------------------------------------------------------
+
+    def fetch_by_position(
+        self,
+        ra: float,
+        dec: float,
+        radius_arcsec: float = 2.0,
+    ) -> list[LightCurve]:
+        """Fetch light curves for all ZTF sources within radius_arcsec of (ra, dec).
+
+        Sends a single Kowalski cone_search query and returns all matching
+        single-band light curves, cleaned and cadence-filtered exactly as
+        fetch_batch() does.
+
+        Use this when you have sky coordinates (e.g. from a WDB catalog)
+        and need to resolve them to ZTF source IDs and light curve data.
+        For a catalog of N positions, call this N times or see
+        scripts/prepare_labels.py for the batch workflow.
+
+        Parameters
+        ----------
+        ra:
+            Right ascension in decimal degrees (J2000).
+        dec:
+            Declination in decimal degrees (J2000).
+        radius_arcsec:
+            Cone search radius in arcseconds.  Default 2.0 arcsec matches
+            the Gaia cross-match radius and is appropriate for isolated stars.
+            Increase to 5–10 arcsec in crowded fields.
+
+        Returns
+        -------
+        list[LightCurve]
+            All matching light curves across all bands, cleaned and
+            cadence-filtered.  Empty list if no ZTF source is found
+            within the search radius.
+        """
+        query = {
+            "query_type": "cone_search",
+            "query": {
+                "object_coordinates": {
+                    "cone_search_radius": radius_arcsec,
+                    "cone_search_unit": "arcsec",
+                    "radec": {"center": [ra, dec]},
+                },
+                "catalogs": {
+                    self._cfg.collection_sources: {},
+                },
+            },
+        }
+        responses = self._client.query(
+            queries=[query],
+            use_batch_query=True,
+            max_n_threads=1,
+        )
+        return self._parse_cone_responses(responses)
+
+    def _parse_cone_responses(self, responses: dict) -> list[LightCurve]:
+        """Parse a cone_search Kowalski response into LightCurve objects.
+
+        The cone_search response nests results under the catalog name and
+        position key ("center" for a single position), unlike the find
+        response parsed by _parse_responses().
+        """
+        light_curves: list[LightCurve] = []
+        for _instance, resp_list in responses.items():
+            for resp in resp_list:
+                if resp.get("status") != "success":
+                    continue
+                data = resp.get("data", {})
+                catalog_data = data.get(self._cfg.collection_sources, {})
+                # cone_search with a single position uses key "center"
+                docs = catalog_data.get("center", [])
+                for doc in docs:
+                    lc = self._doc_to_lightcurve(doc)
+                    if lc is not None:
+                        light_curves.append(lc)
+        return light_curves
 
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
         """Fetch light curves for multiple ZTF source _ids in one query.

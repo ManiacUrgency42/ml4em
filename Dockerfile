@@ -110,8 +110,12 @@ RUN cd /build/periodfind/rust \
 # ── Build periodfind (Cython + CUDA — nvcc IS present in this base image) ─────
 RUN python3.11 -m pip install --no-cache-dir /build/periodfind
 
-# ── Install ml4em (editable) ──────────────────────────────────────────────────
+# ── Install ml4em with training extras (editable) ────────────────────────────
+# [training] adds torch, pandas, pyarrow — everything needed to train the
+# logistic model and persist/reload feature vectors.
+# The torch wheel from PyPI is CPU-only; periodfind uses CUDA directly via
+# its own GPU kernel — torch does not need CUDA bindings for this demo model.
 COPY . /app/ml4em
-RUN python3.11 -m pip install --no-cache-dir -e /app/ml4em
+RUN python3.11 -m pip install --no-cache-dir -e "/app/ml4em[training]"
 
 WORKDIR /app/ml4em

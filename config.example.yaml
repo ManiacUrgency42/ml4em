@@ -45,6 +45,12 @@ features:
     include_gaia: true
 
 storage:
+  # Input files — place in ml4em/data/ locally (gitignored).
+  # Override with absolute paths on MSI.
+  catalog_path: data/wdb_sources.csv   # ra/dec catalog of target sources
+  labels_path:  data/labels.csv        # produced by scripts/prepare_labels.py
+
+  # Output directories
   features_dir:    features
   models_dir:      models
   predictions_dir: predictions

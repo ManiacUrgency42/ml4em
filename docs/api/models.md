@@ -12,10 +12,10 @@ MLModel Protocol and scalar field utilities.
       show_root_heading: false
       show_source: true
 
-::: ml4em.models.xgboost
+::: ml4em.models.logistic_example
     options:
       members:
-        - XGBoostConfig
-        - XGBoostClassifier
+        - LogisticExampleConfig
+        - LogisticExampleClassifier
       show_root_heading: false
       show_source: true

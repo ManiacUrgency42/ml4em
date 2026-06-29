@@ -232,15 +232,37 @@ class StorageConfig(BaseModel):
 
     All paths are strings to avoid platform-specific Path issues in YAML.
     Relative paths are resolved from the working directory at runtime.
+    On MSI, override these in config.yaml with absolute scratch paths.
 
-    Layer responsibilities
-    ---------------------
+    Input files (read by the pipeline)
+    ------------------------------------
+    catalog_path  CSV of known target sources with ra, dec columns.
+                  Used by scripts/prepare_labels.py to look up ZTF IDs
+                  via cone search and produce labels_path.
+                  Local default:  data/wdb_sources.csv
+                  MSI example:    /scratch.global/jin00404/ml4em/data/wdb_sources.csv
+
+    labels_path   CSV produced by prepare_labels.py.
+                  Columns: source_id (ZTF integer _id as str), label (0 or 1).
+                  Read by FeatureDataset._load_labels() during training.
+                  Local default:  data/labels.csv
+                  MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv
+
+    Output directories (written by the pipeline)
+    ---------------------------------------------
     Feature layer  →  writes to features_dir
     Training layer →  reads from features_dir, writes to models_dir
     Inference layer→  reads from features_dir + models_dir,
                       writes to predictions_dir
     """
 
+    # Input files — must exist before running the pipeline.
+    # Place them in ml4em/data/ locally (gitignored).
+    # Override in config.yaml on MSI with absolute scratch paths.
+    catalog_path : str = "data/wdb_sources.csv"   # ra/dec catalog of target sources
+    labels_path  : str = "data/labels.csv"         # source_id,label — produced by prepare_labels.py
+
+    # Output directories — created automatically by each layer
     features_dir    : str = "features"     # parquet files, one per ZTF quad / Rubin tract
     models_dir      : str = "models"       # trained model weights + feature scaler stats
     predictions_dir : str = "predictions"  # per-source WDB probability scores

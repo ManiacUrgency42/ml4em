@@ -5,8 +5,8 @@ Design
 ------
 Each MLModel.save() writes a manifest.json alongside the model weights:
 
-    {path}/manifest.json   {"model_class": "DNNClassifier"}
-    {path}/weights.pt      (PyTorch)  or  {path}/model.ubj  (XGBoost)
+    {path}/manifest.json   {"model_class": "LogisticExampleClassifier"}
+    {path}/weights.pt      (PyTorch state_dict)
 
 load_model() reads the manifest, resolves the class, and delegates to
 that class's classmethod load().
@@ -32,8 +32,7 @@ from ml4em.models.base import MLModel
 # Map class name (as written in manifest.json) to the importable class.
 # Update this dict when adding a new model to models/.
 _MODEL_REGISTRY: dict[str, str] = {
-    "DNNClassifier":      "ml4em.models.dnn",
-    "XGBoostClassifier":  "ml4em.models.xgboost",
+    "LogisticExampleClassifier": "ml4em.models.logistic_example",
 }
 
 

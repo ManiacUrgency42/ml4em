@@ -1,0 +1,54 @@
+name: Build and push GPU image
+
+# Rebuilds and pushes ghcr.io/maniacurgency42/ml4em:gpu whenever the compiled
+# dependencies change. Pure Python code changes (src/ml4em/**) do NOT trigger
+# a rebuild — the editable install + bind-mount picks those up at runtime.
+#
+# Triggers:
+#   - Push to main that touches Dockerfile, pyproject.toml, or periodfind
+#   - Manual dispatch (for forced rebuilds)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "pyproject.toml"
+      - "external/periodfind/**"
+  workflow_dispatch:
+
+jobs:
+  build-gpu:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write   # required to push to GHCR
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push GPU image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: gpu
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/maniacurgency42/ml4em:gpu
+          # Layer cache stored in GHCR — skips Rust/CUDA compilation on
+          # subsequent builds if only pyproject.toml changes.
+          cache-from: type=registry,ref=ghcr.io/maniacurgency42/ml4em:gpu-buildcache
+          cache-to: type=registry,ref=ghcr.io/maniacurgency42/ml4em:gpu-buildcache,mode=max

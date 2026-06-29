@@ -1,14 +1,9 @@
 # Quick Start
 
-!!! warning "Work in progress"
-    The training loop is not yet implemented. This page will be filled in once
-    end-to-end execution is working. The steps below are correct for cloning and
-    configuring; the run commands are placeholders.
-
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/)
-- A ZTF or Rubin API token — set in a `.env` file (see [Deployment](deployment.md))
+- [Docker](https://docs.docker.com/get-docker/) — for local CPU testing
+- A Kowalski ZTF token — set in a `.env` file (see below)
 
 ## 1. Clone
 
@@ -17,7 +12,7 @@ git clone --recurse-submodules <ml4em-repo-url>
 cd ml4em
 ```
 
-The `--recurse-submodules` flag is required because `periodfind` (the GPU period-finding
+`--recurse-submodules` is required because `periodfind` (the GPU period-finding
 library) lives at `external/periodfind` as a git submodule.
 
 ## 2. Configure
@@ -26,64 +21,71 @@ library) lives at `external/periodfind` as a git submodule.
 cp config.example.yaml config.yaml
 ```
 
-Open `config.yaml` and fill in the ZTF or Rubin connection details. API tokens go in a
-`.env` file (not in `config.yaml`):
+Open `config.yaml` and verify the ZTF connection settings. Your Kowalski token goes
+in a `.env` file, not in `config.yaml`:
 
 ```bash
-# .env
-ML4EM_ZTF_TOKEN=your_token_here
-ML4EM_RUBIN_TOKEN=your_token_here
+# .env  (gitignored — never commit this)
+ML4EM_ZTF_TOKEN=your_kowalski_token_here
 ```
 
-See [Deployment](deployment.md) for where to get these.
+## 3. Add your catalog
 
-## 3. Pull the Docker image
+Place your WDB source catalog at the path set by `storage.catalog_path`
+(default: `data/wdb_sources.csv`). The file must have at minimum `ra` and `dec`
+columns in decimal degrees:
+
+```
+obj_id,ra,dec
+WDB_001,123.456,-45.678
+...
+```
+
+## 4. Pull the CPU image (local testing)
 
 ```bash
-# CPU image (for local development)
-docker pull ghcr.io/<org>/ml4em:cpu
-
-# GPU image (for HPC / feature extraction at scale)
-docker pull ghcr.io/<org>/ml4em:gpu
+docker pull ghcr.io/maniacurgency42/ml4em:cpu
 ```
 
-## 4. Run feature extraction
-
-!!! note "TODO"
-    Command placeholder — fill in once `ml4em.run` entry point is implemented.
+## 5. Run the demo
 
 ```bash
-# docker run --rm \
-#   -v $(pwd)/config.yaml:/config.yaml \
-#   -v $(pwd)/data:/data \
-#   ghcr.io/<org>/ml4em:cpu \
-#   python -m ml4em.run --config /config.yaml extract
+docker run --rm \
+    -v $(pwd):/app/ml4em \
+    -v $(pwd)/data:/data \
+    --env-file .env \
+    ghcr.io/maniacurgency42/ml4em:cpu \
+    python scripts/run_demo.py --config config.yaml
 ```
 
-## 5. Run inference
+This runs the full end-to-end pipeline:
 
-!!! note "TODO"
-    Command placeholder — fill in once the training loop and predictor are implemented.
-
-```bash
-# docker run --rm \
-#   -v $(pwd)/config.yaml:/config.yaml \
-#   -v $(pwd)/data:/data \
-#   ghcr.io/<org>/ml4em:cpu \
-#   python -m ml4em.run --config /config.yaml predict
-```
+1. Reads `wdb_sources.csv` — the WDB catalog of target sky positions
+2. Queries ZTF via Kowalski cone search — positives within 2 arcsec, negatives at 2–30 arcsec
+3. Extracts features (statistics, periods, dm/dt histograms)
+4. Trains a `LogisticExampleClassifier` on the labeled sources
+5. Saves the model and runs inference on the test set
+6. Prints results grouped by confidence tier (high / medium / low)
 
 ## 6. Output
 
-The inference layer produces a `candidates.parquet` file with one row per source:
+```
+features/demo.parquet        — extracted feature vectors (reusable)
+models/logistic_demo/        — saved model weights and manifest
+```
 
-| Column | Description |
-|--------|-------------|
-| `source_id` | Survey-native identifier |
-| `ra`, `dec` | Sky position in decimal degrees |
-| `probability` | P(positive class) in [0, 1] |
+Inference results are printed to stdout. Each source shows:
+
+| Field | Description |
+|-------|-------------|
+| `source_id` | ZTF integer source ID |
+| `probability` | P(WDB) in [0, 1] |
 | `confidence` | `"high"` / `"medium"` / `"low"` |
-| `period` | Dominant period in days (from feature layer) |
-| `period_algorithm` | Which algorithm(s) found the period |
+| `period` | Dominant period in days |
+| `period_algorithm` | Which algorithm(s) agreed on the period |
 
-Confidence tiers are set by `inference.confidence_thresholds` in `config.yaml`.
+Confidence thresholds are set by `inference.confidence_thresholds` in `config.yaml`.
+
+## Running on MSI (GPU)
+
+For production runs on MSI with GPU-accelerated feature extraction, see [Deployment](deployment.md).
