@@ -16,7 +16,7 @@
         <link rel="prev" href="..">
       
       
-        <link rel="next" href="../installation/">
+        <link rel="next" href="../deployment/">
       
       
         
@@ -265,13 +265,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="../installation/" class="md-tabs__link">
+      <a href="../deployment/" class="md-tabs__link">
         
   
   
     
   
-  Installation
+  Deployment
 
       </a>
     </li>
@@ -378,28 +378,6 @@
     
   
   Guides
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../deployment/docker/" class="md-tabs__link">
-          
-  
-  
-    
-  
-  Deployment
 
         </a>
       </li>
@@ -665,14 +643,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
+      <a href="../deployment/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Installation
+    Deployment
   
 
     
@@ -1524,6 +1502,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1547,7 +1535,7 @@
   <span class="md-ellipsis">
     
   
-    Deployment
+    API Reference
   
 
     
@@ -1560,167 +1548,6 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Deployment
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deployment/docker/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docker Builds
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deployment/ghcr/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    GitHub Container Registry
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deployment/hpc/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MSI / HPC (Apptainer)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
-        
-          
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2093,8 +1920,8 @@ configuring; the run commands are placeholders.</p>
 </div>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://docs.docker.com/get-docker/">Docker</a> (recommended — see <a href="../installation/">Installation</a>)</li>
-<li>A ZTF or Rubin API token (see <a href="../installation/#api-tokens">Installation → API tokens</a>)</li>
+<li><a href="https://docs.docker.com/get-docker/">Docker</a></li>
+<li>A ZTF or Rubin API token — set in a <code>.env</code> file (see <a href="../deployment/">Deployment</a>)</li>
 </ul>
 <h2 id="1-clone">1. Clone<a class="headerlink" href="#1-clone" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>&lt;ml4em-repo-url&gt;
@@ -2111,7 +1938,7 @@ library) lives at <code>external/periodfind</code> as a git submodule.</p>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_token_here
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nv">ML4EM_RUBIN_TOKEN</span><span class="o">=</span>your_token_here
 </code></pre></div>
-<p>See <a href="../installation/#api-tokens">Installation → API tokens</a> for where to get these.</p>
+<p>See <a href="../deployment/">Deployment</a> for where to get these.</p>
 <h2 id="3-pull-the-docker-image">3. Pull the Docker image<a class="headerlink" href="#3-pull-the-docker-image" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># CPU image (for local development)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/&lt;org&gt;/ml4em:cpu

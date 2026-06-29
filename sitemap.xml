@@ -2,138 +2,126 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/data-contracts/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
-         <loc>https://maniacurgency42.github.io/ml4em/installation/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <loc>https://maniacurgency42.github.io/ml4em/deployment/</loc>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/quickstart/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/config/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/constants/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/data/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/features/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/inference/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/models/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/training/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/api/types/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/architecture/design-principles/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/architecture/overview/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/dmdt/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/gaia/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/light-curves/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/period-finding/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/surveys/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/background/variability-statistics/</loc>
-         <lastmod>2026-06-23</lastmod>
-    </url>
-    <url>
-         <loc>https://maniacurgency42.github.io/ml4em/deployment/docker/</loc>
-         <lastmod>2026-06-23</lastmod>
-    </url>
-    <url>
-         <loc>https://maniacurgency42.github.io/ml4em/deployment/ghcr/</loc>
-         <lastmod>2026-06-23</lastmod>
-    </url>
-    <url>
-         <loc>https://maniacurgency42.github.io/ml4em/deployment/hpc/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/guides/add-data-source/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/guides/add-extractor/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/guides/add-model/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/guides/label-preparation/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/layers/data/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/layers/features/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/layers/foundation/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/layers/inference/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/layers/models/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
     <url>
          <loc>https://maniacurgency42.github.io/ml4em/layers/training/</loc>
-         <lastmod>2026-06-23</lastmod>
+         <lastmod>2026-06-29</lastmod>
     </url>
 </urlset>

@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/deployment/docker/">
+        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/deployment/">
       
       
-        <link rel="prev" href="../../guides/label-preparation/">
+        <link rel="prev" href="../quickstart/">
       
       
-        <link rel="next" href="../ghcr/">
+        <link rel="next" href="../background/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Docker Builds - ml4em</title>
+        <title>Deployment - ml4em</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,11 +53,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#docker-builds" class="md-skip">
+        <a href="#deployment" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="ml4em" class="md-header__button md-logo" aria-label="ml4em" data-md-component="logo">
+    <a href=".." title="ml4em" class="md-header__button md-logo" aria-label="ml4em" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Docker Builds
+              Deployment
             
           </span>
         </div>
@@ -225,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -244,7 +244,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../quickstart/" class="md-tabs__link">
+      <a href="../quickstart/" class="md-tabs__link">
         
   
   
@@ -261,15 +261,17 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../../installation/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
     
   
-  Installation
+  Deployment
 
       </a>
     </li>
@@ -284,7 +286,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../background/" class="md-tabs__link">
+        <a href="../background/" class="md-tabs__link">
           
   
   
@@ -306,7 +308,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../architecture/overview/" class="md-tabs__link">
+        <a href="../architecture/overview/" class="md-tabs__link">
           
   
   
@@ -326,7 +328,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../data-contracts/" class="md-tabs__link">
+      <a href="../data-contracts/" class="md-tabs__link">
         
   
   
@@ -347,7 +349,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../layers/foundation/" class="md-tabs__link">
+        <a href="../layers/foundation/" class="md-tabs__link">
           
   
   
@@ -369,7 +371,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guides/add-data-source/" class="md-tabs__link">
+        <a href="../guides/add-data-source/" class="md-tabs__link">
           
   
   
@@ -387,35 +389,11 @@
   
   
   
-    
-  
-  
-    
-    
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
-          
-  
-  
-    
-  
-  Deployment
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../api/types/" class="md-tabs__link">
+        <a href="../api/types/" class="md-tabs__link">
           
   
   
@@ -457,7 +435,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="ml4em" class="md-nav__button md-logo" aria-label="ml4em" data-md-component="logo">
+    <a href=".." title="ml4em" class="md-nav__button md-logo" aria-label="ml4em" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -487,7 +465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -514,7 +492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   
@@ -538,17 +516,44 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../installation/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    Installation
+    Deployment
   
 
     
@@ -557,6 +562,98 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-build-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Build the image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-push-to-ghcr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Push to GHCR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-pull-on-msi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Pull on MSI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-run-on-msi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Run on MSI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Run on MSI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slurm-job-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLURM job script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-rebuild" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to rebuild
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -603,7 +700,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../background/" class="md-nav__link ">
+            <a href="../background/" class="md-nav__link ">
               
   
   
@@ -647,7 +744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/light-curves/" class="md-nav__link">
+      <a href="../background/light-curves/" class="md-nav__link">
         
   
   
@@ -675,7 +772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/surveys/" class="md-nav__link">
+      <a href="../background/surveys/" class="md-nav__link">
         
   
   
@@ -703,7 +800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/period-finding/" class="md-nav__link">
+      <a href="../background/period-finding/" class="md-nav__link">
         
   
   
@@ -731,7 +828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/variability-statistics/" class="md-nav__link">
+      <a href="../background/variability-statistics/" class="md-nav__link">
         
   
   
@@ -759,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/dmdt/" class="md-nav__link">
+      <a href="../background/dmdt/" class="md-nav__link">
         
   
   
@@ -787,7 +884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/gaia/" class="md-nav__link">
+      <a href="../background/gaia/" class="md-nav__link">
         
   
   
@@ -880,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/overview/" class="md-nav__link">
+      <a href="../architecture/overview/" class="md-nav__link">
         
   
   
@@ -908,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/design-principles/" class="md-nav__link">
+      <a href="../architecture/design-principles/" class="md-nav__link">
         
   
   
@@ -943,7 +1040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../data-contracts/" class="md-nav__link">
+      <a href="../data-contracts/" class="md-nav__link">
         
   
   
@@ -1036,7 +1133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../layers/foundation/" class="md-nav__link">
+      <a href="../layers/foundation/" class="md-nav__link">
         
   
   
@@ -1064,7 +1161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../layers/data/" class="md-nav__link">
+      <a href="../layers/data/" class="md-nav__link">
         
   
   
@@ -1092,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../layers/features/" class="md-nav__link">
+      <a href="../layers/features/" class="md-nav__link">
         
   
   
@@ -1120,7 +1217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../layers/models/" class="md-nav__link">
+      <a href="../layers/models/" class="md-nav__link">
         
   
   
@@ -1148,7 +1245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../layers/training/" class="md-nav__link">
+      <a href="../layers/training/" class="md-nav__link">
         
   
   
@@ -1176,7 +1273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../layers/inference/" class="md-nav__link">
+      <a href="../layers/inference/" class="md-nav__link">
         
   
   
@@ -1273,7 +1370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/add-data-source/" class="md-nav__link">
+      <a href="../guides/add-data-source/" class="md-nav__link">
         
   
   
@@ -1301,7 +1398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/add-extractor/" class="md-nav__link">
+      <a href="../guides/add-extractor/" class="md-nav__link">
         
   
   
@@ -1329,7 +1426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/add-model/" class="md-nav__link">
+      <a href="../guides/add-model/" class="md-nav__link">
         
   
   
@@ -1357,7 +1454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/label-preparation/" class="md-nav__link">
+      <a href="../guides/label-preparation/" class="md-nav__link">
         
   
   
@@ -1365,264 +1462,6 @@
     
   
     Preparing Labels
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deployment
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Deployment
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docker Builds
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docker Builds
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#why-docker-not-conda" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Docker, not conda
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#build-targets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build targets
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#build-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#submodule-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Submodule setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#updating-periodfind" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Updating periodfind
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ghcr/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    GitHub Container Registry
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hpc/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MSI / HPC (Apptainer)
   
 
     
@@ -1681,10 +1520,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -1702,8 +1541,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1720,7 +1559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/types/" class="md-nav__link">
+      <a href="../api/types/" class="md-nav__link">
         
   
   
@@ -1748,7 +1587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../api/constants/" class="md-nav__link">
         
   
   
@@ -1776,7 +1615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/config/" class="md-nav__link">
+      <a href="../api/config/" class="md-nav__link">
         
   
   
@@ -1804,7 +1643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/data/" class="md-nav__link">
+      <a href="../api/data/" class="md-nav__link">
         
   
   
@@ -1832,7 +1671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/features/" class="md-nav__link">
+      <a href="../api/features/" class="md-nav__link">
         
   
   
@@ -1860,7 +1699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/models/" class="md-nav__link">
+      <a href="../api/models/" class="md-nav__link">
         
   
   
@@ -1888,7 +1727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/training/" class="md-nav__link">
+      <a href="../api/training/" class="md-nav__link">
         
   
   
@@ -1916,7 +1755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/inference/" class="md-nav__link">
+      <a href="../api/inference/" class="md-nav__link">
         
   
   
@@ -1971,10 +1810,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-docker-not-conda" class="md-nav__link">
+  <a href="#1-build-the-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Docker, not conda
+        1. Build the image
       
     </span>
   </a>
@@ -1982,10 +1821,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#build-targets" class="md-nav__link">
+  <a href="#2-push-to-ghcr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build targets
+        2. Push to GHCR
       
     </span>
   </a>
@@ -1993,10 +1832,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#build-commands" class="md-nav__link">
+  <a href="#3-pull-on-msi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build commands
+        3. Pull on MSI
       
     </span>
   </a>
@@ -2004,21 +1843,38 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#submodule-setup" class="md-nav__link">
+  <a href="#4-run-on-msi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Submodule setup
+        4. Run on MSI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Run on MSI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slurm-job-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLURM job script
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#updating-periodfind" class="md-nav__link">
+  <a href="#when-to-rebuild" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Updating periodfind
+        When to rebuild
       
     </span>
   </a>
@@ -2045,82 +1901,153 @@
   
 
 
-<h1 id="docker-builds">Docker Builds<a class="headerlink" href="#docker-builds" title="Permanent link">&para;</a></h1>
-<p>ml4em bundles <code>periodfind</code> as a git submodule at <code>external/periodfind</code> and bakes the
-entire build stack into Docker images.</p>
-<h2 id="why-docker-not-conda">Why Docker, not conda<a class="headerlink" href="#why-docker-not-conda" title="Permanent link">&para;</a></h2>
-<p><code>periodfind</code> has a two-layer build:</p>
-<ol>
-<li><strong><code>periodfind_cpu</code></strong> — a Rust extension built with <code>maturin</code> (requires the Rust toolchain)</li>
-<li><strong><code>periodfind</code></strong> — a Cython extension; CUDA GPU extensions compile automatically
-   when <code>nvcc</code> is present, skipped silently when absent</li>
-</ol>
-<p>Managing Rust + maturin + optional CUDA in a conda environment on HPC clusters caused
-repeated dependency conflicts. Docker bakes the full toolchain once and ships a
-reproducible binary image.</p>
-<h2 id="build-targets">Build targets<a class="headerlink" href="#build-targets" title="Permanent link">&para;</a></h2>
-<p>The <code>Dockerfile</code> defines two named targets:</p>
+<h1 id="deployment">Deployment<a class="headerlink" href="#deployment" title="Permanent link">&para;</a></h1>
+<p>ml4em runs on MSI via Apptainer. The workflow is linear: build a Docker image locally,
+push it to GHCR, pull it on MSI as a <code>.sif</code> file, and run it.</p>
+<p><code>periodfind</code> — the GPU-accelerated feature extraction library — requires a Rust + CUDA
+build that cannot be done with <code>pip</code>. Docker handles this once; the resulting image is
+reused indefinitely.</p>
+<hr />
+<h2 id="1-build-the-image">1. Build the image<a class="headerlink" href="#1-build-the-image" title="Permanent link">&para;</a></h2>
+<p>From the repo root:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GPU image — MSI production</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>gpu<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>-t<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:gpu<span class="w"> </span>.
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># CPU image — local testing only</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>cpu<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>-t<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu<span class="w"> </span>.
+</code></pre></div>
+<p><code>--platform linux/amd64</code> is required on Apple Silicon. Without it Docker produces an
+arm64 image that won't run on MSI's x86_64 nodes.</p>
+<p>The GPU build takes ~45 minutes (Rust toolchain + CUDA extensions). See
+<a href="#when-to-rebuild">When to rebuild</a> — you won't need to do this often.</p>
+<div class="admonition note">
+<p class="admonition-title">Submodule required</p>
+<p><code>periodfind</code> lives at <code>external/periodfind</code> as a git submodule. Initialize it before
+building:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>&lt;repo-url&gt;
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># or after a plain clone:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="2-push-to-ghcr">2. Push to GHCR<a class="headerlink" href="#2-push-to-ghcr" title="Permanent link">&para;</a></h2>
+<p>Authenticate with a GitHub PAT. Generate one at:
+<strong>GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic) → Generate new token</strong></p>
+<p>Select scopes: <code>write:packages</code>, <code>read:packages</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span>YOUR_PAT<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span>ManiacUrgency42<span class="w"> </span>--password-stdin
+</code></pre></div>
+<p>Push both images:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:gpu
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu
+</code></pre></div>
+<p>The GPU image is 5–8 GB. If the push times out, rerun — Docker skips already-uploaded
+layers.</p>
+<div class="admonition note">
+<p class="admonition-title">First push only</p>
+<p>Make the package public so MSI can pull without credentials:
+<strong>GitHub → your profile → Packages → ml4em → Package Settings → Change visibility → Public</strong></p>
+</div>
+<hr />
+<h2 id="3-pull-on-msi">3. Pull on MSI<a class="headerlink" href="#3-pull-on-msi" title="Permanent link">&para;</a></h2>
+<p><strong>Run on a compute node, not the login node.</strong> The login node enforces a 15-minute CPU
+limit — not enough to convert a 5–8 GB image.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Request an interactive compute node</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>srun<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--mem<span class="o">=</span>8g<span class="w"> </span>--pty<span class="w"> </span>bash
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Redirect tmp to scratch — default /tmp is too small for a GPU image</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">APPTAINER_TMPDIR</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/tmp
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$APPTAINER_TMPDIR</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>apptainer<span class="w"> </span>pull<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span>docker://ghcr.io/maniacurgency42/ml4em:gpu
+</code></pre></div>
+<p>Store the <code>.sif</code> in <code>/scratch.global</code>, not <code>$HOME</code> — it's 5–8 GB and home quotas are
+small. The <code>.sif</code> only needs to be pulled again when a new image is pushed to GHCR.</p>
+<hr />
+<h2 id="4-run-on-msi">4. Run on MSI<a class="headerlink" href="#4-run-on-msi" title="Permanent link">&para;</a></h2>
+<p>ml4em is installed in <strong>editable mode</strong> inside the image. This means Python imports
+directly from <code>/app/ml4em/src</code> — not from a frozen copy in site-packages. Bind-mounting
+your live git checkout over that path makes <code>git pull</code> on MSI equivalent to a code
+update, with no image rebuild required.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>apptainer<span class="w"> </span>run<span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--bind<span class="w"> </span>/users/7/jin00404/ml4em:/app/ml4em<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--bind<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/data:/data<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>python<span class="w"> </span>-m<span class="w"> </span>ml4em.run<span class="w"> </span>--config<span class="w"> </span>/data/config.yaml
+</code></pre></div>
 <table>
 <thead>
 <tr>
-<th>Target</th>
-<th>Base image</th>
-<th>GPU extensions</th>
-<th>Use for</th>
+<th>Flag</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>cpu</code></td>
-<td><code>ubuntu:22.04</code></td>
-<td>No (<code>nvcc</code> absent)</td>
-<td>Local dev, CI, CPU-only runs</td>
+<td><code>--nv</code></td>
+<td>Pass NVIDIA GPU through to the container</td>
 </tr>
 <tr>
-<td><code>gpu</code></td>
-<td><code>nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04</code></td>
-<td>Yes (<code>nvcc</code> present)</td>
-<td>HPC GPU nodes</td>
+<td><code>--bind .../ml4em:/app/ml4em</code></td>
+<td>Mount your live checkout — code changes via <code>git pull</code>, no rebuild</td>
+</tr>
+<tr>
+<td><code>--bind .../data:/data</code></td>
+<td>Mount your data directory inside the container</td>
 </tr>
 </tbody>
 </table>
-<p>Both targets execute the same build sequence:</p>
-<ol>
-<li>Install Python 3.11, build tools, Rust toolchain via <code>rustup</code></li>
-<li>Build <code>periodfind_cpu</code> from <code>external/periodfind/rust</code> with <code>maturin build --release</code></li>
-<li>Install <code>periodfind</code> from <code>external/periodfind</code> (<code>setup.py</code> auto-detects <code>nvcc</code>)</li>
-<li>Install <code>ml4em</code> (core dependencies only)</li>
-</ol>
-<h2 id="build-commands">Build commands<a class="headerlink" href="#build-commands" title="Permanent link">&para;</a></h2>
-<p>Run from the <code>ml4em/</code> directory (where <code>Dockerfile</code> lives):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># CPU image</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>cpu<span class="w"> </span>-t<span class="w"> </span>ghcr.io/&lt;org&gt;/ml4em:cpu<span class="w"> </span>.
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># GPU image</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>gpu<span class="w"> </span>-t<span class="w"> </span>ghcr.io/&lt;org&gt;/ml4em:gpu<span class="w"> </span>.
+<p>GPU device is controlled by <code>features.device</code> in <code>config.yaml</code> (<code>"cpu"</code> / <code>"gpu"</code> / <code>"auto"</code>).</p>
+<h3 id="slurm-job-script">SLURM job script<a class="headerlink" href="#slurm-job-script" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">#SBATCH --nodes=1</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">#SBATCH --ntasks=1</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">#SBATCH --cpus-per-task=8</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1">#SBATCH --mem=32g</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1">#SBATCH --gres=gpu:a100:1</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1">#SBATCH --time=4:00:00</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>apptainer<span class="w"> </span>run<span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span>--bind<span class="w"> </span>/users/7/jin00404/ml4em:/app/ml4em<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span>--bind<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/data:/data<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span>python<span class="w"> </span>-m<span class="w"> </span>ml4em.run<span class="w"> </span>--config<span class="w"> </span>/data/config.yaml
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Apple Silicon</p>
-<p>The <code>--platform linux/amd64</code> flag is required when building on Apple Silicon (M1/M2/M3)
-to produce images compatible with MSI's x86_64 nodes. Without it, Docker builds
-an arm64 image that won't run on x86 servers.</p>
-</div>
-<h2 id="submodule-setup">Submodule setup<a class="headerlink" href="#submodule-setup" title="Permanent link">&para;</a></h2>
-<p>When cloning ml4em for the first time, initialize the submodule:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>&lt;ml4em-repo-url&gt;
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># or, after a plain clone:</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
-</code></pre></div>
-<h2 id="updating-periodfind">Updating periodfind<a class="headerlink" href="#updating-periodfind" title="Permanent link">&para;</a></h2>
-<p>The submodule is pinned to a specific commit. To advance it:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span>external/periodfind
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>fetch<span class="w"> </span>origin
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>git<span class="w"> </span>checkout<span class="w"> </span>&lt;new-commit-or-tag&gt;
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">cd</span><span class="w"> </span>../..
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>git<span class="w"> </span>add<span class="w"> </span>external/periodfind
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: bump periodfind to &lt;new-version&gt;&quot;</span>
-</code></pre></div>
-<p>Rebuild and push a new Docker image after updating.</p>
+<hr />
+<h2 id="when-to-rebuild">When to rebuild<a class="headerlink" href="#when-to-rebuild" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Rebuild needed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/ml4em/</code> code changes</td>
+<td><strong>No</strong> — <code>git pull</code> on MSI is enough</td>
+</tr>
+<tr>
+<td><code>docs/</code> changes</td>
+<td><strong>No</strong></td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code> dependency changes</td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td><code>external/periodfind</code> submodule update</td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>CUDA driver compatibility change</td>
+<td><strong>Yes</strong></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -2176,10 +2103,10 @@ an arm64 image that won't run on x86 servers.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
