@@ -2012,8 +2012,8 @@
 
 
 <h1 id="constants">Constants<a class="headerlink" href="#constants" title="Permanent link">&para;</a></h1>
-<p>Survey parameters, dm/dt bin parameters, and physical constants.</p>
-<p>See <a href="../../layers/foundation/#constants-py">Foundation Layer</a> for a
+<p>Survey parameters and dm/dt bin parameters.</p>
+<p>See <a href="../../layers/foundation/#constants">Foundation Layer</a> for a
 human-readable table of all constants.</p>
 
 
@@ -2027,13 +2027,8 @@ human-readable table of all constants.</p>
         <p>Survey and pipeline constants for ml4em.</p>
 <p>Every fixed value used anywhere in the codebase is defined here with its
 unit and source.  Magic numbers must not appear in any other module.</p>
-<p>These constants are science-case agnostic (survey parameters, histogram
-binning, cross-match geometry).  Science-case-specific physical constants
-(e.g. WD mass range, WDB period bounds) belong in the downstream
-application (e.g. wdb-ml), NOT here.</p>
 <h3 id="ml4em.constants--sections">Sections<a class="headerlink" href="#ml4em.constants--sections" title="Permanent link">&para;</a></h3>
-<p>Physical constants (SI)    — fundamental, used by any EM science case
-dm/dt histogram parameters — fixed binning (changing invalidates saved features)
+<p>dm/dt histogram parameters — fixed binning (changing invalidates saved features)
 ZTF survey parameters
 Rubin survey parameters
 Cross-match parameters</p>
@@ -2080,37 +2075,37 @@ a few magnitudes and we want uniform resolution there.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/ml4em/constants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
-<span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span>
-<span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span>
-<span class="normal"><a href="#__codelineno-0-73">73</a></span>
-<span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="k">def</span><span class="w"> </span><span class="nf">dmdt_edges</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return (dt_edges, dm_edges) bin-edge arrays for the dm/dt histogram.</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    dt_edges : shape (N_DT_BINS + 1,)  — log-spaced over DMDT_DT_MIN..DMDT_DT_MAX</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    dm_edges : shape (N_DM_BINS + 1,)  — linearly spaced over DMDT_DM_MIN..DMDT_DM_MAX</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    Time differences are log-spaced because relevant timescales span six</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">    orders of magnitude (minutes to years).  Magnitude differences are</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    linear because eclipses and variability are typically bounded within</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">    a few magnitudes and we want uniform resolution there.</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="n">dt_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DMDT_DT_MIN</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DMDT_DT_MAX</span><span class="p">),</span> <span class="n">N_DT_BINS</span> <span class="o">+</span> <span class="mi">1</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="p">)</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="n">dm_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">DMDT_DM_MIN</span><span class="p">,</span> <span class="n">DMDT_DM_MAX</span><span class="p">,</span> <span class="n">N_DM_BINS</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">return</span> <span class="n">dt_edges</span><span class="p">,</span> <span class="n">dm_edges</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="k">def</span><span class="w"> </span><span class="nf">dmdt_edges</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return (dt_edges, dm_edges) bin-edge arrays for the dm/dt histogram.</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    dt_edges : shape (N_DT_BINS + 1,)  — log-spaced over DMDT_DT_MIN..DMDT_DT_MAX</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    dm_edges : shape (N_DM_BINS + 1,)  — linearly spaced over DMDT_DM_MIN..DMDT_DM_MAX</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    Time differences are log-spaced because relevant timescales span six</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">    orders of magnitude (minutes to years).  Magnitude differences are</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">    linear because eclipses and variability are typically bounded within</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">    a few magnitudes and we want uniform resolution there.</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>    <span class="n">dt_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DMDT_DT_MIN</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DMDT_DT_MAX</span><span class="p">),</span> <span class="n">N_DT_BINS</span> <span class="o">+</span> <span class="mi">1</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="p">)</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="n">dm_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">DMDT_DM_MIN</span><span class="p">,</span> <span class="n">DMDT_DM_MAX</span><span class="p">,</span> <span class="n">N_DM_BINS</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="k">return</span> <span class="n">dt_edges</span><span class="p">,</span> <span class="n">dm_edges</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

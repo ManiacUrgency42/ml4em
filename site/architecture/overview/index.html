@@ -2070,81 +2070,47 @@
 well-defined Protocol interface, and strict dependency rules.</p>
 <hr />
 <h2 id="the-six-layers">The six layers<a class="headerlink" href="#the-six-layers" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌──────────────────────────────────────────────────────────────────────┐
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│  Foundation                                                          │
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│  types.py  ·  constants.py  ·  config/                              │
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│  Data contracts, physical constants, validated pipeline config       │
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>└──────────────────┬───────────────────────────────────────────────────┘
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                   │
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>┌──────────────────▼───────────────────────────────────────────────────┐
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│  Data                  data/                                         │
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│  Protocol: LightCurveSource                                          │
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  fetch(source_id) → list[LightCurve]                                 │
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│  Implementations: ZTFSource · RubinSource · SimulatedSource          │
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>└──────────────────┬───────────────────────────────────────────────────┘
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                   │ LightCurve
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>┌──────────────────▼───────────────────────────────────────────────────┐
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│  Features              features/                                     │
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>│  Protocol: FeatureExtractor                                          │
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│  extract(lcs) → dict                                                 │
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│  Extractors: StatisticsExtractor · PeriodExtractor                   │
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>│              DmdtExtractor · CatalogExtractor                        │
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│  Composer:   FeaturePipeline                                         │
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>└──────────┬───────────────────────────────────────────────────────────┘
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>           │ FeatureVector
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>     ┌─────┴──────┐
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>     │            │
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>┌────▼────┐  ┌────▼─────────────────────────────────────────────────┐
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>│Training │  │  Models               models/                        │
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>│training/│  │  Protocol: MLModel                                   │
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│         │  │  predict_proba(features) → np.ndarray                │
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│Trainer  │  │  Reference: XGBoostClassifier                        │
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│Protocol │  │  Utilities: SCALAR_FIELDS · features_to_array        │
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>│         │  └────┬─────────────────────────────────────────────────┘
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>│         │       │ MLModel
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>│FeatureD-│  ┌────▼─────────────────────────────────────────────────┐
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>│ataset   │  │  Inference            inference/                     │
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>│Standard-│  │  Protocol: Predictor                                 │
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>│Trainer  │  │  predict(features) → list[Candidate]                 │
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>└─────────┘  │  StandardPredictor · load_model · postprocess        │
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>             └──────────────────────────────────────────────────────┘
-</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    F["Foundation\ntypes.py · constants.py · config/\nData contracts · survey constants · pipeline config"]
+    D["Data — data/\nProtocol: LightCurveSource\nZTFSource · RubinSource"]
+    FE["Features — features/\nProtocol: FeatureExtractor\nStatisticsExtractor · PeriodExtractor\nDmdtExtractor · CatalogExtractor\nFeaturePipeline"]
+    M["Models — models/\nProtocol: MLModel\nXGBoostClassifier · SCALAR_FIELDS"]
+    T["Training — training/\nTrainer Protocol\nFeatureDataset · StandardTrainer"]
+    I["Inference — inference/\nPredictor Protocol\nload_model · StandardPredictor\nprobabilities_to_candidates"]
+
+    F --&gt; D
+    D --&gt;|"list[LightCurve]"| FE
+    FE --&gt;|"list[FeatureVector]"| T
+    FE --&gt;|"list[FeatureVector]"| M
+    M --&gt;|"MLModel"| I
+    T -. "saved model" .-&gt; I</code></pre>
 <p><strong>Dependency rule:</strong> each layer imports only from layers above it. Training and
 inference are parallel — neither imports from the other.</p>
 <hr />
 <h2 id="data-flow-one-source-end-to-end">Data flow — one source, end to end<a class="headerlink" href="#data-flow-one-source-end-to-end" title="Permanent link">&para;</a></h2>
 <p>Here is what happens to a single astronomical source as it passes through the pipeline:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>source_id (e.g. &quot;686149073900013696&quot;)
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  │
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ▼  Data layer
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ZTFSource.fetch_batch([source_id])
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  → [LightCurve(g), LightCurve(r), LightCurve(i)]   ← one per band
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  │
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  ▼  Feature layer
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  FeaturePipeline.run_batch([[lc_g, lc_r, lc_i]])
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  → [FeatureVector(median=18.4, chi2red=52.3, period=0.12, ...)]
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  │
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>  ▼  Models + Inference layers
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>  StandardPredictor.predict([feature_vector])
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>  → [Candidate(source_id=&quot;...&quot;, probability=0.92, confidence=&quot;high&quot;, period=0.12)]
-</code></pre></div>
+<pre class="mermaid"><code>flowchart LR
+    A["source_id\n\"686149073900013696\""]
+    B["list[LightCurve]\nLightCurve(g) · LightCurve(r) · LightCurve(i)"]
+    C["FeatureVector\nmedian=18.4 · chi2red=52.3\nperiod=0.12 · dmdt=(26×26)"]
+    D["Candidate\nprobability=0.92\nconfidence=high\nperiod=0.12"]
+
+    A --&gt;|"ZTFSource\n.fetch_batch()"| B
+    B --&gt;|"FeaturePipeline\n.run_batch()"| C
+    C --&gt;|"StandardPredictor\n.predict()"| D</code></pre>
 <hr />
 <h2 id="training-vs-inference-parallel-branches">Training vs. inference — parallel branches<a class="headerlink" href="#training-vs-inference-parallel-branches" title="Permanent link">&para;</a></h2>
 <p>Training and inference are <strong>parallel branches</strong> that share only the <code>FeatureVector</code>
 (input) and <code>MLModel</code> (the contract) from the models layer:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>          FeatureVector
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>               │
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       ┌───────┴───────┐
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       │               │
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   Training         Inference
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   ─────────        ─────────
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   FeatureDataset   StandardPredictor
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>   StandardTrainer  load_model
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>       │               │
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>   model.save()    model.predict_proba()
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>                       │
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>                   list[Candidate]
-</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    FV["list[FeatureVector]"]
+    M["MLModel\nshared contract"]
+
+    T["Training\nFeatureDataset · StandardTrainer\nmodel.fit() → model.save()"]
+    I["Inference\nload_model() → StandardPredictor\nmodel.predict_proba() → list[Candidate]"]
+
+    FV --&gt; T &amp; I
+    M --&gt; T &amp; I</code></pre>
 <p>Neither training nor inference imports from the other. You can run inference without
 ever training (load a pre-trained model), or train without doing inference.</p>
 <hr />
@@ -2163,8 +2129,8 @@ ever training (load a pre-trained model), or train without doing inference.</p>
 <tr>
 <td><code>LightCurveSource</code></td>
 <td><code>data/base.py</code></td>
-<td><code>fetch()</code>, <code>fetch_batch()</code></td>
-<td><code>ZTFSource</code>, <code>RubinSource</code>, <code>SimulatedSource</code></td>
+<td><code>fetch_batch()</code></td>
+<td><code>ZTFSource</code>, <code>RubinSource</code></td>
 </tr>
 <tr>
 <td><code>FeatureExtractor</code></td>
@@ -2192,16 +2158,6 @@ ever training (load a pre-trained model), or train without doing inference.</p>
 </tr>
 </tbody>
 </table>
-<div class="admonition info">
-<p class="admonition-title">What is a Protocol? (for astrophysicists)</p>
-<p>In Python, a <code>Protocol</code> is a structural interface — it defines what methods a class
-must have, without requiring that class to inherit from anything.</p>
-<p>Any class that implements the right methods automatically satisfies the Protocol.
-No registration, no base class, no decorators needed.</p>
-<p>This is called <strong>duck typing</strong>: "if it has <code>fetch()</code> and <code>fetch_batch()</code>, it is a
-<code>LightCurveSource</code>." This is why adding a new data source requires zero changes to
-any other file — the feature layer accepts any object with those methods.</p>
-</div>
 <hr />
 <h2 id="the-three-shared-types">The three shared types<a class="headerlink" href="#the-three-shared-types" title="Permanent link">&para;</a></h2>
 <p>Three dataclasses are the only objects that cross layer boundaries:</p>
@@ -2221,7 +2177,7 @@ any other file — the feature layer accepts any object with those methods.</p>
 </tr>
 <tr>
 <td><code>FeatureVector</code></td>
-<td>Features → Models/Training/Inference</td>
+<td>Features → Models / Training / Inference</td>
 <td>Fully extracted feature set</td>
 </tr>
 <tr>
@@ -2234,7 +2190,6 @@ any other file — the feature layer accepts any object with those methods.</p>
 <p>See <a href="../../data-contracts/">Data Contracts</a> for full field tables.</p>
 <hr />
 <h2 id="navigate-to-a-layer">Navigate to a layer<a class="headerlink" href="#navigate-to-a-layer" title="Permanent link">&para;</a></h2>
-<p>Each row is a clickable link to the full layer reference page.</p>
 <table>
 <thead>
 <tr>
