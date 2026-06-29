@@ -1163,6 +1163,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#storageconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        StorageConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#loading-config" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1938,6 +1949,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#storageconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        StorageConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#loading-config" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2163,7 +2185,7 @@
 </tr>
 <tr>
 <td><code>storage</code></td>
-<td>File paths used by all layers</td>
+<td><code>StorageConfig</code> — input file paths and output directories</td>
 </tr>
 <tr>
 <td><code>training</code></td>
@@ -2175,23 +2197,80 @@
 </tr>
 </tbody>
 </table>
+<h3 id="storageconfig"><code>StorageConfig</code><a class="headerlink" href="#storageconfig" title="Permanent link">&para;</a></h3>
+<p>All file paths used by the pipeline. Relative paths resolve from wherever you run the process. On MSI, override with absolute scratch paths in <code>config.yaml</code> — no environment variables, no magic.</p>
+<p><strong>Input files</strong> (must exist before running):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>catalog_path</code></td>
+<td><code>data/wdb_sources.csv</code></td>
+<td>CSV of known target sources with <code>ra</code>, <code>dec</code> columns. Used by <code>prepare_labels.py</code> to look up ZTF IDs via cone search.</td>
+</tr>
+<tr>
+<td><code>labels_path</code></td>
+<td><code>data/labels.csv</code></td>
+<td>CSV produced by <code>prepare_labels.py</code>. Columns: <code>source_id</code>, <code>label</code> (0 or 1). Read by the training layer.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Output directories</strong> (created automatically):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Written by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>features_dir</code></td>
+<td><code>features/</code></td>
+<td>Feature layer</td>
+</tr>
+<tr>
+<td><code>models_dir</code></td>
+<td><code>models/</code></td>
+<td>Training layer</td>
+</tr>
+<tr>
+<td><code>predictions_dir</code></td>
+<td><code>predictions/</code></td>
+<td>Inference layer</td>
+</tr>
+</tbody>
+</table>
+<p>On MSI, override the two input paths in <code>config.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">storage</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">catalog_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/jin00404/ml4em/data/wdb_sources.csv</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">labels_path</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/jin00404/ml4em/data/labels.csv</span>
+</code></pre></div>
+<p>The <code>data/</code> directory, <code>config.yaml</code>, and all output directories are gitignored and never committed.</p>
 <p>Model architecture hyperparameters (tree depth, estimators, dropout) are <strong>not</strong> in <code>PipelineConfig</code> — they live in per-model config dataclasses set in code. See <a href="../../architecture/design-principles/#2-code-controls-architecture-config-controls-parameters">Design Principles</a>.</p>
 <h3 id="loading-config">Loading config<a class="headerlink" href="#loading-config" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">load_default_config</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>   <span class="c1"># from file</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>                <span class="c1"># looks for config.yaml in cwd</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_default_config</span><span class="p">()</span>        <span class="c1"># programmatic defaults, no file needed</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">load_default_config</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>   <span class="c1"># from file</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>                <span class="c1"># looks for config.yaml in cwd</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_default_config</span><span class="p">()</span>        <span class="c1"># programmatic defaults, no file needed</span>
 </code></pre></div>
 <h3 id="api-tokens">API tokens<a class="headerlink" href="#api-tokens" title="Permanent link">&para;</a></h3>
 <p>Tokens are never stored in <code>config.yaml</code>. Set them as environment variables or in a <code>.env</code> file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># .env  (never commit this file)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_kowalski_token
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nv">ML4EM_RUBIN_TOKEN</span><span class="o">=</span>your_rsp_token
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># .env  (never commit this file)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_kowalski_token
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nv">ML4EM_RUBIN_TOKEN</span><span class="o">=</span>your_rsp_token
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ztf_token</span><span class="p">,</span> <span class="n">get_rubin_token</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">token</span> <span class="o">=</span> <span class="n">get_ztf_token</span><span class="p">()</span>    <span class="c1"># reads ML4EM_ZTF_TOKEN from env or .env</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ztf_token</span><span class="p">,</span> <span class="n">get_rubin_token</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">token</span> <span class="o">=</span> <span class="n">get_ztf_token</span><span class="p">()</span>    <span class="c1"># reads ML4EM_ZTF_TOKEN from env or .env</span>
 </code></pre></div>
 <p>Raises a clear error if the token is not found.</p>
 <hr />

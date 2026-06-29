@@ -1141,6 +1141,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#fetch_by_positionra-dec-radius_arcsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fetch_by_position(ra, dec, radius_arcsec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#data-cleaning" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1860,6 +1871,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#fetch_by_positionra-dec-radius_arcsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fetch_by_position(ra, dec, radius_arcsec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#data-cleaning" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1967,6 +1989,13 @@
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ZTFSource</span><span class="p">(</span><span class="n">load_config</span><span class="p">()</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">ztf</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">get_ztf_token</span><span class="p">())</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_batch</span><span class="p">([</span><span class="s2">&quot;686149073900013696&quot;</span><span class="p">,</span> <span class="s2">&quot;686149073900013697&quot;</span><span class="p">])</span>
 </code></pre></div>
+<h3 id="fetch_by_positionra-dec-radius_arcsec"><code>fetch_by_position(ra, dec, radius_arcsec)</code><a class="headerlink" href="#fetch_by_positionra-dec-radius_arcsec" title="Permanent link">&para;</a></h3>
+<p>Cone search — resolves a sky coordinate to ZTF light curves directly, without knowing the source <code>_id</code> in advance. Use this when your input is a catalog of (ra, dec) positions (e.g. <code>data/wdb_sources.csv</code>) rather than ZTF IDs.</p>
+<p><strong>Consumes:</strong> <code>ra</code>, <code>dec</code> in decimal degrees (J2000); <code>radius_arcsec</code> (default 2.0)</p>
+<p><strong>Emits:</strong> <code>list[LightCurve]</code> — all matching sources within the cone, all bands, same cleaning as <code>fetch_batch</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_by_position</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">256.123</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">45.678</span><span class="p">,</span> <span class="n">radius_arcsec</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+</code></pre></div>
+<p>Default radius is 2.0 arcsec — appropriate for isolated stars. Increase to 5–10 arcsec in crowded fields.</p>
 <h3 id="data-cleaning">Data cleaning<a class="headerlink" href="#data-cleaning" title="Permanent link">&para;</a></h3>
 <p>Two filtering steps are applied before returning:</p>
 <table>
