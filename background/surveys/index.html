@@ -741,6 +741,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#how-it-fits-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it fits together
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#ztf-source-ids" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1932,6 +1943,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#how-it-fits-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it fits together
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#ztf-source-ids" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2101,19 +2123,39 @@ time-series data on millions of sources.</p>
 <p>ml4em currently supports two surveys and has stubs for a third (simulated data).</p>
 <hr />
 <h2 id="ztf">ZTF — Zwicky Transient Facility<a class="headerlink" href="#ztf" title="Permanent link">&para;</a></h2>
-<p>ZTF is a wide-field sky survey operating at Palomar Observatory in California. It scans
-the entire accessible northern sky every 2–3 nights.</p>
+<p>ZTF is a camera mounted on a telescope at Palomar Observatory in California. Every few
+nights it scans the entire northern sky, recording brightness measurements for millions
+of stars in three optical filters — g (blue-green), r (red), and i (near-infrared). It
+has been doing this since 2018.</p>
+<p>Each pass through the sky adds one more data point to every star's record. Over years
+of repeated observations, each star accumulates a <strong>light curve</strong> — a time series of
+how its brightness changed. That is your raw data.</p>
+<p>ZTF has observed roughly a billion sources. The full dataset is many terabytes.</p>
 <ul>
 <li><strong>Active since:</strong> 2018</li>
 <li><strong>Bands:</strong> g (green), r (red), i (near-infrared)</li>
-<li><strong>Typical cadence:</strong> one observation per source per band every few nights</li>
+<li><strong>Typical cadence:</strong> one observation per source per band every 2–3 nights</li>
 </ul>
 <h3 id="kowalski-ztfs-database">Kowalski — ZTF's database<a class="headerlink" href="#kowalski-ztfs-database" title="Permanent link">&para;</a></h3>
-<p>ZTF's photometric data is stored in <strong>Kowalski</strong>, a MongoDB-backed database service
-hosted at Caltech. ml4em talks to Kowalski using the <strong>penquins</strong> Python client
-(<code>pip install "ml4em[ztf]"</code> installs it).</p>
-<p>Kowalski is not publicly accessible — you need an account and an API token.
-See <a href="../installation.md#api-tokens">Installation → API tokens</a>.</p>
+<p>You can't just download a billion light curves. <strong>Kowalski</strong> is a database system built
+by Caltech that stores all of ZTF's data and lets you query it programmatically. You
+send it a list of source IDs and it sends back the corresponding light curves.</p>
+<p>Kowalski is organized into collections. The one used by ml4em —
+<code>ZTF_sources_84525009</code> — contains ~84 million sources from ZTF DR20. Each document
+in that collection is one single-band light curve for one sky position, identified by
+an integer <code>_id</code>.</p>
+<p>ml4em talks to Kowalski via the <strong>penquins</strong> Python client at <code>melman.caltech.edu</code>.
+Kowalski is not publicly accessible — you need an account and an API token
+(<code>ML4EM_ZTF_TOKEN</code> in your <code>.env</code>).</p>
+<h3 id="how-it-fits-together">How it fits together<a class="headerlink" href="#how-it-fits-together" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    A["Palomar telescope&lt;br/&gt;takes photos every few nights"]
+    B["ZTF survey&lt;br/&gt;processes photos → brightness measurements"]
+    C["Kowalski database&lt;br/&gt;melman.caltech.edu&lt;br/&gt;stores all light curves, queryable by ID"]
+    D["ZTFSource.fetch_batch()&lt;br/&gt;sends query, receives light curve data"]
+    E["list[LightCurve]&lt;br/&gt;→ feature extraction, model, etc."]
+
+    A --&gt; B --&gt; C --&gt; D --&gt; E</code></pre>
 <h3 id="ztf-source-ids">ZTF source IDs<a class="headerlink" href="#ztf-source-ids" title="Permanent link">&para;</a></h3>
 <p>Each ZTF source has a numeric <code>_id</code> (e.g., <code>686149073900013696</code>) that encodes a
 (sky position, band) pair. One star at a given position observed in g, r, and i bands
