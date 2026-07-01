@@ -2,7 +2,7 @@
 # ml4em — multi-stage Dockerfile
 #
 # Two named build targets:
-#   cpu  — python:3.11-slim-bookworm, no CUDA. For local testing and CI.
+#   cpu  — python:3.11-bookworm, no CUDA. For local testing and CI.
 #   gpu  — CUDA 11.8 / Ubuntu 22.04 base. For MSI/HPC production via Apptainer.
 #
 # Build:
@@ -25,9 +25,34 @@
 #       python -m ml4em.run --config /data/config.yaml
 #
 #   # To pick up code changes: just git pull on MSI, no image rebuild.
-#   # Only rebuild the image when periodfind, CUDA, or pyproject.toml changes.
+#   # Only rebuild the image when periodfind or pyproject.toml changes.
 #
 # Store .sif files in /scratch (not $HOME) — they are 5–8 GB.
+#
+# ── periodfind build structure ────────────────────────────────────────────────
+# periodfind has two completely independent compilation units:
+#
+#   1. periodfind_cpu  (Rust → PyO3 → maturin wheel)
+#      Source: external/periodfind/rust/
+#      Output: Python wheel installed as the periodfind_cpu package
+#      Used by: periodfind/cpu/ for CPU-path period finding
+#
+#   2. periodfind GPU extensions  (Cython + CUDA C++ → compiled .so files)
+#      Source: external/periodfind/periodfind/ + setup.py + pyproject.toml
+#      Output: periodfind.ce, periodfind.aov, periodfind.ls, ... (one .so per algorithm)
+#      Used by: periodfind/gpu/ for GPU-path period finding
+#
+# These units share no source files and have no link-time relationship.
+# They are COPYed separately so that changing one does not invalidate the
+# Docker layer cache of the other:
+#
+#   Edit rust/*.rs        → only periodfind_cpu rebuilds  (~20 min)
+#   Edit *.pyx or *.cu    → only GPU extensions rebuild   (~10 min)
+#   Edit src/ml4em/       → neither rebuilds               (~1 min)
+#
+# The only ordering constraint: periodfind_cpu must be installed before
+# `pip install /build/periodfind` because pyproject.toml declares it as a
+# Python package dependency. This is a pip dependency, not a linker dependency.
 # ==============================================================================
 
 
@@ -41,20 +66,31 @@ FROM python:3.11-bookworm AS cpu
 # Upgrade build tools to satisfy pyproject.toml: requires = ["setuptools>=77"]
 RUN pip install --upgrade pip setuptools wheel
 
-# Rust toolchain — required to build periodfind_cpu
+# Rust toolchain — required to build periodfind_cpu via maturin
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 RUN python3.11 -m pip install --no-cache-dir maturin
 
-# ── Build periodfind_cpu (Rust, no CUDA) ─────────────────────────────────────
-COPY external/periodfind /build/periodfind
+# ── periodfind_cpu (Rust) — independent cache boundary ───────────────────────
+# Implements all period-finding algorithms for CPU using multithreaded Rust.
+# PyO3 exposes Rust functions as Python-callable; maturin packages them into a
+# wheel. Changing rust/*.rs only invalidates this layer — the GPU extensions
+# below are unaffected.
+COPY external/periodfind/rust /build/periodfind/rust
 RUN cd /build/periodfind/rust \
     && maturin build --release --interpreter python3.11 \
     && python3.11 -m pip install --no-cache-dir target/wheels/*.whl
 
-# ── Build periodfind (Cython — no nvcc found, CPU-only extensions) ────────────
-# setup.py checks for nvcc; skips CUDA extensions automatically if absent.
+# ── periodfind GPU extensions (Cython + CUDA) — independent cache boundary ───
+# Cython wrappers translate Python calls into C++ calls against CUDA kernels.
+# setup.py detects nvcc at build time; with no nvcc present in this base image
+# the CUDA extensions are skipped automatically. The package still installs —
+# the GPU backend simply won't be available (correct for CPU-only usage).
+# Changing .pyx or .cu files only invalidates this layer — Rust above is unaffected.
+COPY external/periodfind/periodfind    /build/periodfind/periodfind
+COPY external/periodfind/setup.py      /build/periodfind/setup.py
+COPY external/periodfind/pyproject.toml /build/periodfind/pyproject.toml
 RUN python3.11 -m pip install --no-cache-dir /build/periodfind
 
 # ── Install ml4em with test + ZTF extras (editable) ──────────────────────────
@@ -96,25 +132,37 @@ RUN printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\n' \
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 \
     && python3.11 -m pip install --upgrade pip setuptools wheel
 
+# Rust toolchain — required to build periodfind_cpu via maturin
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 RUN python3.11 -m pip install --no-cache-dir maturin
 
-# ── Build periodfind_cpu (Rust) ───────────────────────────────────────────────
-COPY external/periodfind /build/periodfind
+# ── periodfind_cpu (Rust) — independent cache boundary ───────────────────────
+# Implements all period-finding algorithms for CPU using multithreaded Rust.
+# PyO3 exposes Rust functions as Python-callable; maturin packages them into a
+# wheel. Changing rust/*.rs only invalidates this layer — the GPU extensions
+# below are unaffected.
+COPY external/periodfind/rust /build/periodfind/rust
 RUN cd /build/periodfind/rust \
     && maturin build --release --interpreter python3.11 \
     && python3.11 -m pip install --no-cache-dir target/wheels/*.whl
 
-# ── Build periodfind (Cython + CUDA — nvcc IS present in this base image) ─────
+# ── periodfind GPU extensions (Cython + CUDA) — independent cache boundary ───
+# Cython wrappers translate Python calls into C++ calls against CUDA kernels
+# which run the period-finding algorithms on the GPU in parallel. nvcc is
+# present in this base image so all CUDA extensions are compiled.
+# Changing .pyx or .cu files only invalidates this layer — Rust above is unaffected.
+COPY external/periodfind/periodfind    /build/periodfind/periodfind
+COPY external/periodfind/setup.py      /build/periodfind/setup.py
+COPY external/periodfind/pyproject.toml /build/periodfind/pyproject.toml
 RUN python3.11 -m pip install --no-cache-dir /build/periodfind
 
 # ── Install ml4em with training extras (editable) ────────────────────────────
 # [training] adds torch, pandas, pyarrow — everything needed to train the
 # logistic model and persist/reload feature vectors.
 # The torch wheel from PyPI is CPU-only; periodfind uses CUDA directly via
-# its own GPU kernel — torch does not need CUDA bindings for this demo model.
+# its own GPU kernels — torch does not need CUDA bindings for this demo model.
 COPY . /app/ml4em
 RUN python3.11 -m pip install --no-cache-dir -e "/app/ml4em[training]"
 

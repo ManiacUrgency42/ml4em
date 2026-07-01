@@ -1,0 +1,33 @@
+# ==============================================================================
+# environment-gpu.yml — ml4em conda environment for MSI GPU nodes
+#
+# Creates a Python 3.11 environment with the toolchain needed to build
+# periodfind with CUDA extensions. CUDA itself is NOT installed here —
+# load it from the MSI module system so there is no version conflict:
+#
+#   module load conda
+#   module load cuda/11.8.0      # provides nvcc for the periodfind CUDA build
+#
+#   conda env create -f environment-gpu.yml
+#   conda run -n ml4em-gpu bash scripts/setup_conda.sh gpu
+#
+# On MSI, prefer the SLURM job (login nodes cap CPU time):
+#   sbatch slurm/setup_conda.sh
+#
+# For local dev or CPU-only use environment-cpu.yml instead.
+# ==============================================================================
+
+name: ml4em-gpu
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11
+  - rust>=1.75      # Rust toolchain for maturin (periodfind_cpu Rust extension)
+  - maturin>=1.4    # builds Rust → Python wheel; available on conda-forge
+  - numpy>=1.26     # pinned here so conda resolves a compatible binary upfront
+  - pip
+  # torch with CUDA 11.8 bindings is installed by scripts/setup_conda.sh via
+  # the PyTorch wheel index. It is not installed here to avoid conflicts with
+  # the system CUDA module.

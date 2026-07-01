@@ -2,6 +2,9 @@
 
 Converts raw light curves into fixed-length numerical representations (`FeatureVector` objects) for the model. All computationally intensive work is delegated to **periodfind**, a GPU-accelerated Rust/CUDA library.
 
+!!! tip "periodfind"
+    periodfind is an external compiled library that powers all period-finding and statistics computation in this layer. For a technical deep-dive — how Rust, CUDA C++, and Cython fit together — see [Architecture → periodfind](../architecture/periodfind.md).
+
 **Consumes:** `list[list[LightCurve]]` — outer list is sources, inner list is bands per source
 
 **Emits:** `list[FeatureVector]` — one per source, with 43 scalar fields + 26×26 dm/dt image

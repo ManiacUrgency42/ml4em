@@ -1,0 +1,28 @@
+# ==============================================================================
+# environment-cpu.yml — ml4em conda environment for local dev and CPU nodes
+#
+# Creates a Python 3.11 environment with the toolchain needed to build
+# periodfind (Rust + Cython). All Python packages are installed separately by
+# scripts/setup_conda.sh, which must be run once after this environment is
+# created:
+#
+#   conda env create -f environment-cpu.yml
+#   conda run -n ml4em-cpu bash scripts/setup_conda.sh cpu
+#
+# Or with the Makefile:
+#   make conda-cpu
+#
+# For GPU / MSI production use environment-gpu.yml instead.
+# ==============================================================================
+
+name: ml4em-cpu
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11
+  - rust>=1.75      # Rust toolchain for maturin (periodfind_cpu Rust extension)
+  - maturin>=1.4    # builds Rust → Python wheel; available on conda-forge
+  - numpy>=1.26     # pinned here so conda resolves a compatible binary upfront
+  - pip

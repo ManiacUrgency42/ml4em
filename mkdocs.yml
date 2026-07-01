@@ -70,7 +70,10 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Quick Start: quickstart.md
-  - Deployment: deployment.md
+  - Deployment:
+    - Overview: deployment.md
+    - Apptainer: apptainer-deployment.md
+    - Conda: conda-deployment.md
 
   - Background:
     - background/index.md
@@ -84,6 +87,7 @@ nav:
   - Architecture:
     - Overview: architecture/overview.md
     - Design Principles: architecture/design-principles.md
+    - periodfind: architecture/periodfind.md
 
   - Data Contracts: data-contracts.md
 
