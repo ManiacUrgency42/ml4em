@@ -1141,6 +1141,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#source-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source directory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#python-dispatcher" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1300,17 +1311,6 @@
     <span class="md-ellipsis">
       
         Two independent compilation units
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source-directory" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Source directory
       
     </span>
   </a>
@@ -2193,6 +2193,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#source-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source directory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#python-dispatcher" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2359,17 +2370,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#source-directory" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Source directory
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#why-setup-takes-so-long" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2506,6 +2506,41 @@
     CPU_PKG --&gt;|"Python import"| RUST
     GPU_PKG --&gt;|"compiled C bridge"| CUDA</code></pre>
 <hr />
+<h2 id="source-directory">Source directory<a class="headerlink" href="#source-directory" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>external/periodfind/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── rust/                             # ── periodfind_cpu (Rust wheel) ──────────
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   ├── src/
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   │   ├── lib.rs                    # PyO3 module entry point
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   │   ├── ce.rs                     # Conditional Entropy
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   │   ├── aov.rs                    # Analysis of Variance
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   │   ├── ls.rs                     # Lomb-Scargle
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   │   ├── mhf.rs                    # Multi-Harmonic Fourier
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   │   ├── fpw.rs, bls.rs, mf.rs, vn.rs   # other algorithms
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   │   ├── basicstats.rs             # 22 light curve summary statistics
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│   │   ├── dmdt.rs                   # Δmag/Δt histogram
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│   │   ├── fourier.rs                # Fourier decomposition
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│   │   └── fold.rs, peaks.rs, highcadence.rs   # utilities
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│   └── Cargo.toml                    # Rust package manifest
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>├── periodfind/                       # ── GPU extensions + Python package ──────
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│   ├── __init__.py                   # Python dispatcher (factory functions, device management)
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│   ├── _utils.py                     # input validation
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>│   ├── cpu/
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│   │   └── __init__.py               # CPU backend — imports from periodfind_cpu wheel
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>│   ├── gpu/
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│   │   └── __init__.py               # GPU backend — imports from compiled .so files
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>│   ├── ce.pyx, aov.pyx, ls.pyx       # Cython wrappers — one per algorithm
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>│   ├── mhf.pyx, fpw.pyx, bls.pyx, mf.pyx, vn.pyx
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>│   └── cuda/
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>│       ├── ce.cu, ls.cu, mhf.cu      # CUDA C++ kernels
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>│       ├── fpw.cu, bls.cu, mf.cu
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│       ├── aov.h, vn.h               # header-only CUDA kernels
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│       └── errchk.cuh                # GPU error checking utility
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>├── setup.py                          # Builds Cython + CUDA extensions
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>└── pyproject.toml                    # Declares periodfind_cpu as pip dependency
+</code></pre></div>
+<hr />
 <h2 id="python-dispatcher">Python dispatcher<a class="headerlink" href="#python-dispatcher" title="Permanent link">&para;</a></h2>
 <p><code>periodfind/__init__.py</code> is pure Python — no compilation involved. It provides factory functions (<code>ConditionalEntropy()</code>, <code>AOV()</code>, <code>LombScargle()</code>, ...) that check which hardware is available and hand off to the appropriate backend.</p>
 <p>Device selection:</p>
@@ -2514,13 +2549,13 @@
 <li><strong>Auto-detect</strong> (default) — tries to import the CUDA extension and run <code>nvidia-smi</code>; falls back to <code>'cpu'</code> if no GPU is found</li>
 </ul>
 <p>Every factory function follows the same pattern:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">ConditionalEntropy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device</span> <span class="o">=</span> <span class="n">_resolve_device</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;gpu&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">periodfind.gpu</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConditionalEntropy</span> <span class="k">as</span> <span class="n">_Cls</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">periodfind.cpu</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConditionalEntropy</span> <span class="k">as</span> <span class="n">_Cls</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">return</span> <span class="n">_Cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">ConditionalEntropy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">device</span> <span class="o">=</span> <span class="n">_resolve_device</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;gpu&quot;</span><span class="p">:</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">periodfind.gpu</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConditionalEntropy</span> <span class="k">as</span> <span class="n">_Cls</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">periodfind.cpu</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConditionalEntropy</span> <span class="k">as</span> <span class="n">_Cls</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">return</span> <span class="n">_Cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
 <p>The object returned has the same <code>.calc()</code> method regardless of which backend is selected.</p>
 <hr />
@@ -2534,15 +2569,15 @@
 <h3 id="what-is-maturin">What is maturin?<a class="headerlink" href="#what-is-maturin" title="Permanent link">&para;</a></h3>
 <p>maturin is a build tool that takes the compiled Rust+PyO3 code and packages it into a standard Python wheel file (<code>.whl</code>). A wheel is the standard format for distributing pre-compiled Python packages — the same format you get when you <code>pip install numpy</code>. The result, <code>periodfind_cpu</code>, installs with <code>pip install periodfind_cpu-*.whl</code> just like any other Python package.</p>
 <h3 id="how-the-cpu-path-works-end-to-end">How the CPU path works end to end<a class="headerlink" href="#how-the-cpu-path-works-end-to-end" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>rust/src/ce.rs          Rust source — Conditional Entropy algorithm
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>       ↓   (rustc compiler + Rayon for multi-threading)
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    .so file            compiled Rust binary
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>       ↓   (PyO3 annotations → Python-callable functions)
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>periodfind_cpu          Python wheel
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>       ↓   (pip install)
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>periodfind.cpu          imports calc_ce_batched, calc_aov_batched, ...
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>       ↓   (normal Python function call)
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    your code           periodfind.ConditionalEntropy(device=&#39;cpu&#39;).calc(...)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>rust/src/ce.rs          Rust source — Conditional Entropy algorithm
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>       ↓   (rustc compiler + Rayon for multi-threading)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    .so file            compiled Rust binary
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       ↓   (PyO3 annotations → Python-callable functions)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>periodfind_cpu          Python wheel
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>       ↓   (pip install)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>periodfind.cpu          imports calc_ce_batched, calc_aov_batched, ...
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       ↓   (normal Python function call)
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    your code           periodfind.ConditionalEntropy(device=&#39;cpu&#39;).calc(...)
 </code></pre></div>
 <p>When <code>.calc()</code> is called, execution jumps from Python directly into compiled Rust code, distributes the batch across all CPU cores via Rayon, and returns results as NumPy arrays.</p>
 <hr />
@@ -2556,14 +2591,14 @@
 <p>Cython is a tool that bridges Python and compiled code. You write files in <code>.pyx</code> format — code that looks almost exactly like Python but with optional type annotations — and Cython translates it into C source code, which is then compiled into a <code>.so</code> file (a compiled extension) that Python can import. Cython is widely used in scientific Python (NumPy, SciPy, and many astronomy packages use it internally).</p>
 <p>In periodfind's GPU path, the Cython <code>.pyx</code> files act as a thin bridge: they receive batches of light curve data from Python, pass them into the CUDA C++ code, and return the results as NumPy arrays.</p>
 <h3 id="how-the-gpu-path-works-end-to-end">How the GPU path works end to end<a class="headerlink" href="#how-the-gpu-path-works-end-to-end" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>periodfind/cuda/ce.cu   CUDA C++ — Conditional Entropy kernel (runs on GPU)
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>periodfind/ce.pyx       Cython — receives data from Python, calls CUDA
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       ↓   (nvcc compiles .cu; Cython compiles .pyx; linked together)
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>periodfind.ce.so        compiled extension — Python can import this
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>       ↓   (import)
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>periodfind.gpu          wraps the .so — exposes ConditionalEntropy class
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>       ↓   (normal Python function call)
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    your code           periodfind.ConditionalEntropy(device=&#39;gpu&#39;).calc(...)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>periodfind/cuda/ce.cu   CUDA C++ — Conditional Entropy kernel (runs on GPU)
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>periodfind/ce.pyx       Cython — receives data from Python, calls CUDA
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       ↓   (nvcc compiles .cu; Cython compiles .pyx; linked together)
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>periodfind.ce.so        compiled extension — Python can import this
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>       ↓   (import)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>periodfind.gpu          wraps the .so — exposes ConditionalEntropy class
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>       ↓   (normal Python function call)
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    your code           periodfind.ConditionalEntropy(device=&#39;gpu&#39;).calc(...)
 </code></pre></div>
 <p>When <code>.calc()</code> is called, data moves from CPU memory to GPU memory, the CUDA kernel launches thousands of threads simultaneously (one per source-period pair), and results are copied back to CPU memory as NumPy arrays.</p>
 <h3 id="per-algorithm-structure">Per-algorithm structure<a class="headerlink" href="#per-algorithm-structure" title="Permanent link">&para;</a></h3>
@@ -2650,46 +2685,11 @@
 </tbody>
 </table>
 <p>The one ordering constraint: <code>periodfind_cpu</code> must be installed before <code>pip install external/periodfind</code> runs, because <code>pyproject.toml</code> lists it as a pip dependency:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">[project]</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;periodfind_cpu&gt;=0.1.0&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">[project]</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;periodfind_cpu&gt;=0.1.0&quot;</span><span class="p">]</span>
 </code></pre></div>
 <p>This is a pip-level requirement — pip checks that <code>periodfind_cpu</code> is installed before proceeding. It does not mean the CUDA code links against the Rust binary.</p>
 <p>This independence is exploited by the Dockerfile, which copies and compiles each unit in its own layer. If you change only a <code>.rs</code> file, Docker rebuilds only the Rust layer and reuses the cached Cython+CUDA layer, and vice versa.</p>
-<hr />
-<h2 id="source-directory">Source directory<a class="headerlink" href="#source-directory" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>external/periodfind/
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── rust/                             # ── periodfind_cpu (Rust wheel) ──────────
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>│   ├── src/
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>│   │   ├── lib.rs                    # PyO3 module entry point
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>│   │   ├── ce.rs                     # Conditional Entropy
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>│   │   ├── aov.rs                    # Analysis of Variance
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>│   │   ├── ls.rs                     # Lomb-Scargle
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>│   │   ├── mhf.rs                    # Multi-Harmonic Fourier
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>│   │   ├── fpw.rs, bls.rs, mf.rs, vn.rs   # other algorithms
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>│   │   ├── basicstats.rs             # 22 light curve summary statistics
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>│   │   ├── dmdt.rs                   # Δmag/Δt histogram
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>│   │   ├── fourier.rs                # Fourier decomposition
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>│   │   └── fold.rs, peaks.rs, highcadence.rs   # utilities
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>│   └── Cargo.toml                    # Rust package manifest
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>│
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>├── periodfind/                       # ── GPU extensions + Python package ──────
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>│   ├── __init__.py                   # Python dispatcher (factory functions, device management)
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>│   ├── _utils.py                     # input validation
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>│   ├── cpu/
-<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>│   │   └── __init__.py               # CPU backend — imports from periodfind_cpu wheel
-<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>│   ├── gpu/
-<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>│   │   └── __init__.py               # GPU backend — imports from compiled .so files
-<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>│   ├── ce.pyx, aov.pyx, ls.pyx       # Cython wrappers — one per algorithm
-<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>│   ├── mhf.pyx, fpw.pyx, bls.pyx, mf.pyx, vn.pyx
-<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>│   └── cuda/
-<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>│       ├── ce.cu, ls.cu, mhf.cu      # CUDA C++ kernels
-<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>│       ├── fpw.cu, bls.cu, mf.cu
-<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>│       ├── aov.h, vn.h               # header-only CUDA kernels
-<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>│       └── errchk.cuh                # GPU error checking utility
-<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a>│
-<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a>├── setup.py                          # Builds Cython + CUDA extensions
-<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a>└── pyproject.toml                    # Declares periodfind_cpu as pip dependency
-</code></pre></div>
 <hr />
 <h2 id="why-setup-takes-so-long">Why setup takes so long<a class="headerlink" href="#why-setup-takes-so-long" title="Permanent link">&para;</a></h2>
 <p>When you run <code>sbatch slurm/setup_conda.sh</code> or <code>docker build</code>, you are not downloading a pre-built package — you are <strong>compiling programs from source code</strong> on the server. This is why setup takes 20–45 minutes rather than seconds.</p>
