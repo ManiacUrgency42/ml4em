@@ -53,6 +53,45 @@ flowchart TD
 
 ---
 
+## Source directory
+
+```
+external/periodfind/
+├── rust/                             # ── periodfind_cpu (Rust wheel) ──────────
+│   ├── src/
+│   │   ├── lib.rs                    # PyO3 module entry point
+│   │   ├── ce.rs                     # Conditional Entropy
+│   │   ├── aov.rs                    # Analysis of Variance
+│   │   ├── ls.rs                     # Lomb-Scargle
+│   │   ├── mhf.rs                    # Multi-Harmonic Fourier
+│   │   ├── fpw.rs, bls.rs, mf.rs, vn.rs   # other algorithms
+│   │   ├── basicstats.rs             # 22 light curve summary statistics
+│   │   ├── dmdt.rs                   # Δmag/Δt histogram
+│   │   ├── fourier.rs                # Fourier decomposition
+│   │   └── fold.rs, peaks.rs, highcadence.rs   # utilities
+│   └── Cargo.toml                    # Rust package manifest
+│
+├── periodfind/                       # ── GPU extensions + Python package ──────
+│   ├── __init__.py                   # Python dispatcher (factory functions, device management)
+│   ├── _utils.py                     # input validation
+│   ├── cpu/
+│   │   └── __init__.py               # CPU backend — imports from periodfind_cpu wheel
+│   ├── gpu/
+│   │   └── __init__.py               # GPU backend — imports from compiled .so files
+│   ├── ce.pyx, aov.pyx, ls.pyx       # Cython wrappers — one per algorithm
+│   ├── mhf.pyx, fpw.pyx, bls.pyx, mf.pyx, vn.pyx
+│   └── cuda/
+│       ├── ce.cu, ls.cu, mhf.cu      # CUDA C++ kernels
+│       ├── fpw.cu, bls.cu, mf.cu
+│       ├── aov.h, vn.h               # header-only CUDA kernels
+│       └── errchk.cuh                # GPU error checking utility
+│
+├── setup.py                          # Builds Cython + CUDA extensions
+└── pyproject.toml                    # Declares periodfind_cpu as pip dependency
+```
+
+---
+
 ## Python dispatcher
 
 `periodfind/__init__.py` is pure Python — no compilation involved. It provides factory functions (`ConditionalEntropy()`, `AOV()`, `LombScargle()`, ...) that check which hardware is available and hand off to the appropriate backend.
@@ -183,45 +222,6 @@ dependencies = ["periodfind_cpu>=0.1.0"]
 This is a pip-level requirement — pip checks that `periodfind_cpu` is installed before proceeding. It does not mean the CUDA code links against the Rust binary.
 
 This independence is exploited by the Dockerfile, which copies and compiles each unit in its own layer. If you change only a `.rs` file, Docker rebuilds only the Rust layer and reuses the cached Cython+CUDA layer, and vice versa.
-
----
-
-## Source directory
-
-```
-external/periodfind/
-├── rust/                             # ── periodfind_cpu (Rust wheel) ──────────
-│   ├── src/
-│   │   ├── lib.rs                    # PyO3 module entry point
-│   │   ├── ce.rs                     # Conditional Entropy
-│   │   ├── aov.rs                    # Analysis of Variance
-│   │   ├── ls.rs                     # Lomb-Scargle
-│   │   ├── mhf.rs                    # Multi-Harmonic Fourier
-│   │   ├── fpw.rs, bls.rs, mf.rs, vn.rs   # other algorithms
-│   │   ├── basicstats.rs             # 22 light curve summary statistics
-│   │   ├── dmdt.rs                   # Δmag/Δt histogram
-│   │   ├── fourier.rs                # Fourier decomposition
-│   │   └── fold.rs, peaks.rs, highcadence.rs   # utilities
-│   └── Cargo.toml                    # Rust package manifest
-│
-├── periodfind/                       # ── GPU extensions + Python package ──────
-│   ├── __init__.py                   # Python dispatcher (factory functions, device management)
-│   ├── _utils.py                     # input validation
-│   ├── cpu/
-│   │   └── __init__.py               # CPU backend — imports from periodfind_cpu wheel
-│   ├── gpu/
-│   │   └── __init__.py               # GPU backend — imports from compiled .so files
-│   ├── ce.pyx, aov.pyx, ls.pyx       # Cython wrappers — one per algorithm
-│   ├── mhf.pyx, fpw.pyx, bls.pyx, mf.pyx, vn.pyx
-│   └── cuda/
-│       ├── ce.cu, ls.cu, mhf.cu      # CUDA C++ kernels
-│       ├── fpw.cu, bls.cu, mf.cu
-│       ├── aov.h, vn.h               # header-only CUDA kernels
-│       └── errchk.cuh                # GPU error checking utility
-│
-├── setup.py                          # Builds Cython + CUDA extensions
-└── pyproject.toml                    # Declares periodfind_cpu as pip dependency
-```
 
 ---
 
