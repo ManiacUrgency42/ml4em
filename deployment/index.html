@@ -16,7 +16,7 @@
         <link rel="prev" href="../quickstart/">
       
       
-        <link rel="next" href="../background/">
+        <link rel="next" href="../apptainer-deployment/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Deployment - ml4em</title>
+        <title>Overview - ml4em</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deployment" class="md-skip">
+        <a href="#deploying-on-msi" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Deployment
+              Overview
             
           </span>
         </div>
@@ -264,17 +264,20 @@
     
   
   
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
-        
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
   
   
     
   
   Deployment
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -520,6 +523,71 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
@@ -535,7 +603,7 @@
   <span class="md-ellipsis">
     
   
-    Deployment
+    Overview
   
 
     
@@ -553,7 +621,7 @@
   <span class="md-ellipsis">
     
   
-    Deployment
+    Overview
   
 
     
@@ -579,10 +647,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-build-the-image-maintainers-only" class="md-nav__link">
+  <a href="#not-sure-which-to-choose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Build the image (maintainers only)
+        Not sure which to choose?
       
     </span>
   </a>
@@ -590,132 +658,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-push-to-ghcr-local" class="md-nav__link">
+  <a href="#side-by-side-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Push to GHCR (local)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-first-time-msi-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. First-time MSI setup
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3. First-time MSI setup">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#3a-create-scratch-directories" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3a. Create scratch directories
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3b-copy-your-catalog" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3b. Copy your catalog
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3c-write-a-config-for-msi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3c. Write a config for MSI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3d-store-your-kowalski-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3d. Store your Kowalski token
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-pull-the-image-on-msi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Pull the image on MSI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-run-the-demo-on-msi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Run the demo on MSI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="5. Run the demo on MSI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#batch-job-recommended" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Batch job (recommended)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#interactive-run-for-debugging-only" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Interactive run (for debugging only)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#when-to-rebuild" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        When to rebuild
+        Side-by-side comparison
       
     </span>
   </a>
@@ -725,6 +671,70 @@
     </ul>
   
 </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apptainer-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apptainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conda-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conda
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -997,6 +1007,8 @@
       
         
       
+        
+      
     
     
     
@@ -1085,6 +1097,34 @@
     
   
     Design Principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/periodfind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    periodfind
   
 
     
@@ -1882,10 +1922,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-build-the-image-maintainers-only" class="md-nav__link">
+  <a href="#not-sure-which-to-choose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Build the image (maintainers only)
+        Not sure which to choose?
       
     </span>
   </a>
@@ -1893,132 +1933,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-push-to-ghcr-local" class="md-nav__link">
+  <a href="#side-by-side-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Push to GHCR (local)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-first-time-msi-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. First-time MSI setup
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3. First-time MSI setup">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#3a-create-scratch-directories" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3a. Create scratch directories
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3b-copy-your-catalog" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3b. Copy your catalog
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3c-write-a-config-for-msi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3c. Write a config for MSI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3d-store-your-kowalski-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3d. Store your Kowalski token
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-pull-the-image-on-msi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Pull the image on MSI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-run-the-demo-on-msi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Run the demo on MSI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="5. Run the demo on MSI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#batch-job-recommended" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Batch job (recommended)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#interactive-run-for-debugging-only" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Interactive run (for debugging only)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#when-to-rebuild" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        When to rebuild
+        Side-by-side comparison
       
     </span>
   </a>
@@ -2045,264 +1963,87 @@
   
 
 
-<h1 id="deployment">Deployment<a class="headerlink" href="#deployment" title="Permanent link">&para;</a></h1>
-<p>ml4em runs on MSI via Apptainer. <code>periodfind</code> — the GPU-accelerated feature extraction
-library — requires a Rust + CUDA build that cannot be done with <code>pip</code>, so the full
-toolchain is baked into a Docker image published on GHCR (GitHub Container Registry).</p>
-<p><strong>Most researchers never need to build the image.</strong> The pipeline is installed in
-editable mode inside the container, and your live git checkout is bind-mounted over
-it at runtime — so any Python code you add or change is picked up immediately without
-touching the image. Just pull and run.</p>
-<table>
-<thead>
-<tr>
-<th>You are…</th>
-<th>What you need to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Running the pipeline or adding a model</td>
-<td><code>apptainer pull</code> once, then <code>git pull</code> for updates</td>
-</tr>
-<tr>
-<td>Adding a new Python dependency (<code>pyproject.toml</code>)</td>
-<td>Open a PR → merge to <code>main</code> → CI rebuilds automatically → re-pull the <code>.sif</code></td>
-</tr>
-<tr>
-<td>Maintaining the image (periodfind / CUDA / Dockerfile)</td>
-<td>Same as above — CI rebuilds on merge</td>
-</tr>
-</tbody>
-</table>
-<p>The image is rebuilt automatically by GitHub Actions whenever <code>Dockerfile</code>,
-<code>pyproject.toml</code>, or <code>external/periodfind/</code> changes on <code>main</code>. The section below
-documents how to trigger a manual build if needed.</p>
-<hr />
-<h2 id="1-build-the-image-maintainers-only">1. Build the image (maintainers only)<a class="headerlink" href="#1-build-the-image-maintainers-only" title="Permanent link">&para;</a></h2>
-<p><strong>Normally you don't need to do this</strong> — merging to <code>main</code> triggers the GitHub Actions
-workflow (<code>.github/workflows/docker.yml</code>) which builds and pushes the GPU image on
-native x86_64 runners automatically. Layer caching means rebuilds after a
-<code>pyproject.toml</code>-only change skip the Rust/CUDA compilation entirely.</p>
-<p>Only run a local build if you need to test a Dockerfile change before merging, or if
-CI is unavailable. On Apple Silicon, the <code>--platform linux/amd64</code> flag forces QEMU
-emulation — the GPU build will take 3+ hours. Prefer pushing to a branch and letting
-CI build it.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GPU image — for MSI production runs</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>gpu<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>-t<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:gpu<span class="w"> </span>.
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># CPU image — for local testing only</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>cpu<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>-t<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu<span class="w"> </span>.
-</code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Submodule required</p>
-<p><code>periodfind</code> lives at <code>external/periodfind</code> as a git submodule. Make sure it is
-initialized before building:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>&lt;repo-url&gt;
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># or after a plain clone:</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
-</code></pre></div></p>
-</div>
-<hr />
-<h2 id="2-push-to-ghcr-local">2. Push to GHCR (local)<a class="headerlink" href="#2-push-to-ghcr-local" title="Permanent link">&para;</a></h2>
-<p>GHCR (GitHub Container Registry) hosts the image so MSI can pull it without needing
-Docker installed. Authenticate with a GitHub Personal Access Token (PAT):</p>
-<p><strong>GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic) → Generate new token</strong></p>
-<p>Select scopes: <code>write:packages</code>, <code>read:packages</code></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span>YOUR_PAT<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span>ManiacUrgency42<span class="w"> </span>--password-stdin
-</code></pre></div>
-<p>Then push:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:gpu
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu
-</code></pre></div>
-<p>The GPU image is 5–8 GB. If the push times out mid-upload, rerun — Docker skips
-already-uploaded layers.</p>
-<div class="admonition note">
-<p class="admonition-title">First push only</p>
-<p>After the first push, make the package public so MSI can pull without credentials:
-<strong>GitHub → your profile → Packages → ml4em → Package Settings → Change visibility → Public</strong></p>
-</div>
-<hr />
-<h2 id="3-first-time-msi-setup">3. First-time MSI setup<a class="headerlink" href="#3-first-time-msi-setup" title="Permanent link">&para;</a></h2>
-<p>Do this once after SSH-ing into MSI. These directories persist across jobs.</p>
-<h3 id="3a-create-scratch-directories">3a. Create scratch directories<a class="headerlink" href="#3a-create-scratch-directories" title="Permanent link">&para;</a></h3>
-<p>MSI's home quota is small. Keep all large files on scratch:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$DATA</span>/features<span class="w"> </span><span class="nv">$DATA</span>/models<span class="w"> </span><span class="nv">$DATA</span>/predictions
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/apptainer_cache
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/tmp
-</code></pre></div>
-<h3 id="3b-copy-your-catalog">3b. Copy your catalog<a class="headerlink" href="#3b-copy-your-catalog" title="Permanent link">&para;</a></h3>
-<p><code>wdb_sources.csv</code> is the WDB catalog (ra, dec positions of target sources). Copy it
-to scratch from your local machine:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># From your local machine:</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>scp<span class="w"> </span>data/wdb_sources.csv<span class="w"> </span>jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4em_data/
-</code></pre></div>
-<h3 id="3c-write-a-config-for-msi">3c. Write a config for MSI<a class="headerlink" href="#3c-write-a-config-for-msi" title="Permanent link">&para;</a></h3>
-<p>The MSI config uses absolute scratch paths instead of relative ones. Create it at
-<code>/scratch.global/$USER/ml4em_data/config_msi.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">sources</span><span class="p">:</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">ztf</span><span class="p">:</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">melman.caltech.edu</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">collection_sources</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZTF_sources_84525009</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">max_timestamp_hjd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2459951.5</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nt">bands</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">g</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">r</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">i</span><span class="p p-Indicator">]</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="nt">min_cadence_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.020833</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cuda</span><span class="w">          </span><span class="c1"># use GPU for periodfind</span>
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="nt">min_observations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
-<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
-<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="nt">storage</span><span class="p">:</span>
-<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">  </span><span class="nt">catalog_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/wdb_sources.csv</span>
-<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">  </span><span class="nt">labels_path</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">/data/labels.csv</span>
-<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">  </span><span class="nt">features_dir</span><span class="p">:</span><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">/data/features</span>
-<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">  </span><span class="nt">models_dir</span><span class="p">:</span><span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">/data/models</span>
-<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="w">  </span><span class="nt">predictions_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/predictions</span>
-<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>
-<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="nt">training</span><span class="p">:</span>
-<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">  </span><span class="nt">val_fraction</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
-<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">  </span><span class="nt">test_fraction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
-<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="w">  </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
-<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>
-<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="nt">inference</span><span class="p">:</span>
-<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="w">  </span><span class="nt">confidence_thresholds</span><span class="p">:</span>
-<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
-<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
-</code></pre></div>
-<p>The bind mount in the run command maps <code>/scratch.global/$USER/ml4em_data</code> → <code>/data</code>
-inside the container, so all paths above resolve correctly.</p>
-<h3 id="3d-store-your-kowalski-token">3d. Store your Kowalski token<a class="headerlink" href="#3d-store-your-kowalski-token" title="Permanent link">&para;</a></h3>
-<p>Never put tokens in <code>config_msi.yaml</code>. Store them in a <code>.env</code> file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ML4EM_ZTF_TOKEN=your_token_here&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
-</code></pre></div>
-<p>The <code>--env-file</code> flag in the run scripts injects this into the container at runtime.</p>
-<hr />
-<h2 id="4-pull-the-image-on-msi">4. Pull the image on MSI<a class="headerlink" href="#4-pull-the-image-on-msi" title="Permanent link">&para;</a></h2>
-<p>The repo includes a ready-made SLURM script that handles the pull correctly —
-no interactive node needed:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># From your ml4em repo root on MSI:</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sbatch<span class="w"> </span>slurm/pull_image.sh
-</code></pre></div>
-<p>Monitor progress:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/pull_ml4em_&lt;JOBID&gt;.out
-</code></pre></div>
-<p>The pull takes 20–40 minutes (5–8 GB download + squashfs conversion). Output is
-written to <code>/scratch.global/$USER/ml4em_gpu.sif</code>. You only need to re-run this
-when a new image is pushed to GHCR.</p>
-<div class="admonition warning">
-<p class="admonition-title">Do not pull on the login node</p>
-<p>The login node enforces a 15-minute CPU limit — not enough time to convert a
-5–8 GB image. <code>slurm/pull_image.sh</code> submits the job to a compute node
-automatically via SLURM.</p>
-</div>
-<hr />
-<h2 id="5-run-the-demo-on-msi">5. Run the demo on MSI<a class="headerlink" href="#5-run-the-demo-on-msi" title="Permanent link">&para;</a></h2>
-<h3 id="batch-job-recommended">Batch job (recommended)<a class="headerlink" href="#batch-job-recommended" title="Permanent link">&para;</a></h3>
-<p>The repo includes <code>slurm/run_demo.sh</code>, a complete SLURM script that sets up the
-environment and runs the end-to-end demo pipeline. Submit it from your repo root:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
-</code></pre></div>
-<p>Monitor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_demo_&lt;JOBID&gt;.out
-</code></pre></div>
-<p>The script requests one A100 GPU, bind-mounts your live git checkout into the
-container, and runs <code>scripts/run_demo.py</code> with the MSI config. Outputs:</p>
+<h1 id="deploying-on-msi">Deploying on MSI<a class="headerlink" href="#deploying-on-msi" title="Permanent link">&para;</a></h1>
+<div class="grid cards">
 <ul>
-<li><code>/scratch.global/$USER/ml4em_data/features/demo.parquet</code> — extracted feature vectors</li>
-<li><code>/scratch.global/$USER/ml4em_data/models/logistic_demo/</code> — saved model</li>
-</ul>
-<h3 id="interactive-run-for-debugging-only">Interactive run (for debugging only)<a class="headerlink" href="#interactive-run-for-debugging-only" title="Permanent link">&para;</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Must be on a GPU compute node</p>
-<p><code>apptainer run --nv</code> requires GPU drivers. <strong>Never run it on the login node</strong> —
-request an interactive GPU node first:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
-</code></pre></div>
-</div>
-<p>Once on the compute node:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>module<span class="w"> </span>load<span class="w"> </span>apptainer
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>apptainer<span class="w"> </span>run<span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$HOME</span>/ml4em:/app/ml4em<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$DATA</span>:/data<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span>--env-file<span class="w"> </span><span class="nv">$DATA</span>/.env<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">    </span>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span>/data/config_msi.yaml
-</code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--nv</code></td>
-<td>Pass NVIDIA GPU drivers through to the container</td>
-</tr>
-<tr>
-<td><code>--bind .../ml4em:/app/ml4em</code></td>
-<td>Mount your live code — <code>git pull</code> picks up changes without rebuilding</td>
-</tr>
-<tr>
-<td><code>--bind .../ml4em_data:/data</code></td>
-<td>Mount data directory — catalog, config, output features/models</td>
-</tr>
-<tr>
-<td><code>--env-file .env</code></td>
-<td>Inject <code>ML4EM_ZTF_TOKEN</code> into the container</td>
-</tr>
-</tbody>
-</table>
-<p>GPU device is controlled by <code>features.device</code> in <code>config_msi.yaml</code> (<code>"cpu"</code> / <code>"cuda"</code> / <code>"auto"</code>).</p>
+<li>
+<p><strong>Apptainer</strong> — recommended for most users</p>
 <hr />
-<h2 id="when-to-rebuild">When to rebuild<a class="headerlink" href="#when-to-rebuild" title="Permanent link">&para;</a></h2>
-<p>The image only needs to be rebuilt (and re-pulled on MSI) when compiled dependencies change.</p>
+<p>Download a pre-built software package and run it directly on MSI. No compilation
+or environment setup required — the package is rebuilt automatically whenever
+the codebase changes. Setup takes about 30 minutes, mostly waiting for a ~6 GB
+download to complete.</p>
+<p><a href="../apptainer-deployment/">Apptainer deployment →</a></p>
+</li>
+<li>
+<p><strong>Conda</strong></p>
+<hr />
+<p>Build a Python environment directly on MSI using the standard conda and pip tools
+you may already know. The right choice if you want to run ml4em interactively in
+a Jupyter notebook, or simply prefer a traditional Python setup. Setup takes
+30–45 minutes and compiles the period-finding library from source on MSI.</p>
+<p><a href="../conda-deployment/">Conda deployment →</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="not-sure-which-to-choose">Not sure which to choose?<a class="headerlink" href="#not-sure-which-to-choose" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A([I want to run ml4em on MSI]) --&gt; B{Do I want to run code\ninteractively in a\nJupyter notebook?}
+    B -- Yes --&gt; C[Conda]
+    B -- No --&gt; D[Apptainer ★ recommended]</code></pre>
+<p>If you have no strong preference, go with <strong>Apptainer</strong>. It requires less setup and
+is the path used and tested by the core team.</p>
+<hr />
+<h2 id="side-by-side-comparison">Side-by-side comparison<a class="headerlink" href="#side-by-side-comparison" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Change</th>
-<th>Rebuild needed?</th>
+<th></th>
+<th>Apptainer ★</th>
+<th>Conda</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>src/ml4em/</code> code changes</td>
-<td><strong>No</strong> — <code>git pull</code> on MSI is enough</td>
+<td><strong>Recommended</strong></td>
+<td>Yes, for most users</td>
+<td>For Jupyter / interactive work</td>
 </tr>
 <tr>
-<td><code>docs/</code> or <code>config/</code> changes</td>
-<td><strong>No</strong></td>
+<td><strong>Setup time</strong></td>
+<td>~30 min</td>
+<td>~30–45 min</td>
 </tr>
 <tr>
-<td><code>pyproject.toml</code> dependency changes</td>
-<td><strong>Yes</strong></td>
+<td><strong>What setup involves</strong></td>
+<td>Downloading a pre-built ~6 GB software package to MSI</td>
+<td>Compiling the period-finding library from source, then installing Python packages</td>
 </tr>
 <tr>
-<td><code>external/periodfind</code> submodule update</td>
-<td><strong>Yes</strong></td>
+<td><strong>Tools required</strong></td>
+<td>Apptainer (already available on MSI via <code>module load</code>)</td>
+<td>Conda (already available on MSI via <code>module load</code>)</td>
 </tr>
 <tr>
-<td>CUDA driver compatibility change</td>
-<td><strong>Yes</strong></td>
+<td><strong>After a code change</strong></td>
+<td><code>git pull</code> — nothing else needed</td>
+<td><code>git pull</code> — nothing else needed</td>
+</tr>
+<tr>
+<td><strong>Jupyter notebooks</strong></td>
+<td>Not supported</td>
+<td>Supported</td>
+</tr>
+<tr>
+<td><strong>When you need to redo setup</strong></td>
+<td>Only if the compiled dependencies change (rare)</td>
+<td>Only if the compiled dependencies change (rare)</td>
 </tr>
 </tbody>
 </table>
+<p>Both paths install ml4em in <strong>editable mode</strong>: changes to Python source files are
+picked up immediately with <code>git pull</code> — no rebuild or reinstall needed.</p>
 
 
 

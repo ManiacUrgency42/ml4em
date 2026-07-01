@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/data-contracts/">
+        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/conda-deployment/">
       
       
-        <link rel="prev" href="../architecture/periodfind/">
+        <link rel="prev" href="../apptainer-deployment/">
       
       
-        <link rel="next" href="../layers/foundation/">
+        <link rel="next" href="../background/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Data Contracts - ml4em</title>
+        <title>Conda - ml4em</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#data-contracts" class="md-skip">
+        <a href="#deployment-conda" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Data Contracts
+              Conda
             
           </span>
         </div>
@@ -261,10 +261,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../deployment/" class="md-tabs__link">
           
   
@@ -327,11 +329,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../data-contracts/" class="md-tabs__link">
         
   
   
@@ -519,8 +519,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -534,19 +536,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -564,7 +569,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -635,10 +640,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../conda-deployment/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conda
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -654,6 +686,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-a-setup-script-is-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why a setup script is required
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-clone-the-repo-with-submodules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Clone the repo (with submodules)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-create-the-conda-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Create the conda environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-build-periodfind-and-install-ml4em" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Build periodfind and install ml4em
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-first-time-msi-data-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. First-time MSI data setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. First-time MSI data setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4a-create-scratch-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4a. Create scratch directories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4b-copy-your-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4b. Copy your catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4c-write-a-config-for-msi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4c. Write a config for MSI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4d-store-your-kowalski-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4d. Store your Kowalski token
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-run-the-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Run the demo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Run the demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#batch-job-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch job (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-run-for-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive run (for debugging)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-rebuild-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to rebuild the environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1075,37 +1282,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Data Contracts
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../data-contracts/" class="md-nav__link">
         
   
   
@@ -1121,115 +1301,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#lightcurve-data-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LightCurve — Data → Features
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#featurevector-features-training-inference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FeatureVector — Features → Training / Inference
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="FeatureVector — Features → Training / Inference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#field-groups" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Field groups
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#scalar_fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SCALAR_FIELDS
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#labeledsample-label-preparation-training" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LabeledSample — Label preparation → Training
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#candidate-inference-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Candidate — Inference → Output
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Candidate — Inference → Output">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#confidence-tiers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Confidence tiers
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1984,10 +2055,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#lightcurve-data-features" class="md-nav__link">
+  <a href="#why-a-setup-script-is-required" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LightCurve — Data → Features
+        Why a setup script is required
       
     </span>
   </a>
@@ -1995,22 +2066,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#featurevector-features-training-inference" class="md-nav__link">
+  <a href="#1-clone-the-repo-with-submodules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        FeatureVector — Features → Training / Inference
+        1. Clone the repo (with submodules)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="FeatureVector — Features → Training / Inference">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-create-the-conda-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Create the conda environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-build-periodfind-and-install-ml4em" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Build periodfind and install ml4em
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-first-time-msi-data-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. First-time MSI data setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. First-time MSI data setup">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#field-groups" class="md-nav__link">
+  <a href="#4a-create-scratch-directories" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Field groups
+        4a. Create scratch directories
       
     </span>
   </a>
@@ -2018,10 +2122,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#scalar_fields" class="md-nav__link">
+  <a href="#4b-copy-your-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SCALAR_FIELDS
+        4b. Copy your catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4c-write-a-config-for-msi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4c. Write a config for MSI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4d-store-your-kowalski-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4d. Store your Kowalski token
       
     </span>
   </a>
@@ -2034,33 +2160,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#labeledsample-label-preparation-training" class="md-nav__link">
+  <a href="#5-run-the-demo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LabeledSample — Label preparation → Training
+        5. Run the demo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Run the demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#batch-job-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch job (recommended)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#candidate-inference-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Candidate — Inference → Output
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Candidate — Inference → Output">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#confidence-tiers" class="md-nav__link">
+  <a href="#interactive-run-for-debugging" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Confidence tiers
+        Interactive run (for debugging)
       
     </span>
   </a>
@@ -2069,6 +2195,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-rebuild-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to rebuild the environment
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2092,407 +2229,206 @@
   
 
 
-<h1 id="data-contracts">Data Contracts<a class="headerlink" href="#data-contracts" title="Permanent link">&para;</a></h1>
-<p>Four dataclasses are defined in <code>src/ml4em/types.py</code>. They are the <strong>only objects
-that cross layer boundaries</strong>. All inter-layer communication goes through these types —
-no raw dicts, tuples, or numpy arrays with implicit structure.</p>
+<h1 id="deployment-conda">Deployment — Conda<a class="headerlink" href="#deployment-conda" title="Permanent link">&para;</a></h1>
+<h2 id="why-a-setup-script-is-required">Why a setup script is required<a class="headerlink" href="#why-a-setup-script-is-required" title="Permanent link">&para;</a></h2>
+<p><code>periodfind</code> — the period-finding library ml4em depends on — cannot be installed via
+<code>conda</code> or plain <code>pip</code>. It requires a two-step compiled build:</p>
+<ol>
+<li><strong>Rust → Python wheel</strong> via <code>maturin</code></li>
+<li><strong>Cython extensions</strong> (optionally CUDA-accelerated)</li>
+</ol>
+<p>A one-shot script (<code>scripts/setup_conda.sh</code>) handles both steps after the conda
+environment is created. This is the only step that differs from a standard conda
+workflow.</p>
 <hr />
-<h2 id="lightcurve-data-features">LightCurve — Data → Features<a class="headerlink" href="#lightcurve-data-features" title="Permanent link">&para;</a></h2>
-<p>Single-band photometric time series for one source.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurve</span><span class="p">:</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">source_id</span> <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">time</span>      <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,)</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">mag</span>       <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">mag_err</span>   <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">band</span>      <span class="p">:</span> <span class="n">Band</span>         <span class="c1"># &quot;u&quot;|&quot;g&quot;|&quot;r&quot;|&quot;i&quot;|&quot;z&quot;|&quot;y&quot;</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">survey</span>    <span class="p">:</span> <span class="n">Survey</span>       <span class="c1"># &quot;ztf&quot;|&quot;rubin&quot;|&quot;simulated&quot;</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">ra</span>        <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">dec</span>       <span class="p">:</span> <span class="nb">float</span>
+<h2 id="1-clone-the-repo-with-submodules">1. Clone the repo (with submodules)<a class="headerlink" href="#1-clone-the-repo-with-submodules" title="Permanent link">&para;</a></h2>
+<p><code>periodfind</code> lives at <code>external/periodfind</code> as a git submodule:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/ManiacUrgency42/ml4em.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>ml4em
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># or after a plain clone:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
 </code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>source_id</code></td>
-<td><code>str</code></td>
-<td>Survey-native identifier</td>
-</tr>
-<tr>
-<td><code>time</code></td>
-<td><code>ndarray (N,)</code></td>
-<td>Observation timestamps (MJD or HJD)</td>
-</tr>
-<tr>
-<td><code>mag</code></td>
-<td><code>ndarray (N,)</code></td>
-<td>Apparent magnitude — <strong>smaller = brighter</strong></td>
-</tr>
-<tr>
-<td><code>mag_err</code></td>
-<td><code>ndarray (N,)</code></td>
-<td>1-sigma uncertainty in magnitude</td>
-</tr>
-<tr>
-<td><code>band</code></td>
-<td><code>Band</code></td>
-<td>Photometric filter: <code>u g r i z y</code></td>
-</tr>
-<tr>
-<td><code>survey</code></td>
-<td><code>Survey</code></td>
-<td><code>"ztf"</code> | <code>"rubin"</code> | <code>"simulated"</code></td>
-</tr>
-<tr>
-<td><code>ra</code></td>
-<td><code>float</code></td>
-<td>Right ascension, decimal degrees (J2000)</td>
-</tr>
-<tr>
-<td><code>dec</code></td>
-<td><code>float</code></td>
-<td>Declination, decimal degrees (J2000)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Validation rules</strong> (enforced in <code>__post_init__</code>):
-- <code>time</code>, <code>mag</code>, <code>mag_err</code> must all have the same length (N)
-- All arrays must be 1-dimensional</p>
-<p><strong>One object per band:</strong> a source observed in ZTF g, r, and i produces three
-<code>LightCurve</code> objects. The feature layer receives <code>list[list[LightCurve]]</code> — the outer
-list is one entry per source, the inner list contains all bands for that source.</p>
-<p>See <a href="../background/light-curves/">Light Curves</a> for a full explanation of magnitude, MJD,
-and bands.</p>
 <hr />
-<h2 id="featurevector-features-training-inference">FeatureVector — Features → Training / Inference<a class="headerlink" href="#featurevector-features-training-inference" title="Permanent link">&para;</a></h2>
-<p>Fully extracted feature set for one source. All float fields default to <code>np.nan</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureVector</span><span class="p">:</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">source_id</span>        <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">survey</span>           <span class="p">:</span> <span class="n">Survey</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">ra</span>               <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">dec</span>              <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="c1"># ... 46 more fields</span>
+<h2 id="2-create-the-conda-environment">2. Create the conda environment<a class="headerlink" href="#2-create-the-conda-environment" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">GPU (MSI production)</label><label for="__tabbed_1_2">CPU (local dev / CPU nodes)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>The CUDA module provides <code>nvcc</code>, which is required to build periodfind's CUDA
+extensions. Load it <strong>before</strong> creating the environment:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>module<span class="w"> </span>load<span class="w"> </span>conda
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>module<span class="w"> </span>load<span class="w"> </span>cuda/11.8.0
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment-gpu.yml
 </code></pre></div>
-<h3 id="field-groups">Field groups<a class="headerlink" href="#field-groups" title="Permanent link">&para;</a></h3>
-<p><strong>Sky position (2 fields)</strong></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ra</code>, <code>dec</code></td>
-<td>Sky position in decimal degrees</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Light curve statistics (22 fields)</strong> — computed by <code>StatisticsExtractor</code></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>n_obs</code></td>
-<td>Number of observations</td>
-</tr>
-<tr>
-<td><code>median</code></td>
-<td>Median apparent magnitude</td>
-</tr>
-<tr>
-<td><code>wmean</code></td>
-<td>Error-weighted mean magnitude</td>
-</tr>
-<tr>
-<td><code>chi2red</code></td>
-<td>Reduced chi-squared</td>
-</tr>
-<tr>
-<td><code>roms</code></td>
-<td>Ratio of median scatter to sigma</td>
-</tr>
-<tr>
-<td><code>wstd</code></td>
-<td>Error-weighted standard deviation</td>
-</tr>
-<tr>
-<td><code>norm_peak_to_peak_amp</code></td>
-<td>Normalized peak-to-peak amplitude</td>
-</tr>
-<tr>
-<td><code>norm_excess_var</code></td>
-<td>Normalized excess variance</td>
-</tr>
-<tr>
-<td><code>median_abs_dev</code></td>
-<td>Median absolute deviation</td>
-</tr>
-<tr>
-<td><code>iqr</code></td>
-<td>Interquartile range</td>
-</tr>
-<tr>
-<td><code>i60r</code> <code>i70r</code> <code>i80r</code> <code>i90r</code></td>
-<td>Percentile range ratios</td>
-</tr>
-<tr>
-<td><code>skew</code></td>
-<td>Skewness</td>
-</tr>
-<tr>
-<td><code>small_kurt</code></td>
-<td>Small-sample kurtosis</td>
-</tr>
-<tr>
-<td><code>inv_von_neumann</code></td>
-<td>Inverse Von Neumann ratio</td>
-</tr>
-<tr>
-<td><code>stetson_i</code> <code>stetson_j</code> <code>stetson_k</code></td>
-<td>Stetson variability indices</td>
-</tr>
-<tr>
-<td><code>anderson_darling</code></td>
-<td>Anderson-Darling normality statistic</td>
-</tr>
-<tr>
-<td><code>shapiro_wilk</code></td>
-<td>Shapiro-Wilk W statistic</td>
-</tr>
-</tbody>
-</table>
-<p>See <a href="../background/variability-statistics/">Variability Statistics</a> for definitions.</p>
-<p><strong>Period features (3 fields)</strong> — computed by <code>PeriodExtractor</code></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>period</code></td>
-<td>Best period in days</td>
-</tr>
-<tr>
-<td><code>period_significance</code></td>
-<td>Algorithm confidence score</td>
-</tr>
-<tr>
-<td><code>period_algorithm</code></td>
-<td>Which algorithm(s) found the period (<code>str</code>, not a scalar)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Fourier features (14 fields)</strong> — computed by <code>PeriodExtractor</code></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>f1_power</code></td>
-<td>Power of Fourier model at best period</td>
-</tr>
-<tr>
-<td><code>f1_bic</code></td>
-<td>Bayesian Information Criterion (lower = better fit)</td>
-</tr>
-<tr>
-<td><code>f1_a</code></td>
-<td>Cosine coefficient of 1st harmonic</td>
-</tr>
-<tr>
-<td><code>f1_b</code></td>
-<td>Sine coefficient of 1st harmonic</td>
-</tr>
-<tr>
-<td><code>f1_amp</code></td>
-<td>Amplitude of 1st harmonic</td>
-</tr>
-<tr>
-<td><code>f1_phi0</code></td>
-<td>Phase offset of 1st harmonic</td>
-</tr>
-<tr>
-<td><code>f1_relamp1–4</code></td>
-<td>Amplitudes of harmonics 2–5 relative to 1st</td>
-</tr>
-<tr>
-<td><code>f1_relphi1–4</code></td>
-<td>Phases of harmonics 2–5 relative to 1st</td>
-</tr>
-</tbody>
-</table>
-<p>See <a href="../background/period-finding/">Period Finding</a> for definitions.</p>
-<p><strong>dm/dt image (1 field)</strong></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>dmdt</code></td>
-<td><code>ndarray (26, 26)</code></td>
-<td>L2-normalized Δmag/Δt pairwise histogram</td>
-</tr>
-</tbody>
-</table>
-<p>See <a href="../background/dmdt/">The dm/dt Histogram</a> for a full explanation.</p>
-<p><strong>Gaia catalog features (4 fields)</strong> — computed by <code>CatalogExtractor</code> (stub)</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>gaia_parallax</code></td>
-<td>Parallax in milliarcseconds (distance proxy)</td>
-</tr>
-<tr>
-<td><code>gaia_parallax_error</code></td>
-<td>Parallax uncertainty in milliarcseconds</td>
-</tr>
-<tr>
-<td><code>gaia_bp_rp</code></td>
-<td>BP–RP colour (temperature proxy)</td>
-</tr>
-<tr>
-<td><code>gaia_ruwe</code></td>
-<td>Astrometric quality — RUWE &gt; 1.4 suggests binary</td>
-</tr>
-</tbody>
-</table>
-<p>See <a href="../background/gaia/">Gaia &amp; Stellar Catalogs</a> for definitions.</p>
-<h3 id="scalar_fields">SCALAR_FIELDS<a class="headerlink" href="#scalar_fields" title="Permanent link">&para;</a></h3>
-<p><code>models.SCALAR_FIELDS</code> is an ordered list of <strong>43 float field names</strong> — everything
-in <code>FeatureVector</code> except <code>source_id</code>, <code>survey</code>, <code>period_algorithm</code>, and <code>dmdt</code>. This
-is the input to any scalar-based model.</p>
-<div class="admonition warning">
-<p class="admonition-title">Field order is stable</p>
-<p>The ordering of <code>SCALAR_FIELDS</code> is fixed. Changing it invalidates any previously
-saved model that was trained on that ordering. Never reorder <code>SCALAR_FIELDS</code> without
-retraining all models.</p>
+<div class="admonition note">
+<p class="admonition-title">CUDA is not inside the conda env</p>
+<p><code>environment-gpu.yml</code> does not install a CUDA toolkit — that would conflict
+with MSI's system drivers. Instead, the <code>module load cuda/11.8.0</code> command
+puts <code>nvcc</code> on your PATH at build time.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment-cpu.yml
+</code></pre></div>
+<p>Or with the Makefile (creates the environment and runs the setup script in one
+step — see § 3 below):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>make<span class="w"> </span>conda-cpu
+</code></pre></div>
+</div>
+</div>
 </div>
 <hr />
-<h2 id="labeledsample-label-preparation-training">LabeledSample — Label preparation → Training<a class="headerlink" href="#labeledsample-label-preparation-training" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">LabeledSample</span><span class="p">:</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">feature</span> <span class="p">:</span> <span class="n">FeatureVector</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">label</span>   <span class="p">:</span> <span class="nb">int</span>   <span class="c1"># 1 = positive class, 0 = background</span>
+<h2 id="3-build-periodfind-and-install-ml4em">3. Build periodfind and install ml4em<a class="headerlink" href="#3-build-periodfind-and-install-ml4em" title="Permanent link">&para;</a></h2>
+<p><code>scripts/setup_conda.sh</code> does four things in order:</p>
+<ol>
+<li>Installs torch with the correct wheel (CPU or CUDA 11.8)</li>
+<li>Compiles the periodfind Rust extension with <code>maturin</code></li>
+<li>Compiles the periodfind Cython extensions (with CUDA if in <code>gpu</code> mode)</li>
+<li>Installs ml4em in editable mode: <code>pip install -e ".[ztf,catalog,training,dev]"</code></li>
+</ol>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">GPU (MSI production)</label><label for="__tabbed_2_2">CPU (local dev / CPU nodes)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>On MSI, submit this as a SLURM job. The Rust compilation can exceed the login
+node's 15-minute CPU limit. No GPU is needed to compile — the job runs on a
+CPU node (<code>amdsmall</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
 </code></pre></div>
-<p>Wraps a <code>FeatureVector</code> with its ground-truth label. Labels are never generated by
-ml4em — they must be supplied by the researcher (e.g. from a catalog cross-match).</p>
-<p>Labels must be binary: <code>1</code> = positive class (whatever you're looking for), <code>0</code> =
-background. See <a href="../guides/label-preparation/">Preparing Labels</a> for how to create them.</p>
+<p>Monitor:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_conda_setup_&lt;JOBID&gt;.out
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>ml4em-cpu<span class="w"> </span>bash<span class="w"> </span>scripts/setup_conda.sh<span class="w"> </span>cpu
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Verify the install once complete:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>module<span class="w"> </span>load<span class="w"> </span>conda<span class="w">          </span><span class="c1"># MSI only</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>conda<span class="w"> </span>activate<span class="w"> </span>ml4em-gpu<span class="w">   </span><span class="c1"># or ml4em-cpu</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import ml4em; import periodfind; print(&quot;OK&quot;)&#39;</span>
+</code></pre></div>
 <hr />
-<h2 id="candidate-inference-output">Candidate — Inference → Output<a class="headerlink" href="#candidate-inference-output" title="Permanent link">&para;</a></h2>
-<p>Immutable inference result for one source (<code>frozen=True</code> on the dataclass — no field
-can be changed after creation).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Candidate</span><span class="p">:</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">source_id</span>        <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">ra</span>               <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">dec</span>              <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">survey</span>           <span class="p">:</span> <span class="n">Survey</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">probability</span>      <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">period</span>           <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">period_algorithm</span> <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">confidence</span>       <span class="p">:</span> <span class="n">Confidence</span>   <span class="c1"># &quot;high&quot; | &quot;medium&quot; | &quot;low&quot;</span>
+<h2 id="4-first-time-msi-data-setup">4. First-time MSI data setup<a class="headerlink" href="#4-first-time-msi-data-setup" title="Permanent link">&para;</a></h2>
+<p>Do this once after SSH-ing into MSI. These directories persist across jobs.</p>
+<h3 id="4a-create-scratch-directories">4a. Create scratch directories<a class="headerlink" href="#4a-create-scratch-directories" title="Permanent link">&para;</a></h3>
+<p>MSI's home quota is small. Keep all large files on scratch:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$DATA</span>/features<span class="w"> </span><span class="nv">$DATA</span>/models<span class="w"> </span><span class="nv">$DATA</span>/predictions
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/tmp
 </code></pre></div>
+<h3 id="4b-copy-your-catalog">4b. Copy your catalog<a class="headerlink" href="#4b-copy-your-catalog" title="Permanent link">&para;</a></h3>
+<p><code>wdb_sources.csv</code> is the WDB catalog (ra, dec positions of target sources):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># From your local machine:</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>scp<span class="w"> </span>data/wdb_sources.csv<span class="w"> </span>jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4em_data/
+</code></pre></div>
+<h3 id="4c-write-a-config-for-msi">4c. Write a config for MSI<a class="headerlink" href="#4c-write-a-config-for-msi" title="Permanent link">&para;</a></h3>
+<p>Create <code>/scratch.global/$USER/ml4em_data/config_msi.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">sources</span><span class="p">:</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">ztf</span><span class="p">:</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">melman.caltech.edu</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="nt">collection_sources</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZTF_sources_84525009</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span><span class="nt">max_timestamp_hjd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2459951.5</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="nt">bands</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">g</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">r</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">i</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="nt">min_cadence_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.020833</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cuda</span><span class="w">          </span><span class="c1"># use GPU for periodfind</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">  </span><span class="nt">min_observations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nt">storage</span><span class="p">:</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">  </span><span class="nt">catalog_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/&lt;USER&gt;/ml4em_data/wdb_sources.csv</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">  </span><span class="nt">labels_path</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/&lt;USER&gt;/ml4em_data/labels.csv</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">  </span><span class="nt">features_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/&lt;USER&gt;/ml4em_data/features</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">  </span><span class="nt">models_dir</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/&lt;USER&gt;/ml4em_data/models</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">  </span><span class="nt">predictions_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/&lt;USER&gt;/ml4em_data/predictions</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="nt">training</span><span class="p">:</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">  </span><span class="nt">val_fraction</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">  </span><span class="nt">test_fraction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">  </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="nt">inference</span><span class="p">:</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="w">  </span><span class="nt">confidence_thresholds</span><span class="p">:</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+</code></pre></div>
+<p>Replace <code>&lt;USER&gt;</code> with your MSI username (e.g. <code>jin00404</code>).</p>
+<h3 id="4d-store-your-kowalski-token">4d. Store your Kowalski token<a class="headerlink" href="#4d-store-your-kowalski-token" title="Permanent link">&para;</a></h3>
+<p>Never put tokens in <code>config_msi.yaml</code>. Store them in a <code>.env</code> file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ML4EM_ZTF_TOKEN=your_token_here&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
+</code></pre></div>
+<hr />
+<h2 id="5-run-the-demo">5. Run the demo<a class="headerlink" href="#5-run-the-demo" title="Permanent link">&para;</a></h2>
+<h3 id="batch-job-recommended">Batch job (recommended)<a class="headerlink" href="#batch-job-recommended" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sbatch<span class="w"> </span>slurm/run_demo_conda.sh
+</code></pre></div>
+<p>Monitor:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_demo_conda_&lt;JOBID&gt;.out
+</code></pre></div>
+<p>Output files:</p>
+<ul>
+<li><code>/scratch.global/$USER/ml4em_data/features/demo.parquet</code> — extracted feature vectors</li>
+<li><code>/scratch.global/$USER/ml4em_data/models/logistic_demo/</code> — saved model</li>
+</ul>
+<h3 id="interactive-run-for-debugging">Interactive run (for debugging)<a class="headerlink" href="#interactive-run-for-debugging" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Must be on a GPU compute node</p>
+<p>Never run GPU workloads on the login node. Request an interactive GPU node first:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
+</code></pre></div>
+</div>
+<p>Once on the compute node:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>module<span class="w"> </span>load<span class="w"> </span>conda<span class="w"> </span>cuda/11.8.0
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>conda<span class="w"> </span>activate<span class="w"> </span>ml4em-gpu
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="s2">/.env&quot;</span><span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="s2">/config_msi.yaml&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="when-to-rebuild-the-environment">When to rebuild the environment<a class="headerlink" href="#when-to-rebuild-the-environment" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
+<th>Change</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>source_id</code> <code>ra</code> <code>dec</code> <code>survey</code></td>
-<td>—</td>
-<td>Source identity (copied from <code>FeatureVector</code>)</td>
+<td><code>src/ml4em/</code> code changes</td>
+<td><strong>None</strong> — <code>git pull</code> is enough (editable install)</td>
 </tr>
 <tr>
-<td><code>probability</code></td>
-<td><code>float</code></td>
-<td>P(positive class) ∈ [0, 1]</td>
+<td><code>pyproject.toml</code> pure-Python dep changes</td>
+<td><code>pip install -e ".[ztf,catalog,training,dev]"</code> inside the active env</td>
 </tr>
 <tr>
-<td><code>period</code></td>
-<td><code>float</code></td>
-<td>Best period in days (from feature layer)</td>
+<td><code>external/periodfind</code> submodule update</td>
+<td>Full rebuild (see below)</td>
 </tr>
 <tr>
-<td><code>period_algorithm</code></td>
-<td><code>str</code></td>
-<td>Which algorithm found the period</td>
-</tr>
-<tr>
-<td><code>confidence</code></td>
-<td><code>"high"</code> | <code>"medium"</code> | <code>"low"</code></td>
-<td>Derived from probability thresholds</td>
+<td>CUDA version change</td>
+<td>Full rebuild (see below)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="confidence-tiers">Confidence tiers<a class="headerlink" href="#confidence-tiers" title="Permanent link">&para;</a></h3>
-<p>Confidence is assigned by <code>inference.postprocess.probabilities_to_candidates</code> using
-thresholds from <code>InferenceConfig.confidence_thresholds</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">inference</span><span class="p">:</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">confidence_thresholds</span><span class="p">:</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<p>Full rebuild from scratch:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>-n<span class="w"> </span>ml4em-gpu<span class="w"> </span>--yes
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
 </code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Probability</th>
-<th>Confidence</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>≥ 0.9</td>
-<td><code>"high"</code></td>
-</tr>
-<tr>
-<td>0.5 – 0.9</td>
-<td><code>"medium"</code></td>
-</tr>
-<tr>
-<td>&lt; 0.5</td>
-<td><code>"low"</code></td>
-</tr>
-</tbody>
-</table>
-<p>Thresholds are configurable. There is no science-specific meaning baked into the tiers —
-set them to match the purity/completeness trade-off you need.</p>
 
 
 

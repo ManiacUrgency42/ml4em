@@ -262,17 +262,20 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../deployment/" class="md-tabs__link">
-        
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deployment/" class="md-tabs__link">
+          
   
   
     
   
   Deployment
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -518,9 +521,33 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../deployment/" class="md-nav__link">
+    
+    
+      
         
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -534,7 +561,107 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apptainer-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apptainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../conda-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conda
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -806,6 +933,8 @@
       
         
       
+        
+      
     
     
     
@@ -894,6 +1023,34 @@
     
   
     Design Principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/periodfind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    periodfind
   
 
     
@@ -2052,6 +2209,10 @@
 
 <h1 id="feature-layer">Feature Layer<a class="headerlink" href="#feature-layer" title="Permanent link">&para;</a></h1>
 <p>Converts raw light curves into fixed-length numerical representations (<code>FeatureVector</code> objects) for the model. All computationally intensive work is delegated to <strong>periodfind</strong>, a GPU-accelerated Rust/CUDA library.</p>
+<div class="admonition tip">
+<p class="admonition-title">periodfind</p>
+<p>periodfind is an external compiled library that powers all period-finding and statistics computation in this layer. For a technical deep-dive — how Rust, CUDA C++, and Cython fit together — see <a href="../../architecture/periodfind/">Architecture → periodfind</a>.</p>
+</div>
 <p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — outer list is sources, inner list is bands per source</p>
 <p><strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source, with 43 scalar fields + 26×26 dm/dt image</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/features/
