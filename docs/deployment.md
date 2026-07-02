@@ -52,6 +52,12 @@ less setup and is the path used and tested by the core team.
 
 ## Side-by-side comparison
 
+!!! note "Why does Conda setup take 30–45 minutes?"
+    The setup time is not spent installing Python packages — it is spent compiling
+    the period-finding library (`periodfind`) from Rust and CUDA C++ source code.
+    See [Architecture → periodfind](architecture/periodfind.md#why-setup-takes-so-long)
+    for a full explanation of what is being compiled and why it only needs to happen once.
+
 | | Apptainer ★ | Conda |
 |---|---|---|
 | **Recommended** | Yes, for most MSI users | For Jupyter / interactive work, or local development |
@@ -65,9 +71,3 @@ less setup and is the path used and tested by the core team.
 
 Both paths install ml4em in **editable mode**: changes to Python source files are
 picked up immediately with `git pull` — no rebuild or reinstall needed.
-
-!!! note "Why does Conda setup take 30–45 minutes?"
-    The setup time is not spent installing Python packages — it is spent compiling
-    the period-finding library (`periodfind`) from Rust and CUDA C++ source code.
-    See [Architecture → periodfind](architecture/periodfind.md#why-setup-takes-so-long)
-    for a full explanation of what is being compiled and why it only needs to happen once.
