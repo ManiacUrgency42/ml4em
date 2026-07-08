@@ -3,3 +3,22 @@
     display: flex;
     justify-content: center;
 }
+
+/* Wider content column — gives architecture diagrams room to breathe */
+.md-grid {
+    max-width: 1440px;
+}
+
+/* Mermaid click-href nodes: strip browser link styling (underline, blue/grey color) */
+.mermaid a {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+/* Prevent em-dash separator lines from wrapping to two lines.
+   click-href switches Mermaid to HTML (foreignObject) rendering which word-wraps by default. */
+.mermaid .label div,
+.mermaid .label span,
+.mermaid foreignObject > div {
+    white-space: nowrap !important;
+}
