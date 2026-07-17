@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/guides/add-data-source/">
+        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/background/docker-ghcr/">
       
       
-        <link rel="prev" href="../../layers/inference/">
+        <link rel="prev" href="../periodfind/">
       
       
-        <link rel="next" href="../add-extractor/">
+        <link rel="next" href="../../architecture/overview/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Add a Data Source - ml4em</title>
+        <title>Docker & GHCR - ml4em</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#guide-add-a-new-data-source" class="md-skip">
+        <a href="#docker-ghcr" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Add a Data Source
+              Docker & GHCR
             
           </span>
         </div>
@@ -283,11 +283,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../background/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -368,13 +370,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../guides/add-data-source/" class="md-tabs__link">
           
   
   
@@ -670,6 +670,8 @@
       
   
   
+    
+  
   
   
     
@@ -699,20 +701,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../background/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -730,13 +735,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -756,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/light-curves/" class="md-nav__link">
+      <a href="../light-curves/" class="md-nav__link">
         
   
   
@@ -784,7 +789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/surveys/" class="md-nav__link">
+      <a href="../surveys/" class="md-nav__link">
         
   
   
@@ -812,7 +817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/period-finding/" class="md-nav__link">
+      <a href="../period-finding/" class="md-nav__link">
         
   
   
@@ -840,7 +845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/variability-statistics/" class="md-nav__link">
+      <a href="../variability-statistics/" class="md-nav__link">
         
   
   
@@ -868,7 +873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/dmdt/" class="md-nav__link">
+      <a href="../dmdt/" class="md-nav__link">
         
   
   
@@ -896,7 +901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/gaia/" class="md-nav__link">
+      <a href="../gaia/" class="md-nav__link">
         
   
   
@@ -924,7 +929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../background/periodfind/" class="md-nav__link">
+      <a href="../periodfind/" class="md-nav__link">
         
   
   
@@ -949,10 +954,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../background/docker-ghcr/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker & GHCR
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -968,6 +1000,103 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is Docker?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-ghcr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is GHCR?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-all-fits-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it all fits together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci-rebuild-times" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI rebuild times
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-image-maintainers-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the image (maintainers only)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pushing-to-ghcr-maintainers-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pushing to GHCR (maintainers only)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1373,10 +1502,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1392,22 +1519,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1425,7 +1549,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1440,37 +1564,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Add a Data Source
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../guides/add-data-source/" class="md-nav__link">
         
   
   
@@ -1486,92 +1583,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#step-1-create-the-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 1 — Create the file
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-2-implement-the-two-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 2 — Implement the two methods
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-3-build-lightcurve-objects" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 3 — Build LightCurve objects
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-4-optional-export-for-convenience" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 4 — Optional: export for convenience
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-5-use-it" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 5 — Use it
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-pitfalls" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common pitfalls
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1584,7 +1595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../add-extractor/" class="md-nav__link">
+      <a href="../../guides/add-extractor/" class="md-nav__link">
         
   
   
@@ -1612,7 +1623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../add-model/" class="md-nav__link">
+      <a href="../../guides/add-model/" class="md-nav__link">
         
   
   
@@ -1640,7 +1651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../label-preparation/" class="md-nav__link">
+      <a href="../../guides/label-preparation/" class="md-nav__link">
         
   
   
@@ -1996,10 +2007,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#step-1-create-the-file" class="md-nav__link">
+  <a href="#what-is-docker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1 — Create the file
+        What is Docker?
       
     </span>
   </a>
@@ -2007,10 +2018,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-implement-the-two-methods" class="md-nav__link">
+  <a href="#what-is-ghcr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2 — Implement the two methods
+        What is GHCR?
       
     </span>
   </a>
@@ -2018,10 +2029,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-3-build-lightcurve-objects" class="md-nav__link">
+  <a href="#how-it-all-fits-together" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3 — Build LightCurve objects
+        How it all fits together
       
     </span>
   </a>
@@ -2029,10 +2040,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-optional-export-for-convenience" class="md-nav__link">
+  <a href="#the-dockerfile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 4 — Optional: export for convenience
+        The Dockerfile
       
     </span>
   </a>
@@ -2040,10 +2051,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-5-use-it" class="md-nav__link">
+  <a href="#ci-rebuild-times" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 5 — Use it
+        CI rebuild times
       
     </span>
   </a>
@@ -2051,10 +2062,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#common-pitfalls" class="md-nav__link">
+  <a href="#building-the-image-maintainers-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common pitfalls
+        Building the image (maintainers only)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pushing-to-ghcr-maintainers-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pushing to GHCR (maintainers only)
       
     </span>
   </a>
@@ -2081,104 +2103,212 @@
   
 
 
-<h1 id="guide-add-a-new-data-source">Guide: Add a New Data Source<a class="headerlink" href="#guide-add-a-new-data-source" title="Permanent link">&para;</a></h1>
-<p>Adding a new survey or data source requires <strong>one new file</strong>. No existing files need
-to change (except optionally exporting from <code>data/__init__.py</code> for convenience).</p>
+<h1 id="docker-ghcr">Docker &amp; GHCR<a class="headerlink" href="#docker-ghcr" title="Permanent link">&para;</a></h1>
+<p>ml4em depends on <code>periodfind</code>, a library that must be compiled from Rust and CUDA C++
+source code. Because that compilation requires a specific toolchain (Rust, <code>nvcc</code>, CUDA
+headers), the fully compiled environment is baked into a Docker image and stored on
+GHCR so researchers never have to compile anything themselves.</p>
 <hr />
-<h2 id="step-1-create-the-file">Step 1 — Create the file<a class="headerlink" href="#step-1-create-the-file" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/data/my_source.py
-</code></pre></div>
-<h2 id="step-2-implement-the-two-methods">Step 2 — Implement the two methods<a class="headerlink" href="#step-2-implement-the-two-methods" title="Permanent link">&para;</a></h2>
-<p>Your class must have exactly two methods with these signatures:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightCurve</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">MySource</span><span class="p">:</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all bands for one source.&quot;&quot;&quot;</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="o">...</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all bands for all sources in one call.&quot;&quot;&quot;</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="o">...</span>
-</code></pre></div>
-<p>Both methods return a <strong>flat</strong> <code>list[LightCurve]</code> — not grouped by source. If one
-source has 3 bands, the list has 3 entries. The feature layer groups them by
-<code>source_id</code> internally.</p>
-<h2 id="step-3-build-lightcurve-objects">Step 3 — Build LightCurve objects<a class="headerlink" href="#step-3-build-lightcurve-objects" title="Permanent link">&para;</a></h2>
-<p>Each <code>LightCurve</code> must have:
-- <code>time</code>: timestamps in <strong>days</strong> (MJD or HJD — pick one and be consistent)
-- <code>mag</code>: apparent magnitude (smaller = brighter)
-- <code>mag_err</code>: 1-sigma uncertainty, same units as <code>mag</code>
-- <code>band</code>: one of <code>"u"</code>, <code>"g"</code>, <code>"r"</code>, <code>"i"</code>, <code>"z"</code>, <code>"y"</code>
-- <code>survey</code>: a string identifying your survey (e.g. <code>"my_survey"</code>)
-- <code>ra</code>, <code>dec</code>: sky position in decimal degrees</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightCurve</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">MySource</span><span class="p">:</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">LightCurve</span><span class="p">(</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            <span class="n">source_id</span><span class="o">=</span><span class="n">source_id</span><span class="p">,</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>            <span class="n">time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>            <span class="n">mag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>            <span class="n">mag_err</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;magerr&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>            <span class="n">band</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>          <span class="c1"># &quot;g&quot;, &quot;r&quot;, etc.</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>            <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>            <span class="n">ra</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>            <span class="n">dec</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="p">)]</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="c1"># Make one batched API call instead of N individual calls</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">results</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">batch_get</span><span class="p">(</span><span class="n">source_ids</span><span class="p">)</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="n">lcs</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>            <span class="n">lc</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>                <span class="n">source_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>                <span class="n">time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>                <span class="n">mag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>                <span class="n">mag_err</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;magerr&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>                <span class="n">band</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>                <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>                <span class="n">ra</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>                <span class="n">dec</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>            <span class="p">)</span>
-<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>            <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
-<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>        <span class="k">return</span> <span class="n">lcs</span>
-</code></pre></div>
-<h2 id="step-4-optional-export-for-convenience">Step 4 — Optional: export for convenience<a class="headerlink" href="#step-4-optional-export-for-convenience" title="Permanent link">&para;</a></h2>
-<p>Add to <code>src/ml4em/data/__init__.py</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">.my_source</span><span class="w"> </span><span class="kn">import</span> <span class="n">MySource</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="s2">&quot;MySource&quot;</span><span class="p">]</span>
-</code></pre></div>
-<h2 id="step-5-use-it">Step 5 — Use it<a class="headerlink" href="#step-5-use-it" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.data.my_source</span><span class="w"> </span><span class="kn">import</span> <span class="n">MySource</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeaturePipeline</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">source</span> <span class="o">=</span> <span class="n">MySource</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_batch</span><span class="p">([</span><span class="s2">&quot;id1&quot;</span><span class="p">,</span> <span class="s2">&quot;id2&quot;</span><span class="p">,</span> <span class="s2">&quot;id3&quot;</span><span class="p">])</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># group by source_id</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">groupby</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">grouped</span> <span class="o">=</span> <span class="p">[[</span><span class="n">lc</span> <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">g</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">lcs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="o">.</span><span class="n">source_id</span><span class="p">)]</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="n">fvs</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_batch</span><span class="p">(</span><span class="n">grouped</span><span class="p">)</span>
-</code></pre></div>
+<h2 id="what-is-docker">What is Docker?<a class="headerlink" href="#what-is-docker" title="Permanent link">&para;</a></h2>
+<p>Docker is a tool for packaging an entire software environment — the operating system,
+system libraries, compilers, and Python packages — into a single portable file called
+an <strong>image</strong>. When you run an image, Docker starts an isolated environment (a
+<strong>container</strong>) that behaves identically regardless of what machine it runs on.</p>
+<p>In ml4em, the Docker image contains:
+- Ubuntu 22.04 + CUDA 11.8 runtime and development libraries
+- A compiled <code>periodfind_cpu</code> Rust wheel
+- Compiled Cython + CUDA extensions for <code>periodfind</code>
+- All Python dependencies from <code>pyproject.toml</code>
+- <code>ml4em</code> itself, installed in editable mode</p>
+<p>Researchers on MSI never interact with Docker directly — Apptainer converts the Docker
+image into a <code>.sif</code> file and runs it. See <a href="../../apptainer-deployment/">Deployment → Apptainer</a>.</p>
 <hr />
-<h2 id="common-pitfalls">Common pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
-<p><strong>Wrong array dtype:</strong> <code>LightCurve.__post_init__</code> validates that <code>time</code>, <code>mag</code>, and
-<code>mag_err</code> are all 1-dimensional and the same length. If your arrays are 2D (e.g. from
-a pandas DataFrame without <code>.values.flatten()</code>), you'll get a validation error.</p>
-<p><strong>Flux instead of magnitude:</strong> Many surveys return flux in Janskies or nJy, not
-magnitudes. Convert before building <code>LightCurve</code>:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">mag</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flux_njy</span> <span class="o">/</span> <span class="mf">3631e9</span><span class="p">)</span>   <span class="c1"># AB magnitude</span>
+<h2 id="what-is-ghcr">What is GHCR?<a class="headerlink" href="#what-is-ghcr" title="Permanent link">&para;</a></h2>
+<p>GHCR (GitHub Container Registry) is GitHub's built-in Docker image registry — a place
+to store and distribute Docker images, integrated directly with a GitHub repository.</p>
+<p>GHCR plays <strong>two distinct roles</strong> in this project:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Artifact</th>
+<th>Who uses it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Distribution</strong></td>
+<td><code>ghcr.io/maniacurgency42/ml4em:gpu</code></td>
+<td>MSI — pulled via <code>apptainer pull</code></td>
+</tr>
+<tr>
+<td><strong>Build cache</strong></td>
+<td><code>ghcr.io/maniacurgency42/ml4em:gpu-buildcache</code></td>
+<td>GitHub Actions only — never pull this directly</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>gpu-buildcache</code> artifact stores intermediate Docker build layers between CI runs.
+Without it, GitHub Actions runners (which are ephemeral — they reset after every job)
+would recompile Rust (~20 min) and CUDA (~10 min) from scratch on every push. With the
+cache, CI reuses compiled layers and only rebuilds what changed.</p>
+<hr />
+<h2 id="how-it-all-fits-together">How it all fits together<a class="headerlink" href="#how-it-all-fits-together" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A["Push to main\nDockerfile / pyproject.toml / periodfind/ changed"]
+
+    subgraph ci ["GitHub Actions — docker.yml"]
+        B["Pull gpu-buildcache"] --&gt; C["Build :gpu image\nskip unchanged layers"] --&gt; D["Push results to GHCR"]
+    end
+
+    subgraph ghcr ["GHCR — github.com/maniacurgency42/ml4em/pkgs/container"]
+        E[("gpu\nfinal image\n~6 GB")]
+        F[("gpu-buildcache\nintermediate layers\nCI only — do not pull")]
+    end
+
+    subgraph msi ["MSI"]
+        G["sbatch pull_image.sh\n→ ml4em_gpu.sif\nonce per image update"]
+        H["apptainer run --nv\nbind-mount live code"]
+    end
+
+    A --&gt; ci
+    B -.-&gt;|reads| F
+    D --&gt;|pushes| E
+    D -.-&gt;|updates| F
+    E --&gt;|"apptainer pull  (~30 min)"| G
+    G --&gt; H</code></pre>
+<table>
+<thead>
+<tr>
+<th>You are…</th>
+<th>What you need to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Running the pipeline or adding a model</td>
+<td><code>apptainer pull</code> once, then <code>git pull</code> for updates</td>
+</tr>
+<tr>
+<td>Adding a new Python dependency (<code>pyproject.toml</code>)</td>
+<td>Open a PR → merge to <code>main</code> → CI rebuilds automatically → re-pull the <code>.sif</code></td>
+</tr>
+<tr>
+<td>Maintaining the image (periodfind / CUDA / Dockerfile)</td>
+<td>Same as above — CI rebuilds on merge</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-dockerfile">The Dockerfile<a class="headerlink" href="#the-dockerfile" title="Permanent link">&para;</a></h2>
+<p>The Dockerfile uses a <strong>multi-stage build</strong> with two targets:</p>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Base</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cpu</code></td>
+<td><code>python:3.11-bookworm</code></td>
+<td>Local testing, no GPU required</td>
+</tr>
+<tr>
+<td><code>gpu</code></td>
+<td><code>nvidia/cuda:11.8.0-devel-ubuntu22.04</code></td>
+<td>MSI production runs</td>
+</tr>
+</tbody>
+</table>
+<p>The GPU target is structured to exploit Docker's layer caching. The two compiled
+components — the Rust wheel and the CUDA extensions — are copied and built in
+<strong>separate layers</strong>, so changing one never invalidates the other's cache:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Layer 1  — system packages (apt)           rarely changes
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Layer 2  — Python deps from pyproject.toml changes on new pip dep
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Layer 3  — periodfind Rust source → wheel  ~20 min if *.rs changes
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Layer 4  — periodfind CUDA source → .so    ~10 min if *.pyx or *.cu changes
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Layer 5  — ml4em src/ (editable install)   ~1 min, always runs
+</code></pre></div>
+<p>See <a href="../periodfind/">Background → periodfind</a> for a detailed explanation of what is
+being compiled in layers 3 and 4 and why each step takes as long as it does.</p>
+<hr />
+<h2 id="ci-rebuild-times">CI rebuild times<a class="headerlink" href="#ci-rebuild-times" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What changed</th>
+<th>CI rebuild time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/ml4em/</code> Python code</td>
+<td>~1–2 min (no recompilation)</td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code> Python deps only</td>
+<td>~2–5 min (Rust + CUDA layers reused from cache)</td>
+</tr>
+<tr>
+<td><code>rust/src/*.rs</code></td>
+<td>~20–25 min (Rust recompiles, CUDA layer reused)</td>
+</tr>
+<tr>
+<td><code>periodfind/*.pyx</code> or <code>cuda/*.cu</code></td>
+<td>~10–15 min (CUDA recompiles, Rust layer reused)</td>
+</tr>
+<tr>
+<td>Both Rust and CUDA source</td>
+<td>~30–40 min (full rebuild)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="building-the-image-maintainers-only">Building the image (maintainers only)<a class="headerlink" href="#building-the-image-maintainers-only" title="Permanent link">&para;</a></h2>
+<p>Merging to <code>main</code> triggers the GitHub Actions workflow (<code>.github/workflows/docker.yml</code>),
+which builds and pushes the GPU image automatically on native x86_64 runners. <strong>You
+do not normally need to build locally.</strong></p>
+<p>Only run a local build to test a Dockerfile change before merging, or if CI is
+unavailable. On Apple Silicon, <code>--platform linux/amd64</code> forces QEMU emulation — the
+GPU build will take 3+ hours. Prefer pushing to a branch and letting CI build it.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># GPU image — for MSI production runs</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>gpu<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>-t<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:gpu<span class="w"> </span>.
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># CPU image — for local testing only</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>docker<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>--target<span class="w"> </span>cpu<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span>-t<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu<span class="w"> </span>.
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Submodule required</p>
+<p><code>periodfind</code> lives at <code>external/periodfind</code> as a git submodule. Make sure it is
+initialized before building:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>&lt;repo-url&gt;
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># or after a plain clone:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
 </code></pre></div></p>
-<p><strong>HJD vs MJD:</strong> Both are fine as long as you're consistent. ZTF uses HJD, Rubin uses
-MJD. The feature extractors treat <code>time</code> as just a float array of days.</p>
+</div>
+<hr />
+<h2 id="pushing-to-ghcr-maintainers-only">Pushing to GHCR (maintainers only)<a class="headerlink" href="#pushing-to-ghcr-maintainers-only" title="Permanent link">&para;</a></h2>
+<p>Authenticate with a GitHub Personal Access Token (PAT):</p>
+<p><strong>GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic) → Generate new token</strong></p>
+<p>Select scopes: <code>write:packages</code>, <code>read:packages</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">echo</span><span class="w"> </span>YOUR_PAT<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span>ManiacUrgency42<span class="w"> </span>--password-stdin
+</code></pre></div>
+<p>Then push:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:gpu
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/maniacurgency42/ml4em:cpu
+</code></pre></div>
+<p>The GPU image is 5–8 GB. If the push times out mid-upload, rerun — Docker skips
+already-uploaded layers.</p>
+<div class="admonition note">
+<p class="admonition-title">First push only</p>
+<p>After the first push, make the package public so MSI can pull without credentials:
+<strong>GitHub → your profile → Packages → ml4em → Package Settings → Change visibility → Public</strong></p>
+</div>
 
 
 

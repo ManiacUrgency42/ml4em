@@ -691,6 +691,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -913,6 +917,62 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/periodfind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    periodfind
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/docker-ghcr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker & GHCR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -928,8 +988,6 @@
   
     
     
-      
-        
       
         
       
@@ -1023,34 +1081,6 @@
     
   
     Design Principles
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/periodfind/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    periodfind
   
 
     
@@ -2211,7 +2241,7 @@
 <p>Converts raw light curves into fixed-length numerical representations (<code>FeatureVector</code> objects) for the model. All computationally intensive work is delegated to <strong>periodfind</strong>, a GPU-accelerated Rust/CUDA library.</p>
 <div class="admonition tip">
 <p class="admonition-title">periodfind</p>
-<p>periodfind is an external compiled library that powers all period-finding and statistics computation in this layer. For a technical deep-dive — how Rust, CUDA C++, and Cython fit together — see <a href="../../architecture/periodfind/">Architecture → periodfind</a>.</p>
+<p>periodfind is an external compiled library that powers all period-finding and statistics computation in this layer. For a technical deep-dive — how Rust, CUDA C++, and Cython fit together — see <a href="../../background/periodfind/">Background → periodfind</a>.</p>
 </div>
 <p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — outer list is sources, inner list is bands per source</p>
 <p><strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source, with 43 scalar fields + 26×26 dm/dt image</p>

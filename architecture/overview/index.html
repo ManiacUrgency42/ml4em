@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/architecture/overview/">
       
       
-        <link rel="prev" href="../../background/gaia/">
+        <link rel="prev" href="../../background/docker-ghcr/">
       
       
         <link rel="next" href="../design-principles/">
@@ -691,6 +691,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -913,6 +917,62 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/periodfind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    periodfind
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/docker-ghcr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker & GHCR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -930,8 +990,6 @@
   
     
     
-      
-        
       
         
       
@@ -1130,34 +1188,6 @@
     
   
     Design Principles
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../periodfind/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    periodfind
   
 
     
@@ -2040,18 +2070,34 @@ well-defined Protocol interface, and strict dependency rules.</p>
 
     FE["&lt;b&gt;FEATURES&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; FeatureExtractor&lt;br/&gt;──────────────────────────&lt;br/&gt;StatisticsExtractor · PeriodExtractor&lt;br/&gt;DmdtExtractor · CatalogExtractor&lt;br/&gt;FeaturePipeline"]
 
-    M["&lt;b&gt;MODELS&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; MLModel&lt;br/&gt;──────────────────────────&lt;br/&gt;XGBoostClassifier · SCALAR_FIELDS"]
+    M["&lt;b&gt;MODELS&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; MLModel&lt;br/&gt;──────────────────────────&lt;br/&gt;predict_proba() · save()&lt;br/&gt;SCALAR_FIELDS"]
 
-    T["&lt;b&gt;TRAINING&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; Trainer&lt;br/&gt;──────────────────────────&lt;br/&gt;FeatureDataset · StandardTrainer"]
+    T["&lt;b&gt;TRAINING&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; Trainer&lt;br/&gt;──────────────────────────&lt;br/&gt;FeatureDataset&lt;br/&gt;StandardTrainer"]
 
     I["&lt;b&gt;INFERENCE&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;&lt;b&gt;Protocol:&lt;/b&gt; Predictor&lt;br/&gt;──────────────────────────&lt;br/&gt;load_model · StandardPredictor&lt;br/&gt;probabilities_to_candidates"]
+
+    subgraph EXT ["external submodule"]
+        PF["&lt;b&gt;periodfind&lt;/b&gt;&lt;br/&gt;──────────&lt;br/&gt;CPU · Rust / PyO3&lt;br/&gt;GPU · CUDA / Cython"]
+    end
 
     F --&gt; D
     D --&gt;|"list[LightCurve]"| FE
     FE --&gt;|"list[FeatureVector]"| T
     FE --&gt;|"list[FeatureVector]"| M
     M --&gt;|"MLModel"| I
-    T -. "saved model" .-&gt; I</code></pre>
+    T -. "saved model" .-&gt; I
+    F ~~~ PF
+    FE -.- PF
+
+    style EXT stroke-dasharray:5 5,fill:transparent,stroke:#999,color:#999
+
+    click F href "../../layers/foundation/"
+    click D href "../../layers/data/"
+    click FE href "../../layers/features/"
+    click M href "../../layers/models/"
+    click T href "../../layers/training/"
+    click I href "../../layers/inference/"
+    click PF href "../periodfind/"</code></pre>
 <p><strong>Dependency rule:</strong> each layer imports only from layers above it. Training and
 inference are parallel — neither imports from the other.</p>
 <hr />
@@ -2110,7 +2156,7 @@ ever training (load a pre-trained model), or train without doing inference.</p>
 <td><code>MLModel</code></td>
 <td><code>models/base.py</code></td>
 <td><code>predict_proba()</code>, <code>save()</code></td>
-<td><code>XGBoostClassifier</code></td>
+<td><em>(pluggable — any conforming model)</em></td>
 </tr>
 <tr>
 <td><code>Trainer</code></td>

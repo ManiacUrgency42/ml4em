@@ -693,6 +693,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -918,6 +922,62 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="periodfind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    periodfind
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docker-ghcr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker & GHCR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -933,8 +993,6 @@
   
     
     
-      
-        
       
         
       
@@ -1028,34 +1086,6 @@
     
   
     Design Principles
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../architecture/periodfind/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    periodfind
   
 
     
@@ -1861,6 +1891,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Pages in this section">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#astrophysics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Astrophysics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1884,22 +1942,27 @@
 
 
 <h1 id="background">Background<a class="headerlink" href="#background" title="Permanent link">&para;</a></h1>
-<p>This section explains every astrophysics concept used in ml4em from first principles.
-No prior astronomy knowledge is assumed.</p>
+<p>This section covers everything you need to understand ml4em before diving into code —
+both the astrophysics concepts and the technical infrastructure that makes the pipeline
+run. No prior astronomy or systems knowledge is assumed.</p>
 <div class="admonition info">
 <p class="admonition-title">Who this section is for</p>
 <p><strong>If you come from an EECS/CS background:</strong> the astrophysics terms in this codebase
 will be unfamiliar. Variable names like <code>chi2red</code>, <code>stetson_k</code>, <code>gaia_ruwe</code>, and
 <code>f1_relphi2</code> are completely opaque without context. This section gives you that
-context.</p>
+context — and also explains the compiled library (<code>periodfind</code>) and deployment
+infrastructure (Docker, GHCR, Apptainer) that power the pipeline.</p>
 <p><strong>If you come from an astrophysics background:</strong> the software design patterns used
-here (Protocols, dataclasses, batch-first APIs, Protocol-based dependency injection)
-are explained in the <a href="../architecture/overview/">Architecture</a> section.</p>
+here (Protocols, dataclasses, batch-first APIs) are explained in the
+<a href="../architecture/overview/">Architecture</a> section. This section focuses on the
+science and on the technical toolchain (Rust, CUDA, Docker) you will encounter
+during setup.</p>
 <p><strong>You don't need to read these pages in order.</strong> When you hit an unfamiliar term in
-the code, come here.</p>
+the code or setup docs, come here.</p>
 </div>
 <hr />
 <h2 id="pages-in-this-section">Pages in this section<a class="headerlink" href="#pages-in-this-section" title="Permanent link">&para;</a></h2>
+<h3 id="astrophysics">Astrophysics<a class="headerlink" href="#astrophysics" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -1931,6 +1994,25 @@ the code, come here.</p>
 <tr>
 <td><a href="gaia/">Gaia &amp; Stellar Catalogs</a></td>
 <td>Gaia EDR3; parallax; BP–RP colour; RUWE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="infrastructure">Infrastructure<a class="headerlink" href="#infrastructure" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>What it explains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="periodfind/">periodfind</a></td>
+<td>Why Python is too slow; Rust + Rayon CPU backend; CUDA GPU backend; Cython; maturin; why setup takes 20–45 min</td>
+</tr>
+<tr>
+<td><a href="docker-ghcr/">Docker &amp; GHCR</a></td>
+<td>What Docker images are; GHCR's two roles (distribution + build cache); the CI workflow; Dockerfile layer structure; how to build and push images</td>
 </tr>
 </tbody>
 </table>
