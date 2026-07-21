@@ -11,13 +11,26 @@ no rebuild needed.
 
 ---
 
-## 1. First-time MSI setup
+## 1. Clone the repo on MSI
 
-Do this once after SSH-ing into MSI. These directories persist across jobs.
+SSH into MSI and clone the repo with submodules. `periodfind` lives at
+`external/periodfind` as a git submodule — without `--recurse-submodules` the
+build will fail.
 
-### 3a. Create scratch directories
+```bash
+git clone --recurse-submodules https://github.com/ManiacUrgency42/ml4em.git ~/ml4em
+cd ~/ml4em
+```
 
-MSI's home quota is small. Keep all large files on scratch:
+---
+
+## 2. First-time data setup
+
+Do this once. These directories and files persist across jobs on scratch.
+
+### 2a. Create scratch directories
+
+MSI's home quota is small (~10 GB). Keep all large files on scratch:
 
 ```bash
 DATA=/scratch.global/$USER/ml4em_data
@@ -27,7 +40,7 @@ mkdir -p /scratch.global/$USER/apptainer_cache
 mkdir -p /scratch.global/$USER/tmp
 ```
 
-### 3b. Copy your catalog
+### 2b. Copy your catalog
 
 `wdb_sources.csv` is the WDB catalog (ra, dec positions of target sources). Copy it
 to scratch from your local machine:
@@ -37,7 +50,7 @@ to scratch from your local machine:
 scp data/wdb_sources.csv jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4em_data/
 ```
 
-### 3c. Write a config for MSI
+### 2c. Write a config for MSI
 
 The MSI config uses absolute scratch paths instead of relative ones. Create it at
 `/scratch.global/$USER/ml4em_data/config_msi.yaml`:
@@ -78,7 +91,7 @@ inference:
 The bind mount in the run command maps `/scratch.global/$USER/ml4em_data` → `/data`
 inside the container, so all paths above resolve correctly.
 
-### 3d. Store your Kowalski token
+### 2d. Store your Kowalski token
 
 Never put tokens in `config_msi.yaml`. Store them in a `.env` file:
 
@@ -91,13 +104,15 @@ The `--env-file` flag in the run scripts injects this into the container at runt
 
 ---
 
-## 4. Pull the image on MSI
+## 3. Pull the image on MSI
 
-The repo includes a ready-made SLURM script that handles the pull correctly —
-no interactive node needed:
+Submit the SLURM pull job from your repo root. This downloads the Docker image
+from GHCR, decompresses every layer, merges them into a single filesystem, and
+converts it to a `.sif` (SquashFS Image Format) file on scratch. This is the
+one-time cost — you never repeat it unless a compiled dependency changes.
 
 ```bash
-# From your ml4em repo root on MSI:
+cd ~/ml4em
 mkdir -p logs
 sbatch slurm/pull_image.sh
 ```
@@ -110,8 +125,7 @@ tail -f logs/pull_ml4em_<JOBID>.out
 ```
 
 The pull takes 20–40 minutes (5–8 GB download + squashfs conversion). Output is
-written to `/scratch.global/$USER/ml4em_gpu.sif`. You only need to re-run this
-when a new image is pushed to GHCR.
+written to `/scratch.global/$USER/ml4em_gpu.sif`.
 
 !!! warning "Do not pull on the login node"
     The login node enforces a 15-minute CPU limit — not enough time to convert a
@@ -120,7 +134,7 @@ when a new image is pushed to GHCR.
 
 ---
 
-## 5. Run the demo on MSI
+## 4. Run the demo
 
 ### Batch job (recommended)
 
