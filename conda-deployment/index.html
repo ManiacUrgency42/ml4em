@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -792,10 +792,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4d-fetch-your-kowalski-token" class="md-nav__link">
+  <a href="#4d-store-your-kowalski-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4d. Fetch your Kowalski token
+        4d. Store your Kowalski token
       
     </span>
   </a>
@@ -2302,10 +2302,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4d-fetch-your-kowalski-token" class="md-nav__link">
+  <a href="#4d-store-your-kowalski-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4d. Fetch your Kowalski token
+        4d. Store your Kowalski token
       
     </span>
   </a>
@@ -2517,45 +2517,20 @@ CPU node (<code>amdsmall</code>).</p>
 <a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
 </code></pre></div>
 <p>Replace <code>&lt;USER&gt;</code> with your MSI username (e.g. <code>jin00404</code>).</p>
-<h3 id="4d-fetch-your-kowalski-token">4d. Fetch your Kowalski token<a class="headerlink" href="#4d-fetch-your-kowalski-token" title="Permanent link">&para;</a></h3>
-<p>Never put tokens in <code>config_msi.yaml</code>. Activate the conda environment and run
-<code>ml4em-get-credentials</code> — it prompts for your Kowalski username and password,
-fetches a JWT from the server, verifies it with a ping, and writes it to <code>.env</code>
-automatically:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>module<span class="w"> </span>load<span class="w"> </span>conda
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>conda<span class="w"> </span>activate<span class="w"> </span>ml4em-gpu
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>ml4em-get-credentials<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">    </span>--config<span class="w"> </span><span class="nv">$DATA</span>/config_msi.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">$DATA</span>/.env
+<h3 id="4d-store-your-kowalski-token">4d. Store your Kowalski token<a class="headerlink" href="#4d-store-your-kowalski-token" title="Permanent link">&para;</a></h3>
+<p>Never put tokens in <code>config_msi.yaml</code>. Store them in a <code>.env</code> file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ML4EM_ZTF_TOKEN=your_token_here&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
 </code></pre></div>
-<p>You will be prompted:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Target: https://melman.caltech.edu:443
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>Output: /scratch.global/&lt;USER&gt;/ml4em_data/.env
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>Username: your_kowalski_username
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>Password:
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>Fetching token...
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>Token received.
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>Verifying token with Kowalski ping...
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>Ping successful.
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>Saved ML4EM_ZTF_TOKEN to /scratch.global/&lt;USER&gt;/ml4em_data/.env
-</code></pre></div>
-<p>Run this on the login node — no GPU or SLURM job needed. The <code>.env</code> file is
-written with <code>chmod 600</code>. Re-run whenever your token expires.</p>
 <hr />
 <h2 id="5-run-the-demo">5. Run the demo<a class="headerlink" href="#5-run-the-demo" title="Permanent link">&para;</a></h2>
 <h3 id="batch-job-recommended">Batch job (recommended)<a class="headerlink" href="#batch-job-recommended" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sbatch<span class="w"> </span>slurm/run_demo_conda.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sbatch<span class="w"> </span>slurm/run_demo_conda.sh
 </code></pre></div>
 <p>Monitor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_demo_conda_&lt;JOBID&gt;.out
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_demo_conda_&lt;JOBID&gt;.out
 </code></pre></div>
 <p>Output files:</p>
 <ul>
@@ -2566,19 +2541,19 @@ written with <code>chmod 600</code>. Re-run whenever your token expires.</p>
 <div class="admonition warning">
 <p class="admonition-title">Must be on a GPU compute node</p>
 <p>Never run GPU workloads on the login node. Request an interactive GPU node first:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Once on the compute node:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>module<span class="w"> </span>load<span class="w"> </span>conda<span class="w"> </span>cuda/11.8.0
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>conda<span class="w"> </span>activate<span class="w"> </span>ml4em-gpu
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="s2">/.env&quot;</span><span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="s2">/config_msi.yaml&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>module<span class="w"> </span>load<span class="w"> </span>conda<span class="w"> </span>cuda/11.8.0
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>conda<span class="w"> </span>activate<span class="w"> </span>ml4em-gpu
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="s2">/.env&quot;</span><span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA</span><span class="si">}</span><span class="s2">/config_msi.yaml&quot;</span>
 </code></pre></div>
 <hr />
 <h2 id="when-to-rebuild-the-environment">When to rebuild the environment<a class="headerlink" href="#when-to-rebuild-the-environment" title="Permanent link">&para;</a></h2>
@@ -2609,8 +2584,8 @@ written with <code>chmod 600</code>. Re-run whenever your token expires.</p>
 </tbody>
 </table>
 <p>Full rebuild from scratch:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>-n<span class="w"> </span>ml4em-gpu<span class="w"> </span>--yes
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>-n<span class="w"> </span>ml4em-gpu<span class="w"> </span>--yes
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
 </code></pre></div>
 
 
@@ -2670,7 +2645,7 @@ written with <code>chmod 600</code>. Re-run whenever your token expires.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

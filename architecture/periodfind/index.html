@@ -10,13 +10,9 @@
       
       
       
-        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/layers/features/">
+        <link rel="canonical" href="https://maniacurgency42.github.io/ml4em/architecture/periodfind/">
       
       
-        <link rel="prev" href="../data/">
-      
-      
-        <link rel="next" href="../models/">
       
       
         
@@ -27,7 +23,7 @@
     
     
       
-        <title>Features - ml4em</title>
+        <title>periodfind - ml4em</title>
       
     
     
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#feature-layer" class="md-skip">
+        <a href="#periodfind" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Features
+              periodfind
             
           </span>
         </div>
@@ -309,7 +305,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../architecture/overview/" class="md-tabs__link">
+        <a href="../overview/" class="md-tabs__link">
           
   
   
@@ -346,13 +342,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../foundation/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../layers/foundation/" class="md-tabs__link">
           
   
   
@@ -1173,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/overview/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         
   
   
@@ -1201,7 +1195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/design-principles/" class="md-nav__link">
+      <a href="../design-principles/" class="md-nav__link">
         
   
   
@@ -1260,10 +1254,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1283,22 +1275,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1316,7 +1305,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1334,7 +1323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../foundation/" class="md-nav__link">
+      <a href="../../layers/foundation/" class="md-nav__link">
         
   
   
@@ -1362,7 +1351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../data/" class="md-nav__link">
+      <a href="../../layers/data/" class="md-nav__link">
         
   
   
@@ -1387,37 +1376,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Features
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../layers/features/" class="md-nav__link">
         
   
   
@@ -1433,170 +1395,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contents
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#featureextractor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FeatureExtractor Protocol
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#featurepipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FeaturePipeline
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="FeaturePipeline">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#device-and-batching" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Device and batching
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#minimum-observations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Minimum observations
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#statisticsextractor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        StatisticsExtractor
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#periodextractor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PeriodExtractor
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="PeriodExtractor">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#supported-algorithms" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Supported algorithms
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#agreement-scoring" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Agreement scoring
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fourier-decomposition" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fourier decomposition
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dmdtextractor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DmdtExtractor
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#catalogextractor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CatalogExtractor (stub)
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1609,7 +1407,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../models/" class="md-nav__link">
+      <a href="../../layers/models/" class="md-nav__link">
         
   
   
@@ -1637,7 +1435,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/" class="md-nav__link">
+      <a href="../../layers/training/" class="md-nav__link">
         
   
   
@@ -1665,7 +1463,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inference/" class="md-nav__link">
+      <a href="../../layers/inference/" class="md-nav__link">
         
   
   
@@ -2202,10 +2000,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
+  <a href="#why-python-alone-is-too-slow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Contents
+        Why Python alone is too slow
       
     </span>
   </a>
@@ -2213,10 +2011,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#featureextractor" class="md-nav__link">
+  <a href="#the-two-backends" class="md-nav__link">
     <span class="md-ellipsis">
       
-        FeatureExtractor Protocol
+        The two backends
       
     </span>
   </a>
@@ -2224,22 +2022,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#featurepipeline" class="md-nav__link">
+  <a href="#architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        FeaturePipeline
+        Architecture
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="FeaturePipeline">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source directory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-dispatcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python dispatcher
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-backend-rust-rayon-pyo3-maturin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU backend — Rust + Rayon + PyO3 + maturin
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CPU backend — Rust + Rayon + PyO3 + maturin">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#device-and-batching" class="md-nav__link">
+  <a href="#what-is-rust" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Device and batching
+        What is Rust?
       
     </span>
   </a>
@@ -2247,10 +2078,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#minimum-observations" class="md-nav__link">
+  <a href="#what-is-rayon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Minimum observations
+        What is Rayon?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-pyo3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is PyO3?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-maturin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is maturin?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-cpu-path-works-end-to-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the CPU path works end to end
       
     </span>
   </a>
@@ -2263,33 +2127,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statisticsextractor" class="md-nav__link">
+  <a href="#gpu-backend-cuda-c-cython" class="md-nav__link">
     <span class="md-ellipsis">
       
-        StatisticsExtractor
+        GPU backend — CUDA C++ + Cython
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#periodextractor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PeriodExtractor
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="PeriodExtractor">
+    <nav class="md-nav" aria-label="GPU backend — CUDA C++ + Cython">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#supported-algorithms" class="md-nav__link">
+  <a href="#what-is-a-gpu-and-why-does-it-help" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported algorithms
+        What is a GPU and why does it help?
       
     </span>
   </a>
@@ -2297,10 +2150,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#agreement-scoring" class="md-nav__link">
+  <a href="#what-is-cuda" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Agreement scoring
+        What is CUDA?
       
     </span>
   </a>
@@ -2308,10 +2161,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fourier-decomposition" class="md-nav__link">
+  <a href="#what-is-cython" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fourier decomposition
+        What is Cython?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-gpu-path-works-end-to-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the GPU path works end to end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-algorithm-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-algorithm structure
       
     </span>
   </a>
@@ -2324,10 +2199,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dmdtextractor" class="md-nav__link">
+  <a href="#two-independent-compilation-units" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DmdtExtractor
+        Two independent compilation units
       
     </span>
   </a>
@@ -2335,13 +2210,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#catalogextractor" class="md-nav__link">
+  <a href="#why-setup-takes-so-long" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CatalogExtractor (stub)
+        Why setup takes so long
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Why setup takes so long">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-rust-compilation-1520-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Rust compilation (~15–20 min)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-cuda-compilation-812-min-on-gpu-nodes-skipped-on-cpu-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — CUDA compilation (~8–12 min on GPU nodes, skipped on CPU-only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-only-happens-once-per-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why it only happens once (per environment)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2365,179 +2279,301 @@
   
 
 
-<h1 id="feature-layer">Feature Layer<a class="headerlink" href="#feature-layer" title="Permanent link">&para;</a></h1>
-<p>Converts raw light curves into fixed-length numerical representations (<code>FeatureVector</code> objects) for the model. All computationally intensive work is delegated to <strong>periodfind</strong>, a GPU-accelerated Rust/CUDA library.</p>
-<div class="admonition tip">
-<p class="admonition-title">periodfind</p>
-<p>periodfind is an external compiled library that powers all period-finding and statistics computation in this layer. For a technical deep-dive — how Rust, CUDA C++, and Cython fit together — see <a href="../../background/periodfind/">Background → periodfind</a>.</p>
-</div>
-<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — outer list is sources, inner list is bands per source</p>
-<p><strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source, with 43 scalar fields + 26×26 dm/dt image</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/features/
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         FeatureExtractor Protocol
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  statistics.py   StatisticsExtractor   [implemented]
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  period.py       PeriodExtractor       [implemented]
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  dmdt.py         DmdtExtractor         [implemented]
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  catalog.py      CatalogExtractor      [stub]
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  pipeline.py     FeaturePipeline       [implemented]
-</code></pre></div>
-<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="#featureextractor">FeatureExtractor Protocol</a></li>
-<li><a href="#featurepipeline">FeaturePipeline</a></li>
-<li><a href="#statisticsextractor">StatisticsExtractor</a></li>
-<li><a href="#periodextractor">PeriodExtractor</a></li>
-<li><a href="#dmdtextractor">DmdtExtractor</a></li>
-<li><a href="#catalogextractor">CatalogExtractor (stub)</a></li>
-</ul>
+<h1 id="periodfind">periodfind<a class="headerlink" href="#periodfind" title="Permanent link">&para;</a></h1>
+<p>periodfind is an external library — a git submodule at <code>external/periodfind</code> — that ml4em depends on for all period-finding and basic statistics computation. It is not a standard Python package you can find on PyPI; it must be compiled from source as part of setting up the project. That compilation step is what the Docker and Conda setup processes are doing when they take a long time.</p>
 <hr />
-<h2 id="featureextractor"><code>FeatureExtractor</code> Protocol<a class="headerlink" href="#featureextractor" title="Permanent link">&para;</a></h2>
-<p>The contract every extractor must satisfy. Extractors are called by <code>FeaturePipeline</code> — never directly.</p>
-<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — one list of bands per source</p>
-<p><strong>Emits:</strong> <code>list[dict[str, Any]]</code> — one dict per source mapping <code>FeatureVector</code> field names to values</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureExtractor</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span> <span class="o">...</span>
-</code></pre></div>
-<p><code>extract</code> must <strong>never raise</strong>. On failure, return an empty dict <code>{}</code> for that source; the pipeline fills those fields with <code>np.nan</code>.</p>
+<h2 id="why-python-alone-is-too-slow">Why Python alone is too slow<a class="headerlink" href="#why-python-alone-is-too-slow" title="Permanent link">&para;</a></h2>
+<p>Period finding is a brute-force search. For each of 10,000+ candidate periods, the algorithm folds the light curve, computes a test statistic, and records the result. Repeat for every source in your batch.</p>
+<p>For a typical batch of 1,000 light curves × 10,000 trial periods, that is 10 billion elementary operations. Python executes roughly 10–50 million simple operations per second. At that rate, a single batch would take <strong>hours</strong>.</p>
+<p>The same computation runs in <strong>seconds</strong> when implemented in a language that compiles down to native machine code and runs on all available CPU cores or GPU threads simultaneously. That is what periodfind does.</p>
 <hr />
-<h2 id="featurepipeline"><code>FeaturePipeline</code><a class="headerlink" href="#featurepipeline" title="Permanent link">&para;</a></h2>
-<p>Composes extractors in order and assembles the resulting dicts into <code>FeatureVector</code> objects. This is the entry point for the feature layer.</p>
-<p><strong>Consumes:</strong> <code>list[list[LightCurve]]</code> — sources grouped by band</p>
-<p><strong>Emits:</strong> <code>list[FeatureVector]</code> — one per source; sources below <code>min_observations</code> return an all-NaN vector</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeaturePipeline</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">load_config</span><span class="p">()</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">feature_vectors</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_batch</span><span class="p">(</span><span class="n">grouped_lcs</span><span class="p">)</span>
-</code></pre></div>
-<p>For a custom extractor set:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="p">(</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">extractors</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="p">,</span> <span class="n">period</span><span class="p">],</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">min_observations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">compute_dmdt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span>
-</code></pre></div>
-<h3 id="device-and-batching">Device and batching<a class="headerlink" href="#device-and-batching" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auto</span><span class="w">             </span><span class="c1"># &quot;cpu&quot; | &quot;gpu&quot; | &quot;auto&quot;</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">feature_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
-</code></pre></div>
-<p><code>device</code> controls whether periodfind uses CPU (Rust) or GPU (CUDA). <code>auto</code> uses GPU if available and falls back to CPU. <code>feature_batch_size</code> controls memory usage per periodfind call.</p>
-<h3 id="minimum-observations">Minimum observations<a class="headerlink" href="#minimum-observations" title="Permanent link">&para;</a></h3>
-<p>Sources with fewer than <code>min_observations</code> observations in their primary band (default: 50) skip all extractors and return an all-NaN <code>FeatureVector</code>.</p>
-<hr />
-<h2 id="statisticsextractor"><code>StatisticsExtractor</code><a class="headerlink" href="#statisticsextractor" title="Permanent link">&para;</a></h2>
-<p>Computes 22 scalar light curve variability statistics using <code>periodfind.BasicStats</code>.</p>
-<p><strong>Consumes:</strong> Primary band light curve (the band with the most observations) per source</p>
-<p><strong>Emits:</strong> 22 scalar fields in <code>FeatureVector</code> — see <a href="../../background/variability-statistics/">Variability Statistics</a> for definitions</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatisticsExtractor</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">StatisticsExtractor</span><span class="p">()</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">results</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">grouped_lcs</span><span class="p">)</span>   <span class="c1"># list[dict] — 22 keys per source</span>
-</code></pre></div>
-<p>Casts time/mag/error arrays to float32, then calls <code>periodfind.BasicStats().calc(times, mags, errs)</code> in a single batched call over all N sources. Column names are remapped from <code>periodfind.BasicStats.STAT_NAMES</code> to <code>FeatureVector</code> field names via <code>_STAT_NAME_MAP</code>.</p>
-<hr />
-<h2 id="periodextractor"><code>PeriodExtractor</code><a class="headerlink" href="#periodextractor" title="Permanent link">&para;</a></h2>
-<p>Finds the dominant period using multiple algorithms and computes 14 Fourier decomposition features.</p>
-<p><strong>Consumes:</strong> Primary band light curve per source</p>
-<p><strong>Emits:</strong> <code>period</code>, <code>period_algorithm</code>, and 14 Fourier fields (<code>f1_power</code>, <code>f1_bic</code>, <code>f1_a</code>, <code>f1_b</code>, <code>f1_amp</code>, <code>f1_phi0</code>, <code>f1_relamp1–4</code>, <code>f1_relphi1–4</code>)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.period</span><span class="w"> </span><span class="kn">import</span> <span class="n">PeriodExtractor</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">PeriodExtractor</span><span class="p">(</span><span class="n">load_config</span><span class="p">()</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">period</span><span class="p">)</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">results</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">grouped_lcs</span><span class="p">)</span>   <span class="c1"># list[dict] — 15 keys per source</span>
-</code></pre></div>
-<p>Configure via <code>config.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">period</span><span class="p">:</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">algorithms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">CE</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AOV</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">LS</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">MHF</span><span class="p p-Indicator">]</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">min_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.003</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">max_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30.0</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nt">n_freq_grid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
-</code></pre></div>
-<h3 id="supported-algorithms">Supported algorithms<a class="headerlink" href="#supported-algorithms" title="Permanent link">&para;</a></h3>
+<h2 id="the-two-backends">The two backends<a class="headerlink" href="#the-two-backends" title="Permanent link">&para;</a></h2>
+<p>periodfind provides the same algorithms under two completely different computational engines, selectable at runtime:</p>
 <table>
 <thead>
 <tr>
-<th>Key</th>
-<th>periodfind class</th>
-<th>Default parameters</th>
+<th></th>
+<th>CPU backend</th>
+<th>GPU backend</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>CE</code></td>
-<td><code>ConditionalEntropy</code></td>
-<td><code>n_phase=20, n_mag=10</code></td>
+<td><strong>What runs the computation</strong></td>
+<td>The server/laptop CPU, using all available cores</td>
+<td>An NVIDIA GPU (graphics card), using thousands of parallel threads</td>
 </tr>
 <tr>
-<td><code>AOV</code></td>
-<td><code>AOV</code></td>
-<td><code>n_phase=20</code></td>
+<td><strong>Language the algorithms are written in</strong></td>
+<td>Rust</td>
+<td>CUDA C++</td>
 </tr>
 <tr>
-<td><code>LS</code></td>
-<td><code>LombScargle</code></td>
-<td>—</td>
+<td><strong>How Python talks to it</strong></td>
+<td>PyO3 + maturin</td>
+<td>Cython</td>
 </tr>
 <tr>
-<td><code>MHF</code></td>
-<td><code>MultiHarmonicFourier</code></td>
-<td><code>max_harmonics=5</code></td>
+<td><strong>Package it lives in</strong></td>
+<td><code>periodfind_cpu</code> (a separate installable wheel)</td>
+<td>compiled <code>.so</code> files inside the <code>periodfind</code> package</td>
 </tr>
 <tr>
-<td><code>FPW</code></td>
-<td><code>FPW</code></td>
-<td><code>n_bins=10</code></td>
-</tr>
-<tr>
-<td><code>BLS</code></td>
-<td><code>BoxLeastSquares</code></td>
-<td><code>n_bins=50</code></td>
+<td><strong>When to use</strong></td>
+<td>Local development, CPU-only compute nodes</td>
+<td>GPU nodes on MSI (A100)</td>
 </tr>
 </tbody>
 </table>
-<p>The default production set (CE, AOV, LS, MHF) matches the upstream scope-ml pipeline.</p>
-<h3 id="agreement-scoring">Agreement scoring<a class="headerlink" href="#agreement-scoring" title="Permanent link">&para;</a></h3>
-<p>Each algorithm runs in one batched call and returns its top period candidates. <code>_agree()</code> then:</p>
-<ol>
-<li>Checks all algorithm pairs for period agreement (within 2% fractional tolerance)</li>
-<li>Reports the period confirmed by the most algorithms</li>
-<li>Falls back to the highest-significance single result if no two algorithms agree</li>
-</ol>
-<h3 id="fourier-decomposition">Fourier decomposition<a class="headerlink" href="#fourier-decomposition" title="Permanent link">&para;</a></h3>
-<p>After period finding, <code>periodfind.FourierDecomposition().calc()</code> runs on sources with a valid period and returns 14 features per source:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>[power, BIC, offset, slope, A1, B1, A2, B2, A3, B3, A4, B4, A5, B5]
+<hr />
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    ML["&lt;b&gt;ml4em — features layer&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;PeriodExtractor · StatisticsExtractor&lt;br/&gt;DmdtExtractor"]
+
+    DISP["&lt;b&gt;periodfind.__init__.py&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;Pure Python dispatcher&lt;br/&gt;ConditionalEntropy(device=...) etc.&lt;br/&gt;set_device() · get_device() · auto-detect"]
+
+    CPU_PKG["&lt;b&gt;periodfind.cpu&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;Pure Python wrapper&lt;br/&gt;imports functions from periodfind_cpu"]
+
+    GPU_PKG["&lt;b&gt;periodfind.gpu&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;Thin Cython wrappers&lt;br/&gt;one compiled .so per algorithm"]
+
+    RUST["&lt;b&gt;periodfind_cpu&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;Rust algorithms&lt;br/&gt;multi-threaded via Rayon&lt;br/&gt;packaged as a Python wheel by maturin"]
+
+    CUDA["&lt;b&gt;CUDA C++ kernels&lt;/b&gt;&lt;br/&gt;──────────────────────────&lt;br/&gt;periodfind/cuda/*.cu&lt;br/&gt;runs on NVIDIA GPU&lt;br/&gt;thousands of parallel threads"]
+
+    ML --&gt;|"import periodfind"| DISP
+    DISP --&gt;|"device=cpu"| CPU_PKG
+    DISP --&gt;|"device=gpu"| GPU_PKG
+    CPU_PKG --&gt;|"Python import"| RUST
+    GPU_PKG --&gt;|"compiled C bridge"| CUDA</code></pre>
+<hr />
+<h2 id="source-directory">Source directory<a class="headerlink" href="#source-directory" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>external/periodfind/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── rust/                             # ── periodfind_cpu (Rust wheel) ──────────
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   ├── src/
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   │   ├── lib.rs                    # PyO3 module entry point
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   │   ├── ce.rs                     # Conditional Entropy
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   │   ├── aov.rs                    # Analysis of Variance
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   │   ├── ls.rs                     # Lomb-Scargle
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   │   ├── mhf.rs                    # Multi-Harmonic Fourier
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   │   ├── fpw.rs, bls.rs, mf.rs, vn.rs   # other algorithms
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   │   ├── basicstats.rs             # 22 light curve summary statistics
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│   │   ├── dmdt.rs                   # Δmag/Δt histogram
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│   │   ├── fourier.rs                # Fourier decomposition
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│   │   └── fold.rs, peaks.rs, highcadence.rs   # utilities
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│   └── Cargo.toml                    # Rust package manifest
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>├── periodfind/                       # ── GPU extensions + Python package ──────
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│   ├── __init__.py                   # Python dispatcher (factory functions, device management)
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│   ├── _utils.py                     # input validation
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>│   ├── cpu/
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│   │   └── __init__.py               # CPU backend — imports from periodfind_cpu wheel
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>│   ├── gpu/
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│   │   └── __init__.py               # GPU backend — imports from compiled .so files
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>│   ├── ce.pyx, aov.pyx, ls.pyx       # Cython wrappers — one per algorithm
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>│   ├── mhf.pyx, fpw.pyx, bls.pyx, mf.pyx, vn.pyx
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>│   └── cuda/
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>│       ├── ce.cu, ls.cu, mhf.cu      # CUDA C++ kernels
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>│       ├── fpw.cu, bls.cu, mf.cu
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│       ├── aov.h, vn.h               # header-only CUDA kernels
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│       └── errchk.cuh                # GPU error checking utility
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>├── setup.py                          # Builds Cython + CUDA extensions
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>└── pyproject.toml                    # Declares periodfind_cpu as pip dependency
 </code></pre></div>
 <hr />
-<h2 id="dmdtextractor"><code>DmdtExtractor</code><a class="headerlink" href="#dmdtextractor" title="Permanent link">&para;</a></h2>
-<p>Computes a 26×26 Δmag/Δt pairwise histogram using <code>periodfind.DmDt</code>.</p>
-<p><strong>Consumes:</strong> Primary band light curve per source</p>
-<p><strong>Emits:</strong> <code>dmdt</code> field in <code>FeatureVector</code> — shape <code>(26, 26)</code> float32 array, L2-normalized per source</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.dmdt</span><span class="w"> </span><span class="kn">import</span> <span class="n">DmdtExtractor</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">DmdtExtractor</span><span class="p">(</span><span class="n">load_config</span><span class="p">()</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">dmdt</span><span class="p">)</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">results</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">grouped_lcs</span><span class="p">)</span>   <span class="c1"># list[dict] — one &quot;dmdt&quot; key per source</span>
+<h2 id="python-dispatcher">Python dispatcher<a class="headerlink" href="#python-dispatcher" title="Permanent link">&para;</a></h2>
+<p><code>periodfind/__init__.py</code> is pure Python — no compilation involved. It provides factory functions (<code>ConditionalEntropy()</code>, <code>AOV()</code>, <code>LombScargle()</code>, ...) that check which hardware is available and hand off to the appropriate backend.</p>
+<p>Device selection:</p>
+<ul>
+<li><strong><code>set_device('cpu')</code></strong> or <strong><code>set_device('gpu')</code></strong> — override globally for all calls</li>
+<li><strong>Auto-detect</strong> (default) — tries to import the CUDA extension and run <code>nvidia-smi</code>; falls back to <code>'cpu'</code> if no GPU is found</li>
+</ul>
+<p>Every factory function follows the same pattern:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">ConditionalEntropy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">device</span> <span class="o">=</span> <span class="n">_resolve_device</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;gpu&quot;</span><span class="p">:</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">periodfind.gpu</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConditionalEntropy</span> <span class="k">as</span> <span class="n">_Cls</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">periodfind.cpu</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConditionalEntropy</span> <span class="k">as</span> <span class="n">_Cls</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">return</span> <span class="n">_Cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
-<p>Δt bin edges (log-spaced) and Δmag bin edges (linear) are built once at construction and reused. To skip this extractor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">compute_dmdt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<p>The object returned has the same <code>.calc()</code> method regardless of which backend is selected.</p>
+<hr />
+<h2 id="cpu-backend-rust-rayon-pyo3-maturin">CPU backend — Rust + Rayon + PyO3 + maturin<a class="headerlink" href="#cpu-backend-rust-rayon-pyo3-maturin" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-rust">What is Rust?<a class="headerlink" href="#what-is-rust" title="Permanent link">&para;</a></h3>
+<p>Rust is a programming language designed for speed and reliability. Like C++, it compiles directly to machine code rather than being interpreted at runtime, making it typically <strong>10–100× faster than Python</strong> for computation-heavy loops. Unlike C++, Rust's compiler catches whole categories of bugs (crashes, memory corruption) before the code ever runs. It has become popular in scientific computing precisely because it is fast without being dangerous.</p>
+<h3 id="what-is-rayon">What is Rayon?<a class="headerlink" href="#what-is-rayon" title="Permanent link">&para;</a></h3>
+<p>Rayon is a Rust library for parallel computation. It automatically distributes a batch of light curves across all available CPU cores — no manual thread management needed. A typical MSI compute node has 64+ cores; Rayon uses all of them simultaneously.</p>
+<h3 id="what-is-pyo3">What is PyO3?<a class="headerlink" href="#what-is-pyo3" title="Permanent link">&para;</a></h3>
+<p>PyO3 is a system that lets you annotate Rust functions so Python can call them directly. Instead of writing thousands of lines of "glue code" to connect Python and Rust, you add one annotation (<code>#[pyfunction]</code>) above each Rust function, and PyO3 generates the bridge automatically. From Python's perspective, the Rust functions look like normal Python functions.</p>
+<h3 id="what-is-maturin">What is maturin?<a class="headerlink" href="#what-is-maturin" title="Permanent link">&para;</a></h3>
+<p>maturin is a build tool that takes the compiled Rust+PyO3 code and packages it into a standard Python wheel file (<code>.whl</code>). A wheel is the standard format for distributing pre-compiled Python packages — the same format you get when you <code>pip install numpy</code>. The result, <code>periodfind_cpu</code>, installs with <code>pip install periodfind_cpu-*.whl</code> just like any other Python package.</p>
+<h3 id="how-the-cpu-path-works-end-to-end">How the CPU path works end to end<a class="headerlink" href="#how-the-cpu-path-works-end-to-end" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>rust/src/ce.rs          Rust source — Conditional Entropy algorithm
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>       ↓   (rustc compiler + Rayon for multi-threading)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    .so file            compiled Rust binary
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       ↓   (PyO3 annotations → Python-callable functions)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>periodfind_cpu          Python wheel
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>       ↓   (pip install)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>periodfind.cpu          imports calc_ce_batched, calc_aov_batched, ...
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       ↓   (normal Python function call)
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    your code           periodfind.ConditionalEntropy(device=&#39;cpu&#39;).calc(...)
 </code></pre></div>
-<p>See <a href="../../background/dmdt/">The dm/dt Histogram</a> for a full explanation.</p>
+<p>When <code>.calc()</code> is called, execution jumps from Python directly into compiled Rust code, distributes the batch across all CPU cores via Rayon, and returns results as NumPy arrays.</p>
 <hr />
-<h2 id="catalogextractor"><code>CatalogExtractor</code> <em>(stub)</em><a class="headerlink" href="#catalogextractor" title="Permanent link">&para;</a></h2>
-<p>Will cross-match each source against Gaia EDR3 within 2 arcseconds and return 4 astrometric features.</p>
-<p><strong>Consumes:</strong> <code>(ra, dec)</code> from each source's <code>LightCurve</code></p>
-<p><strong>Emits:</strong> <code>gaia_parallax</code>, <code>gaia_parallax_error</code>, <code>gaia_bp_rp</code>, <code>gaia_ruwe</code></p>
-<p>Planned backends: astroquery TAP+ or Kowalski Gaia cone search.</p>
-<blockquote>
-<p><strong>Status:</strong> returns empty dicts for all sources — all 4 Gaia fields remain <code>np.nan</code>.</p>
-</blockquote>
+<h2 id="gpu-backend-cuda-c-cython">GPU backend — CUDA C++ + Cython<a class="headerlink" href="#gpu-backend-cuda-c-cython" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-a-gpu-and-why-does-it-help">What is a GPU and why does it help?<a class="headerlink" href="#what-is-a-gpu-and-why-does-it-help" title="Permanent link">&para;</a></h3>
+<p>A GPU (Graphics Processing Unit) is a chip originally designed to render video game graphics. To draw 4K video at 60 frames per second, a GPU must perform billions of simple arithmetic operations every second — it does this by having <strong>thousands of small computing cores</strong> working in parallel rather than a handful of powerful ones like a CPU. NVIDIA's A100 (the GPU on MSI's a100 partition) has 6,912 cores.</p>
+<p>Period finding maps perfectly onto this architecture: each (source, trial-period) pair is an independent computation that can run on its own GPU core simultaneously. A batch of 1,000 sources × 10,000 periods means 10 million independent jobs that a GPU can start simultaneously.</p>
+<h3 id="what-is-cuda">What is CUDA?<a class="headerlink" href="#what-is-cuda" title="Permanent link">&para;</a></h3>
+<p>CUDA (Compute Unified Device Architecture) is NVIDIA's system for programming GPUs. It extends C++ with special annotations that let you write functions that run on the GPU (called "kernels") and launch thousands of instances of them simultaneously. CUDA code lives in <code>.cu</code> files and is compiled by NVIDIA's <code>nvcc</code> compiler. The output is code that runs entirely on the GPU.</p>
+<h3 id="what-is-cython">What is Cython?<a class="headerlink" href="#what-is-cython" title="Permanent link">&para;</a></h3>
+<p>Cython is a tool that bridges Python and compiled code. You write files in <code>.pyx</code> format — code that looks almost exactly like Python but with optional type annotations — and Cython translates it into C source code, which is then compiled into a <code>.so</code> file (a compiled extension) that Python can import. Cython is widely used in scientific Python (NumPy, SciPy, and many astronomy packages use it internally).</p>
+<p>In periodfind's GPU path, the Cython <code>.pyx</code> files act as a thin bridge: they receive batches of light curve data from Python, pass them into the CUDA C++ code, and return the results as NumPy arrays.</p>
+<h3 id="how-the-gpu-path-works-end-to-end">How the GPU path works end to end<a class="headerlink" href="#how-the-gpu-path-works-end-to-end" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>periodfind/cuda/ce.cu   CUDA C++ — Conditional Entropy kernel (runs on GPU)
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>periodfind/ce.pyx       Cython — receives data from Python, calls CUDA
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       ↓   (nvcc compiles .cu; Cython compiles .pyx; linked together)
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>periodfind.ce.so        compiled extension — Python can import this
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>       ↓   (import)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>periodfind.gpu          wraps the .so — exposes ConditionalEntropy class
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>       ↓   (normal Python function call)
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    your code           periodfind.ConditionalEntropy(device=&#39;gpu&#39;).calc(...)
+</code></pre></div>
+<p>When <code>.calc()</code> is called, data moves from CPU memory to GPU memory, the CUDA kernel launches thousands of threads simultaneously (one per source-period pair), and results are copied back to CPU memory as NumPy arrays.</p>
+<h3 id="per-algorithm-structure">Per-algorithm structure<a class="headerlink" href="#per-algorithm-structure" title="Permanent link">&para;</a></h3>
+<p>Each algorithm has its own Cython wrapper + CUDA kernel pair. They are compiled into separate <code>.so</code> files:</p>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Cython file</th>
+<th>CUDA kernel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conditional Entropy</td>
+<td><code>ce.pyx</code></td>
+<td><code>cuda/ce.cu</code></td>
+</tr>
+<tr>
+<td>Analysis of Variance</td>
+<td><code>aov.pyx</code></td>
+<td><code>cuda/aov.h</code></td>
+</tr>
+<tr>
+<td>Lomb-Scargle</td>
+<td><code>ls.pyx</code></td>
+<td><code>cuda/ls.cu</code></td>
+</tr>
+<tr>
+<td>Multi-Harmonic Fourier</td>
+<td><code>mhf.pyx</code></td>
+<td><code>cuda/mhf.cu</code></td>
+</tr>
+<tr>
+<td>Fast Phase-folding Weighted</td>
+<td><code>fpw.pyx</code></td>
+<td><code>cuda/fpw.cu</code></td>
+</tr>
+<tr>
+<td>Box Least Squares</td>
+<td><code>bls.pyx</code></td>
+<td><code>cuda/bls.cu</code></td>
+</tr>
+<tr>
+<td>Matched Filter</td>
+<td><code>mf.pyx</code></td>
+<td><code>cuda/mf.cu</code></td>
+</tr>
+<tr>
+<td>Viterbi Narrowband</td>
+<td><code>vn.pyx</code></td>
+<td><code>cuda/vn.h</code></td>
+</tr>
+</tbody>
+</table>
 <hr />
-<p><a class="md-button" href="../data/">← Data</a> <a class="md-button md-button--primary" href="../models/">Models →</a></p>
+<h2 id="two-independent-compilation-units">Two independent compilation units<a class="headerlink" href="#two-independent-compilation-units" title="Permanent link">&para;</a></h2>
+<p>The Rust code and the Cython+CUDA code are completely independent — they share no source files and neither calls the other at any level. They produce separate outputs and are built by separate tools.</p>
+<table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Source</th>
+<th>Output</th>
+<th>Build tool</th>
+<th>~Build time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>periodfind_cpu</code></td>
+<td><code>rust/src/*.rs</code></td>
+<td>Python wheel</td>
+<td>maturin</td>
+<td>~15–20 min</td>
+</tr>
+<tr>
+<td>GPU extensions</td>
+<td><code>periodfind/*.pyx</code> + <code>cuda/*.cu</code></td>
+<td><code>.so</code> per algorithm</td>
+<td>Cython + nvcc</td>
+<td>~8–12 min</td>
+</tr>
+</tbody>
+</table>
+<p>The one ordering constraint: <code>periodfind_cpu</code> must be installed before <code>pip install external/periodfind</code> runs, because <code>pyproject.toml</code> lists it as a pip dependency:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">[project]</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;periodfind_cpu&gt;=0.1.0&quot;</span><span class="p">]</span>
+</code></pre></div>
+<p>This is a pip-level requirement — pip checks that <code>periodfind_cpu</code> is installed before proceeding. It does not mean the CUDA code links against the Rust binary.</p>
+<p>This independence is exploited by the Dockerfile, which copies and compiles each unit in its own layer. If you change only a <code>.rs</code> file, Docker rebuilds only the Rust layer and reuses the cached Cython+CUDA layer, and vice versa.</p>
+<hr />
+<h2 id="why-setup-takes-so-long">Why setup takes so long<a class="headerlink" href="#why-setup-takes-so-long" title="Permanent link">&para;</a></h2>
+<p>When you run <code>sbatch slurm/setup_conda.sh</code> or <code>docker build</code>, you are not downloading a pre-built package — you are <strong>compiling programs from source code</strong> on the server. This is why setup takes 20–45 minutes rather than seconds.</p>
+<p>Here is what is actually happening and why each step is slow:</p>
+<h3 id="step-1-rust-compilation-1520-min">Step 1 — Rust compilation (~15–20 min)<a class="headerlink" href="#step-1-rust-compilation-1520-min" title="Permanent link">&para;</a></h3>
+<p>The Rust compiler (<code>rustc</code>) reads all the <code>.rs</code> source files and translates them into optimized machine code. Unlike Python, Rust performs this work upfront rather than at runtime. The compiler does extensive analysis to verify correctness and apply aggressive optimizations (essentially, it checks millions of possible execution paths to find the most efficient one). This is inherently slow. A Rust codebase that takes 20 minutes to compile might run in milliseconds once built.</p>
+<p>maturin then packages the compiled binary into a Python wheel (<code>.whl</code> file). This packaging step is fast; almost all the time is in the Rust compilation itself.</p>
+<h3 id="step-2-cuda-compilation-812-min-on-gpu-nodes-skipped-on-cpu-only">Step 2 — CUDA compilation (~8–12 min on GPU nodes, skipped on CPU-only)<a class="headerlink" href="#step-2-cuda-compilation-812-min-on-gpu-nodes-skipped-on-cpu-only" title="Permanent link">&para;</a></h3>
+<p>NVIDIA's <code>nvcc</code> compiler translates the <code>.cu</code> CUDA C++ files into GPU machine code. GPU hardware comes in many generations (V100, A100, H100, ...), each with a different instruction set. By default, <code>nvcc</code> compiles for multiple GPU architectures simultaneously — essentially building the same code several times over. This multiplies the compilation time.</p>
+<p>Cython then translates the <code>.pyx</code> wrapper files into C code, which is compiled and linked with the CUDA output into the final <code>.so</code> extension files.</p>
+<h3 id="why-it-only-happens-once-per-environment">Why it only happens once (per environment)<a class="headerlink" href="#why-it-only-happens-once-per-environment" title="Permanent link">&para;</a></h3>
+<p>Neither step needs to be repeated unless the source code changes:</p>
+<table>
+<thead>
+<tr>
+<th>What changed</th>
+<th>What needs to rebuild</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/ml4em/</code> Python code</td>
+<td>Nothing — Python is interpreted, changes take effect immediately</td>
+</tr>
+<tr>
+<td><code>rust/src/*.rs</code></td>
+<td>Rust step only</td>
+</tr>
+<tr>
+<td><code>periodfind/*.pyx</code> or <code>cuda/*.cu</code></td>
+<td>Cython+CUDA step only</td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code> (Python deps only)</td>
+<td>Nothing compiled — just <code>pip install</code></td>
+</tr>
+<tr>
+<td>Both Rust and CUDA source</td>
+<td>Both steps</td>
+</tr>
+</tbody>
+</table>
+<p>In Docker, each compilation step is cached as a separate image layer. If only the Rust source changes, Docker reuses the cached CUDA layer and only recompiles Rust. The Dockerfile was structured deliberately to exploit this: the two compilation units are <code>COPY</code>d and built in separate layers so that changing one never invalidates the other's cache.</p>
+<p>For Conda (on MSI), there is no automatic caching — if you need to rebuild, you re-run the full setup job. This is the main practical advantage of the Apptainer path: the Docker image is built once on GitHub's servers and cached on GHCR; MSI just downloads the finished result.</p>
 
 
 

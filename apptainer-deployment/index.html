@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -720,10 +720,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3d-fetch-your-kowalski-token" class="md-nav__link">
+  <a href="#3d-store-your-kowalski-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3d. Fetch your Kowalski token
+        3d. Store your Kowalski token
       
     </span>
   </a>
@@ -786,10 +786,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-to-rebuild" class="md-nav__link">
+  <a href="#updating-the-pipeline-after-the-initial-pull" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to rebuild
+        Updating the pipeline after the initial pull
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-re-pull-the-sif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to re-pull the .sif
       
     </span>
   </a>
@@ -2225,10 +2236,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3d-fetch-your-kowalski-token" class="md-nav__link">
+  <a href="#3d-store-your-kowalski-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3d. Fetch your Kowalski token
+        3d. Store your Kowalski token
       
     </span>
   </a>
@@ -2291,10 +2302,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-to-rebuild" class="md-nav__link">
+  <a href="#updating-the-pipeline-after-the-initial-pull" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to rebuild
+        Updating the pipeline after the initial pull
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-re-pull-the-sif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to re-pull the .sif
       
     </span>
   </a>
@@ -2384,47 +2406,23 @@ to scratch from your local machine:</p>
 </code></pre></div>
 <p>The bind mount in the run command maps <code>/scratch.global/$USER/ml4em_data</code> → <code>/data</code>
 inside the container, so all paths above resolve correctly.</p>
-<h3 id="3d-fetch-your-kowalski-token">3d. Fetch your Kowalski token<a class="headerlink" href="#3d-fetch-your-kowalski-token" title="Permanent link">&para;</a></h3>
-<p>Never put tokens in <code>config_msi.yaml</code>. Run <code>ml4em-get-credentials</code> inside the
-container — it prompts for your Kowalski username and password, fetches a JWT
-from the server, verifies it with a ping, and writes it to <code>.env</code> automatically:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$DATA</span>:/data<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span>ml4em-get-credentials<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span>--config<span class="w"> </span>/data/config_msi.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span>--env<span class="w"> </span>/data/.env
+<h3 id="3d-store-your-kowalski-token">3d. Store your Kowalski token<a class="headerlink" href="#3d-store-your-kowalski-token" title="Permanent link">&para;</a></h3>
+<p>Never put tokens in <code>config_msi.yaml</code>. Store them in a <code>.env</code> file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ML4EM_ZTF_TOKEN=your_token_here&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/scratch.global/<span class="nv">$USER</span>/ml4em_data/.env
 </code></pre></div>
-<p>You will be prompted:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Target: https://melman.caltech.edu:443
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Output: /data/.env
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Username: your_kowalski_username
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Password:
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Fetching token...
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Token received.
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>Verifying token with Kowalski ping...
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>Ping successful.
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>Saved ML4EM_ZTF_TOKEN to /data/.env
-</code></pre></div>
-<p>Run this on the login node — no GPU or SLURM job needed. The <code>.env</code> file is
-written with <code>chmod 600</code>. Re-run whenever your token expires.</p>
 <p>The <code>--env-file</code> flag in the run scripts injects this into the container at runtime.</p>
 <hr />
 <h2 id="4-pull-the-image-on-msi">4. Pull the image on MSI<a class="headerlink" href="#4-pull-the-image-on-msi" title="Permanent link">&para;</a></h2>
 <p>The repo includes a ready-made SLURM script that handles the pull correctly —
 no interactive node needed:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># From your ml4em repo root on MSI:</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sbatch<span class="w"> </span>slurm/pull_image.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># From your ml4em repo root on MSI:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sbatch<span class="w"> </span>slurm/pull_image.sh
 </code></pre></div>
 <p>Monitor progress:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/pull_ml4em_&lt;JOBID&gt;.out
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/pull_ml4em_&lt;JOBID&gt;.out
 </code></pre></div>
 <p>The pull takes 20–40 minutes (5–8 GB download + squashfs conversion). Output is
 written to <code>/scratch.global/$USER/ml4em_gpu.sif</code>. You only need to re-run this
@@ -2440,12 +2438,12 @@ automatically via SLURM.</p>
 <h3 id="batch-job-recommended">Batch job (recommended)<a class="headerlink" href="#batch-job-recommended" title="Permanent link">&para;</a></h3>
 <p>The repo includes <code>slurm/run_demo.sh</code>, a complete SLURM script that sets up the
 environment and runs the end-to-end demo pipeline. Submit it from your repo root:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
 </code></pre></div>
 <p>Monitor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_demo_&lt;JOBID&gt;.out
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tail<span class="w"> </span>-f<span class="w"> </span>logs/ml4em_demo_&lt;JOBID&gt;.out
 </code></pre></div>
 <p>The script requests one A100 GPU, bind-mounts your live git checkout into the
 container, and runs <code>scripts/run_demo.py</code> with the MSI config. Outputs:</p>
@@ -2458,21 +2456,21 @@ container, and runs <code>scripts/run_demo.py</code> with the MSI config. Output
 <p class="admonition-title">Must be on a GPU compute node</p>
 <p><code>apptainer run --nv</code> requires GPU drivers. <strong>Never run it on the login node</strong> —
 request an interactive GPU node first:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Once on the compute node:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>module<span class="w"> </span>load<span class="w"> </span>apptainer
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>apptainer<span class="w"> </span>run<span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$HOME</span>/ml4em:/app/ml4em<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$DATA</span>:/data<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span>--env-file<span class="w"> </span><span class="nv">$DATA</span>/.env<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span>/data/config_msi.yaml
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nv">DATA</span><span class="o">=</span>/scratch.global/<span class="nv">$USER</span>/ml4em_data
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>module<span class="w"> </span>load<span class="w"> </span>apptainer
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>apptainer<span class="w"> </span>run<span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$HOME</span>/ml4em:/app/ml4em<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$DATA</span>:/data<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span>--env-file<span class="w"> </span><span class="nv">$DATA</span>/.env<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span>/scratch.global/<span class="nv">$USER</span>/ml4em_gpu.sif<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span>python<span class="w"> </span>scripts/run_demo.py<span class="w"> </span>--config<span class="w"> </span>/data/config_msi.yaml
 </code></pre></div>
 <table>
 <thead>
@@ -2502,38 +2500,54 @@ request an interactive GPU node first:</p>
 </table>
 <p>GPU device is controlled by <code>features.device</code> in <code>config_msi.yaml</code> (<code>"cpu"</code> / <code>"cuda"</code> / <code>"auto"</code>).</p>
 <hr />
-<h2 id="when-to-rebuild">When to rebuild<a class="headerlink" href="#when-to-rebuild" title="Permanent link">&para;</a></h2>
-<p>The image only needs to be rebuilt (and re-pulled on MSI) when compiled dependencies change.</p>
+<h2 id="updating-the-pipeline-after-the-initial-pull">Updating the pipeline after the initial pull<a class="headerlink" href="#updating-the-pipeline-after-the-initial-pull" title="Permanent link">&para;</a></h2>
+<p><strong>The <code>.sif</code> is a one-time cost.</strong> Once it exists on scratch, you never pull it
+again unless a compiled dependency changes. All Python code — models, scripts,
+pipeline logic — lives in your git checkout and is bind-mounted live into the
+container at runtime.</p>
+<p>The day-to-day workflow is just:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># On MSI login node — pick up any code changes from GitHub</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>git<span class="w"> </span>pull
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Submit your job — the container immediately sees the updated code</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
+</code></pre></div>
+<p>That's it. No rebuild, no re-pull, no reinstall.</p>
+<h2 id="when-to-re-pull-the-sif">When to re-pull the .sif<a class="headerlink" href="#when-to-re-pull-the-sif" title="Permanent link">&para;</a></h2>
+<p>The image only needs to be re-pulled when compiled dependencies change — things
+that are baked into the image at build time and cannot be bind-mounted.</p>
 <table>
 <thead>
 <tr>
 <th>Change</th>
-<th>Rebuild needed?</th>
+<th>Action needed on MSI</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>src/ml4em/</code> code changes</td>
-<td><strong>No</strong> — <code>git pull</code> on MSI is enough</td>
+<td><code>src/ml4em/</code> Python code</td>
+<td><code>git pull</code> only — no re-pull</td>
 </tr>
 <tr>
-<td><code>docs/</code> or <code>config/</code> changes</td>
-<td><strong>No</strong></td>
+<td><code>scripts/</code>, <code>slurm/</code>, <code>docs/</code></td>
+<td><code>git pull</code> only — no re-pull</td>
 </tr>
 <tr>
-<td><code>pyproject.toml</code> dependency changes</td>
-<td><strong>Yes</strong></td>
+<td><code>pyproject.toml</code> — new pip dependency</td>
+<td>Re-pull <code>.sif</code> after CI rebuilds image</td>
 </tr>
 <tr>
 <td><code>external/periodfind</code> submodule update</td>
-<td><strong>Yes</strong></td>
+<td>Re-pull <code>.sif</code> after CI rebuilds image</td>
 </tr>
 <tr>
 <td>CUDA driver compatibility change</td>
-<td><strong>Yes</strong></td>
+<td>Re-pull <code>.sif</code> after CI rebuilds image</td>
 </tr>
 </tbody>
 </table>
+<p>CI rebuilds the image automatically when you merge to <code>main</code> — you just wait
+for the build to finish, then run <code>sbatch slurm/pull_image.sh</code> again on MSI.</p>
 
 
 
@@ -2592,7 +2606,7 @@ request an interactive GPU node first:</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
