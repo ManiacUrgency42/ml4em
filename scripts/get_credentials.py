@@ -24,8 +24,8 @@ def main() -> None:
     show_password = "--show-password" in sys.argv
 
     print("Enter your Kowalski (ZTF) credentials.")
-    username = input("Username: ")
-    password = input("Password: ") if show_password else getpass.getpass("Password: ")
+    username = input("Username: ").strip()
+    password = (input("Password: ") if show_password else getpass.getpass("Password: ")).strip()
 
     payload = json.dumps({"username": username, "password": password}).encode()
     req = urllib.request.Request(
