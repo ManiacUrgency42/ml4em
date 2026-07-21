@@ -38,7 +38,11 @@ def main() -> None:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read())
     except urllib.error.HTTPError as exc:
-        raise SystemExit(f"Authentication failed ({exc.code}). Check your username and password.") from exc
+        body = exc.read().decode(errors="replace")
+        raise SystemExit(f"Authentication failed ({exc.code}):\n{body}") from exc
+
+    if "data" not in data or "token" not in data.get("data", {}):
+        raise SystemExit(f"Unexpected response from server:\n{json.dumps(data, indent=2)}")
 
     token = data["data"]["token"]
 
