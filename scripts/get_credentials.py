@@ -3,11 +3,16 @@
 
 Uses only the Python standard library — no conda environment or container
 needed. Run this on the MSI login node after cloning the repo.
+
+Usage:
+    python3 get_credentials.py                # password input is hidden
+    python3 get_credentials.py --show-password  # password is visible (useful when pasting)
 """
 
 import getpass
 import json
 import os
+import sys
 import urllib.request
 from pathlib import Path
 
@@ -16,9 +21,11 @@ ENV_FILE = Path(f"/scratch.global/{os.environ['USER']}/ml4em_data/.env")
 
 
 def main() -> None:
+    show_password = "--show-password" in sys.argv
+
     print("Enter your Kowalski (ZTF) credentials.")
     username = input("Username: ")
-    password = getpass.getpass("Password: ")
+    password = input("Password: ") if show_password else getpass.getpass("Password: ")
 
     payload = json.dumps({"username": username, "password": password}).encode()
     req = urllib.request.Request(
