@@ -1,88 +1,17 @@
 # Deployment — Apptainer
 
-`periodfind` requires a Rust + CUDA build that cannot be done with `pip`, so the full
-toolchain is baked into a Docker image published on GHCR (GitHub Container Registry).
+The pipeline is packaged as a Docker image, stored on GHCR, and converted to an
+Apptainer `.sif` file on MSI. Your live git checkout is bind-mounted into the container
+at runtime, so any Python code you change is picked up immediately with `git pull` —
+no rebuild needed.
 
-**Most researchers never need to build the image.** The pipeline is installed in
-editable mode inside the container, and your live git checkout is bind-mounted over
-it at runtime — so any Python code you add or change is picked up immediately without
-touching the image. Just pull and run.
-
-| You are… | What you need to do |
-|----------|---------------------|
-| Running the pipeline or adding a model | `apptainer pull` once, then `git pull` for updates |
-| Adding a new Python dependency (`pyproject.toml`) | Open a PR → merge to `main` → CI rebuilds automatically → re-pull the `.sif` |
-| Maintaining the image (periodfind / CUDA / Dockerfile) | Same as above — CI rebuilds on merge |
-
-The image is rebuilt automatically by GitHub Actions whenever `Dockerfile`,
-`pyproject.toml`, or `external/periodfind/` changes on `main`. The section below
-documents how to trigger a manual build if needed.
+!!! tip "How Docker and GHCR fit into this"
+    If you want to understand how the image is built, how GHCR caching works, or when
+    CI triggers a rebuild, see [Background → Docker & GHCR](background/docker-ghcr.md).
 
 ---
 
-## 1. Build the image (maintainers only)
-
-**Normally you don't need to do this** — merging to `main` triggers the GitHub Actions
-workflow (`.github/workflows/docker.yml`) which builds and pushes the GPU image on
-native x86_64 runners automatically. Layer caching means rebuilds after a
-`pyproject.toml`-only change skip the Rust/CUDA compilation entirely.
-
-Only run a local build if you need to test a Dockerfile change before merging, or if
-CI is unavailable. On Apple Silicon, the `--platform linux/amd64` flag forces QEMU
-emulation — the GPU build will take 3+ hours. Prefer pushing to a branch and letting
-CI build it.
-
-```bash
-# GPU image — for MSI production runs
-docker build --platform linux/amd64 --target gpu \
-    -t ghcr.io/maniacurgency42/ml4em:gpu .
-
-# CPU image — for local testing only
-docker build --platform linux/amd64 --target cpu \
-    -t ghcr.io/maniacurgency42/ml4em:cpu .
-```
-
-!!! note "Submodule required"
-    `periodfind` lives at `external/periodfind` as a git submodule. Make sure it is
-    initialized before building:
-    ```bash
-    git clone --recurse-submodules <repo-url>
-    # or after a plain clone:
-    git submodule update --init
-    ```
-
----
-
-## 2. Push to GHCR (local)
-
-GHCR (GitHub Container Registry) hosts the image so MSI can pull it without needing
-Docker installed. Authenticate with a GitHub Personal Access Token (PAT):
-
-**GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic) → Generate new token**
-
-Select scopes: `write:packages`, `read:packages`
-
-```bash
-echo YOUR_PAT | docker login ghcr.io -u ManiacUrgency42 --password-stdin
-```
-
-Then push:
-
-```bash
-docker push ghcr.io/maniacurgency42/ml4em:gpu
-docker push ghcr.io/maniacurgency42/ml4em:cpu
-```
-
-The GPU image is 5–8 GB. If the push times out mid-upload, rerun — Docker skips
-already-uploaded layers.
-
-!!! note "First push only"
-    After the first push, make the package public so MSI can pull without credentials:
-    **GitHub → your profile → Packages → ml4em → Package Settings → Change visibility → Public**
-
----
-
-## 3. First-time MSI setup
+## 1. First-time MSI setup
 
 Do this once after SSH-ing into MSI. These directories persist across jobs.
 
@@ -253,14 +182,37 @@ GPU device is controlled by `features.device` in `config_msi.yaml` (`"cpu"` / `"
 
 ---
 
-## When to rebuild
+## Updating the pipeline after the initial pull
 
-The image only needs to be rebuilt (and re-pulled on MSI) when compiled dependencies change.
+**The `.sif` is a one-time cost.** Once it exists on scratch, you never pull it
+again unless a compiled dependency changes. All Python code — models, scripts,
+pipeline logic — lives in your git checkout and is bind-mounted live into the
+container at runtime.
 
-| Change | Rebuild needed? |
-|--------|----------------|
-| `src/ml4em/` code changes | **No** — `git pull` on MSI is enough |
-| `docs/` or `config/` changes | **No** |
-| `pyproject.toml` dependency changes | **Yes** |
-| `external/periodfind` submodule update | **Yes** |
-| CUDA driver compatibility change | **Yes** |
+The day-to-day workflow is just:
+
+```bash
+# On MSI login node — pick up any code changes from GitHub
+git pull
+
+# Submit your job — the container immediately sees the updated code
+sbatch slurm/run_demo.sh
+```
+
+That's it. No rebuild, no re-pull, no reinstall.
+
+## When to re-pull the .sif
+
+The image only needs to be re-pulled when compiled dependencies change — things
+that are baked into the image at build time and cannot be bind-mounted.
+
+| Change | Action needed on MSI |
+|--------|----------------------|
+| `src/ml4em/` Python code | `git pull` only — no re-pull |
+| `scripts/`, `slurm/`, `docs/` | `git pull` only — no re-pull |
+| `pyproject.toml` — new pip dependency | Re-pull `.sif` after CI rebuilds image |
+| `external/periodfind` submodule update | Re-pull `.sif` after CI rebuilds image |
+| CUDA driver compatibility change | Re-pull `.sif` after CI rebuilds image |
+
+CI rebuilds the image automatically when you merge to `main` — you just wait
+for the build to finish, then run `sbatch slurm/pull_image.sh` again on MSI.

@@ -55,7 +55,7 @@ less setup and is the path used and tested by the core team.
 !!! note "Why does Conda setup take 30–45 minutes?"
     The setup time is not spent installing Python packages — it is spent compiling
     the period-finding library (`periodfind`) from Rust and CUDA C++ source code.
-    See [Architecture → periodfind](architecture/periodfind.md#why-setup-takes-so-long)
+    See [Background → periodfind](background/periodfind.md#why-setup-takes-so-long)
     for a full explanation of what is being compiled and why it only needs to happen once.
 
 | | Apptainer ★ | Conda |

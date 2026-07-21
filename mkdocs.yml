@@ -77,17 +77,20 @@ nav:
 
   - Background:
     - background/index.md
-    - Light Curves: background/light-curves.md
-    - Surveys (ZTF & Rubin): background/surveys.md
-    - Period Finding: background/period-finding.md
-    - Variability Statistics: background/variability-statistics.md
-    - The dm/dt Histogram: background/dmdt.md
-    - Gaia & Stellar Catalogs: background/gaia.md
+    - Astrophysics:
+      - Light Curves: background/light-curves.md
+      - Surveys (ZTF & Rubin): background/surveys.md
+      - Period Finding: background/period-finding.md
+      - Variability Statistics: background/variability-statistics.md
+      - The dm/dt Histogram: background/dmdt.md
+      - Gaia & Stellar Catalogs: background/gaia.md
+    - Infrastructure:
+      - periodfind: background/periodfind.md
+      - Docker & GHCR: background/docker-ghcr.md
 
   - Architecture:
     - Overview: architecture/overview.md
     - Design Principles: architecture/design-principles.md
-    - periodfind: architecture/periodfind.md
 
   - Data Contracts: data-contracts.md
 
