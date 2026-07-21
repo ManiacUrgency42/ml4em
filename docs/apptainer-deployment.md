@@ -17,10 +17,20 @@ SSH into MSI and clone the repo with submodules. `periodfind` lives at
 `external/periodfind` as a git submodule — without `--recurse-submodules` the
 build will fail.
 
+MSI's login nodes cannot use SSH keys to authenticate to GitHub, so use a
+Personal Access Token (PAT) embedded in the HTTPS URL. Replace `<PAT>` with
+your token:
+
 ```bash
-git clone --recurse-submodules https://github.com/ManiacUrgency42/ml4em.git ~/ml4em
+git clone --recurse-submodules https://<PAT>@github.com/ManiacUrgency42/ml4em.git ~/ml4em
 cd ~/ml4em
 ```
+
+!!! tip "Creating a classic PAT"
+    Go to **GitHub → Settings → Developer settings → Personal access tokens →
+    Tokens (classic)** and generate a token with `repo` scope.
+    See [GitHub docs — Creating a personal access token (classic)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
+    for step-by-step instructions.
 
 ---
 
