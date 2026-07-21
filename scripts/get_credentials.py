@@ -41,11 +41,11 @@ def main() -> None:
         body = exc.read().decode(errors="replace")
         raise SystemExit(f"Authentication failed ({exc.code}):\n{body}") from exc
 
-    if "data" not in data or "token" not in data.get("data", {}):
+    if data.get("status") != "success" or "token" not in data:
         msg = data.get("message", json.dumps(data, indent=2))
-        raise SystemExit(f"Server error: {msg}")
+        raise SystemExit(f"Authentication failed: {msg}")
 
-    token = data["data"]["token"]
+    token = data["token"]
 
     ENV_FILE.parent.mkdir(parents=True, exist_ok=True)
     ENV_FILE.write_text(f"ML4EM_ZTF_TOKEN={token}\n")
