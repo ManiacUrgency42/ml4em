@@ -1,70 +1,62 @@
 # Deployment — Apptainer
 
-The pipeline is packaged as a Docker image, stored on GHCR, and converted to an
-Apptainer `.sif` file on MSI. Your live git checkout is bind-mounted into the container
-at runtime, so any Python code you change is picked up immediately with `git pull` —
-no rebuild needed.
+The pipeline ships as a pre-built container image. You download it once, then
+run jobs against your live git checkout — no recompilation needed when you
+change Python code.
 
-!!! tip "How Docker and GHCR fit into this"
-    If you want to understand how the image is built, how GHCR caching works, or when
-    CI triggers a rebuild, see [Background → Docker & GHCR](background/docker-ghcr.md).
+!!! tip "How the image is built"
+    See [Background → Docker & GHCR](background/docker-ghcr.md) for details on
+    how the image is built and when CI triggers a rebuild.
 
 ---
 
-## 1. Clone the repo on MSI
+## 1. Clone the repo
 
-SSH into MSI and clone the repo with submodules. `periodfind` lives at
-`external/periodfind` as a git submodule — without `--recurse-submodules` the
-build will fail.
+MSI login nodes cannot authenticate to GitHub via SSH. Use a Personal Access
+Token (PAT) embedded in the HTTPS URL. Replace `<PAT>` with your token.
 
-MSI's login nodes cannot use SSH keys to authenticate to GitHub, so use a
-Personal Access Token (PAT) embedded in the HTTPS URL. Replace `<PAT>` with
-your token:
-
+**Run on MSI:**
 ```bash
 git clone --recurse-submodules https://<PAT>@github.com/ManiacUrgency42/ml4em.git ~/ml4em
 cd ~/ml4em
 ```
 
 !!! tip "Creating a classic PAT"
-    Go to **GitHub → Settings → Developer settings → Personal access tokens →
-    Tokens (classic)** and generate a token with `repo` scope.
-    See [GitHub docs — Creating a personal access token (classic)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
-    for step-by-step instructions.
+    GitHub → Settings → Developer settings → Personal access tokens → Tokens
+    (classic). Grant `repo` scope.
+    [Step-by-step guide →](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
 
 ---
 
 ## 2. First-time data setup
 
-Do this once. These directories and files persist across jobs on scratch.
+Do this once. Everything here persists across SLURM jobs on scratch.
 
 ### 2a. Create scratch directories
 
-MSI's home quota is small (~10 GB). Keep all large files on scratch:
+MSI home directories have a small quota (~10 GB). All large files go on scratch.
 
+**Run on MSI:**
 ```bash
-DATA=/scratch.global/$USER/ml4em_data
-
-mkdir -p $DATA/features $DATA/models $DATA/predictions
-mkdir -p /scratch.global/$USER/apptainer_cache
-mkdir -p /scratch.global/$USER/tmp
+mkdir -p /scratch.global/$USER/ml4em_data/{features,models,predictions}
+mkdir -p /scratch.global/$USER/{apptainer_cache,tmp}
 ```
 
 ### 2b. Copy your catalog
 
-`wdb_sources.csv` is the WDB catalog (ra, dec positions of target sources). Copy it
-to scratch from your local machine:
+`wdb_sources.csv` is the source catalog (RA/Dec positions of WDB targets).
 
+**Run on your laptop:**
 ```bash
-# From your local machine:
 scp data/wdb_sources.csv jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4em_data/
 ```
 
-### 2c. Write a config for MSI
+### 2c. Write the MSI config
 
-The MSI config uses absolute scratch paths instead of relative ones. Create it at
-`/scratch.global/$USER/ml4em_data/config_msi.yaml`:
+The storage paths use `/data` — the run command maps your scratch directory to
+`/data` inside the container at runtime.
 
+**Save as `/scratch.global/$USER/ml4em_data/config_msi.yaml`:**
 ```yaml
 sources:
   ztf:
@@ -77,7 +69,7 @@ sources:
     min_cadence_days: 0.020833
 
 features:
-  device: cuda          # use GPU for periodfind
+  device: cuda
   min_observations: 50
 
 storage:
@@ -98,29 +90,26 @@ inference:
     medium: 0.7
 ```
 
-The bind mount in the run command maps `/scratch.global/$USER/ml4em_data` → `/data`
-inside the container, so all paths above resolve correctly.
-
 ### 2d. Store your Kowalski token
 
-Never put tokens in `config_msi.yaml`. Store them in a `.env` file:
+API tokens never go in the config file. The run command injects this `.env`
+file into the container automatically.
 
+**Run on MSI:**
 ```bash
 echo "ML4EM_ZTF_TOKEN=your_token_here" > /scratch.global/$USER/ml4em_data/.env
 chmod 600 /scratch.global/$USER/ml4em_data/.env
 ```
 
-The `--env-file` flag in the run scripts injects this into the container at runtime.
-
 ---
 
-## 3. Pull the image on MSI
+## 3. Pull the container image
 
-Submit the SLURM pull job from your repo root. This downloads the Docker image
-from GHCR, decompresses every layer, merges them into a single filesystem, and
-converts it to a `.sif` (SquashFS Image Format) file on scratch. This is the
-one-time cost — you never repeat it unless a compiled dependency changes.
+Downloads the pre-built image from GHCR and converts it to a `.sif` file on
+scratch. Runs as a SLURM job because the conversion (20–40 min, ~6 GB download)
+exceeds the login node's CPU time limit.
 
+**Run on MSI:**
 ```bash
 cd ~/ml4em
 mkdir -p logs
@@ -129,18 +118,13 @@ sbatch slurm/pull_image.sh
 
 Monitor progress:
 
+**Run on MSI:**
 ```bash
 squeue -u $USER
 tail -f logs/pull_ml4em_<JOBID>.out
 ```
 
-The pull takes 20–40 minutes (5–8 GB download + squashfs conversion). Output is
-written to `/scratch.global/$USER/ml4em_gpu.sif`.
-
-!!! warning "Do not pull on the login node"
-    The login node enforces a 15-minute CPU limit — not enough time to convert a
-    5–8 GB image. `slurm/pull_image.sh` submits the job to a compute node
-    automatically via SLURM.
+Output: `/scratch.global/$USER/ml4em_gpu.sif`
 
 ---
 
@@ -148,49 +132,46 @@ written to `/scratch.global/$USER/ml4em_gpu.sif`.
 
 ### Batch job (recommended)
 
-The repo includes `slurm/run_demo.sh`, a complete SLURM script that sets up the
-environment and runs the end-to-end demo pipeline. Submit it from your repo root:
-
+**Run on MSI:**
 ```bash
+cd ~/ml4em
 mkdir -p logs
 sbatch slurm/run_demo.sh
 ```
 
 Monitor:
 
+**Run on MSI:**
 ```bash
 squeue -u $USER
 tail -f logs/ml4em_demo_<JOBID>.out
 ```
 
-The script requests one A100 GPU, bind-mounts your live git checkout into the
-container, and runs `scripts/run_demo.py` with the MSI config. Outputs:
+Outputs:
 
 - `/scratch.global/$USER/ml4em_data/features/demo.parquet` — extracted feature vectors
 - `/scratch.global/$USER/ml4em_data/models/logistic_demo/` — saved model
 
-### Interactive run (for debugging only)
+### Interactive run (debugging only)
 
-!!! warning "Must be on a GPU compute node"
-    `apptainer run --nv` requires GPU drivers. **Never run it on the login node** —
-    request an interactive GPU node first:
+First, request a GPU compute node:
 
-    ```bash
-    srun --account=cough052 --partition=a100 --gres=gpu:a100:1 \
-         --mem=16g --time=1:00:00 --pty bash
-    ```
+**Run on MSI:**
+```bash
+srun --account=cough052 --partition=a100 --gres=gpu:a100:1 \
+     --mem=16g --time=1:00:00 --pty bash
+```
 
 Once on the compute node:
 
+**Run on MSI (compute node):**
 ```bash
-DATA=/scratch.global/$USER/ml4em_data
-
 module load apptainer
 
 apptainer run --nv \
     --bind $HOME/ml4em:/app/ml4em \
-    --bind $DATA:/data \
-    --env-file $DATA/.env \
+    --bind /scratch.global/$USER/ml4em_data:/data \
+    --env-file /scratch.global/$USER/ml4em_data/.env \
     /scratch.global/$USER/ml4em_gpu.sif \
     python scripts/run_demo.py --config /data/config_msi.yaml
 ```
@@ -199,44 +180,33 @@ apptainer run --nv \
 |------|---------|
 | `--nv` | Pass NVIDIA GPU drivers through to the container |
 | `--bind .../ml4em:/app/ml4em` | Mount your live code — `git pull` picks up changes without rebuilding |
-| `--bind .../ml4em_data:/data` | Mount data directory — catalog, config, output features/models |
+| `--bind .../ml4em_data:/data` | Mount scratch — catalog, config, outputs |
 | `--env-file .env` | Inject `ML4EM_ZTF_TOKEN` into the container |
-
-GPU device is controlled by `features.device` in `config_msi.yaml` (`"cpu"` / `"cuda"` / `"auto"`).
 
 ---
 
-## Updating the pipeline after the initial pull
+## Day-to-day workflow
 
-**The `.sif` is a one-time cost.** Once it exists on scratch, you never pull it
-again unless a compiled dependency changes. All Python code — models, scripts,
-pipeline logic — lives in your git checkout and is bind-mounted live into the
-container at runtime.
+The `.sif` is a one-time download. All Python code lives in your git checkout
+and is mounted live into the container. Updating the pipeline is:
 
-The day-to-day workflow is just:
-
+**Run on MSI:**
 ```bash
-# On MSI login node — pick up any code changes from GitHub
 git pull
-
-# Submit your job — the container immediately sees the updated code
 sbatch slurm/run_demo.sh
 ```
 
-That's it. No rebuild, no re-pull, no reinstall.
+## When to re-pull the `.sif`
 
-## When to re-pull the .sif
+The image only needs to be re-pulled when compiled dependencies change.
 
-The image only needs to be re-pulled when compiled dependencies change — things
-that are baked into the image at build time and cannot be bind-mounted.
+| Change | Action |
+|--------|--------|
+| `src/ml4em/` Python code | `git pull` only |
+| `scripts/`, `slurm/`, `docs/` | `git pull` only |
+| `pyproject.toml` — new pip dependency | Re-pull after CI rebuilds image |
+| `external/periodfind` submodule update | Re-pull after CI rebuilds image |
+| CUDA driver compatibility change | Re-pull after CI rebuilds image |
 
-| Change | Action needed on MSI |
-|--------|----------------------|
-| `src/ml4em/` Python code | `git pull` only — no re-pull |
-| `scripts/`, `slurm/`, `docs/` | `git pull` only — no re-pull |
-| `pyproject.toml` — new pip dependency | Re-pull `.sif` after CI rebuilds image |
-| `external/periodfind` submodule update | Re-pull `.sif` after CI rebuilds image |
-| CUDA driver compatibility change | Re-pull `.sif` after CI rebuilds image |
-
-CI rebuilds the image automatically when you merge to `main` — you just wait
-for the build to finish, then run `sbatch slurm/pull_image.sh` again on MSI.
+CI rebuilds automatically on merge to `main`. Once the build finishes, run
+`sbatch slurm/pull_image.sh` on MSI.

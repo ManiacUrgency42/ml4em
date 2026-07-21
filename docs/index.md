@@ -34,9 +34,9 @@ a model; the library handles data fetching, feature extraction, training, and in
 
 - **Ready to run something?**
 
-    The Quick Start gets you from a clone to a running pipeline.
+    The Deployment section gets you from a clone to a running pipeline on MSI.
 
-    [Quick Start →](quickstart.md)
+    [Deployment →](deployment.md)
 
 - **Adding to the library?**
 

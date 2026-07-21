@@ -69,7 +69,6 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Quick Start: quickstart.md
   - Deployment:
     - Overview: deployment.md
     - Apptainer: apptainer-deployment.md
