@@ -56,8 +56,9 @@ scp data/wdb_sources.csv jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4
 The storage paths use `/data` — the run command maps your scratch directory to
 `/data` inside the container at runtime.
 
-**Save as `/scratch.global/$USER/ml4em_data/config_msi.yaml`:**
-```yaml
+**Run on MSI:**
+```bash
+cat > /scratch.global/$USER/ml4em_data/config_msi.yaml << 'EOF'
 sources:
   ztf:
     host: melman.caltech.edu
@@ -88,18 +89,22 @@ inference:
   confidence_thresholds:
     high:   0.9
     medium: 0.7
+EOF
 ```
 
-### 2d. Store your Kowalski token
+### 2d. Get your Kowalski token
 
-API tokens never go in the config file. The run command injects this `.env`
-file into the container automatically.
+Run this script on the MSI login node. It prompts for your Kowalski username
+and password, fetches a token, and saves it to your scratch directory.
 
 **Run on MSI:**
 ```bash
-echo "ML4EM_ZTF_TOKEN=your_token_here" > /scratch.global/$USER/ml4em_data/.env
-chmod 600 /scratch.global/$USER/ml4em_data/.env
+python3 ~/ml4em/scripts/get_credentials.py
 ```
+
+Your token is stored at `/scratch.global/$USER/ml4em_data/.env`. To update
+your credentials at any time — for example if your token expires — just re-run
+the script.
 
 ---
 
