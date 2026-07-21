@@ -42,7 +42,8 @@ def main() -> None:
         raise SystemExit(f"Authentication failed ({exc.code}):\n{body}") from exc
 
     if "data" not in data or "token" not in data.get("data", {}):
-        raise SystemExit(f"Unexpected response from server:\n{json.dumps(data, indent=2)}")
+        msg = data.get("message", json.dumps(data, indent=2))
+        raise SystemExit(f"Server error: {msg}")
 
     token = data["data"]["token"]
 
