@@ -1,137 +1,109 @@
 # Deployment — Conda
 
-## Why a setup script is required
+`periodfind` — the period-finding library ml4em depends on — cannot be installed
+via `conda` or plain `pip`. It requires a compiled build from Rust and Cython
+source. A one-shot SLURM job handles this automatically.
 
-`periodfind` — the period-finding library ml4em depends on — cannot be installed via
-`conda` or plain `pip`. It requires a two-step compiled build:
-
-1. **Rust → Python wheel** via `maturin`
-2. **Cython extensions** (optionally CUDA-accelerated)
-
-A one-shot script (`scripts/setup_conda.sh`) handles both steps after the conda
-environment is created. This is the only step that differs from a standard conda
-workflow.
+!!! tip "Jupyter notebooks"
+    Once the environment is set up, you can run ml4em interactively in a Jupyter
+    notebook via [MSI Open OnDemand](https://ondemand.msi.umn.edu). Launch a
+    JupyterLab session, select the `ml4em-gpu` kernel, and import away.
 
 ---
 
-## 1. Clone the repo (with submodules)
+## 1. Clone the repo
 
-`periodfind` lives at `external/periodfind` as a git submodule:
+MSI login nodes cannot authenticate to GitHub via SSH. Use a Personal Access
+Token (PAT) embedded in the HTTPS URL. Replace `<PAT>` with your token.
 
+**Run on MSI:**
 ```bash
-git clone --recurse-submodules https://github.com/ManiacUrgency42/ml4em.git
-cd ml4em
-# or after a plain clone:
-git submodule update --init
+git clone --recurse-submodules https://<PAT>@github.com/ManiacUrgency42/ml4em.git ~/ml4em
+cd ~/ml4em
 ```
+
+!!! tip "Creating a classic PAT"
+    GitHub → Settings → Developer settings → Personal access tokens → Tokens
+    (classic). Grant `repo` scope.
+    [Step-by-step guide →](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
 
 ---
 
 ## 2. Create the conda environment
 
-=== "GPU (MSI production)"
+**Run on MSI:**
+```bash
+module load conda
+module load cuda/11.8.0
+conda env create -f ~/ml4em/environment-gpu.yml
+```
 
-    The CUDA module provides `nvcc`, which is required to build periodfind's CUDA
-    extensions. Load it **before** creating the environment:
-
-    ```bash
-    module load conda
-    module load cuda/11.8.0
-    conda env create -f environment-gpu.yml
-    ```
-
-    !!! note "CUDA is not inside the conda env"
-        `environment-gpu.yml` does not install a CUDA toolkit — that would conflict
-        with MSI's system drivers. Instead, the `module load cuda/11.8.0` command
-        puts `nvcc` on your PATH at build time.
-
-=== "CPU (local dev / CPU nodes)"
-
-    ```bash
-    conda env create -f environment-cpu.yml
-    ```
-
-    Or with the Makefile (creates the environment and runs the setup script in one
-    step — see § 3 below):
-
-    ```bash
-    make conda-cpu
-    ```
+!!! note "CUDA is not inside the conda env"
+    `environment-gpu.yml` does not install a CUDA toolkit — that would conflict
+    with MSI's system drivers. `module load cuda/11.8.0` puts `nvcc` on your
+    PATH so periodfind's CUDA extensions can be compiled in the next step.
 
 ---
 
 ## 3. Build periodfind and install ml4em
 
-`scripts/setup_conda.sh` does four things in order:
+The Rust compilation can exceed the login node's 15-minute CPU limit. Submit it
+as a SLURM job — no GPU needed, it runs on a CPU node.
 
-1. Installs torch with the correct wheel (CPU or CUDA 11.8)
-2. Compiles the periodfind Rust extension with `maturin`
-3. Compiles the periodfind Cython extensions (with CUDA if in `gpu` mode)
-4. Installs ml4em in editable mode: `pip install -e ".[ztf,catalog,training,dev]"`
-
-=== "GPU (MSI production)"
-
-    On MSI, submit this as a SLURM job. The Rust compilation can exceed the login
-    node's 15-minute CPU limit. No GPU is needed to compile — the job runs on a
-    CPU node (`amdsmall`).
-
-    ```bash
-    mkdir -p logs
-    sbatch slurm/setup_conda.sh
-    ```
-
-    Monitor:
-
-    ```bash
-    squeue -u $USER
-    tail -f logs/ml4em_conda_setup_<JOBID>.out
-    ```
-
-=== "CPU (local dev / CPU nodes)"
-
-    ```bash
-    conda run -n ml4em-cpu bash scripts/setup_conda.sh cpu
-    ```
-
-Verify the install once complete:
-
+**Run on MSI:**
 ```bash
-module load conda          # MSI only
-conda activate ml4em-gpu   # or ml4em-cpu
+cd ~/ml4em
+mkdir -p logs
+sbatch slurm/setup_conda.sh
+```
+
+Monitor progress:
+
+**Run on MSI:**
+```bash
+squeue -u $USER
+tail -f logs/ml4em_conda_setup_<JOBID>.out
+```
+
+Verify the install once the job completes:
+
+**Run on MSI:**
+```bash
+module load conda
+conda activate ml4em-gpu
 python -c 'import ml4em; import periodfind; print("OK")'
 ```
 
 ---
 
-## 4. First-time MSI data setup
+## 4. First-time data setup
 
-Do this once after SSH-ing into MSI. These directories persist across jobs.
+Do this once. Everything here persists across SLURM jobs on scratch.
 
 ### 4a. Create scratch directories
 
-MSI's home quota is small. Keep all large files on scratch:
+MSI home directories have a small quota (~10 GB). All large files go on scratch.
 
+**Run on MSI:**
 ```bash
-DATA=/scratch.global/$USER/ml4em_data
-
-mkdir -p $DATA/features $DATA/models $DATA/predictions
+mkdir -p /scratch.global/$USER/ml4em_data/{features,models,predictions}
 mkdir -p /scratch.global/$USER/tmp
 ```
 
 ### 4b. Copy your catalog
 
-`wdb_sources.csv` is the WDB catalog (ra, dec positions of target sources):
+`wdb_sources.csv` is the source catalog (RA/Dec positions of WDB targets).
 
+**Run on your laptop:**
 ```bash
-# From your local machine:
 scp data/wdb_sources.csv jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4em_data/
 ```
 
-### 4c. Write a config for MSI
+### 4c. Write the MSI config
 
-Create `/scratch.global/$USER/ml4em_data/config_msi.yaml`:
-
-```yaml
+**Run on MSI:**
+```bash
+cat > /scratch.global/$USER/ml4em_data/config_msi.yaml << EOF
 sources:
   ztf:
     host: melman.caltech.edu
@@ -143,15 +115,15 @@ sources:
     min_cadence_days: 0.020833
 
 features:
-  device: cuda          # use GPU for periodfind
+  device: cuda
   min_observations: 50
 
 storage:
-  catalog_path: /scratch.global/<USER>/ml4em_data/wdb_sources.csv
-  labels_path:  /scratch.global/<USER>/ml4em_data/labels.csv
-  features_dir: /scratch.global/<USER>/ml4em_data/features
-  models_dir:   /scratch.global/<USER>/ml4em_data/models
-  predictions_dir: /scratch.global/<USER>/ml4em_data/predictions
+  catalog_path: /scratch.global/$USER/ml4em_data/wdb_sources.csv
+  labels_path:  /scratch.global/$USER/ml4em_data/labels.csv
+  features_dir:    /scratch.global/$USER/ml4em_data/features
+  models_dir:      /scratch.global/$USER/ml4em_data/models
+  predictions_dir: /scratch.global/$USER/ml4em_data/predictions
 
 training:
   val_fraction:  0.1
@@ -162,18 +134,21 @@ inference:
   confidence_thresholds:
     high:   0.9
     medium: 0.7
+EOF
 ```
 
-Replace `<USER>` with your MSI username (e.g. `jin00404`).
+### 4d. Get your Kowalski token
 
-### 4d. Store your Kowalski token
+Run this script on the MSI login node. It prompts for your Kowalski username
+and password, fetches a token, and saves it to your scratch directory.
 
-Never put tokens in `config_msi.yaml`. Store them in a `.env` file:
-
+**Run on MSI:**
 ```bash
-echo "ML4EM_ZTF_TOKEN=your_token_here" > /scratch.global/$USER/ml4em_data/.env
-chmod 600 /scratch.global/$USER/ml4em_data/.env
+python3 ~/ml4em/scripts/get_credentials.py --show-password
 ```
+
+Your token is stored at `/scratch.global/$USER/ml4em_data/.env`. To update
+your credentials at any time, re-run the script.
 
 ---
 
@@ -181,60 +156,76 @@ chmod 600 /scratch.global/$USER/ml4em_data/.env
 
 ### Batch job (recommended)
 
+**Run on MSI:**
 ```bash
+cd ~/ml4em
 mkdir -p logs
 sbatch slurm/run_demo_conda.sh
 ```
 
 Monitor:
 
+**Run on MSI:**
 ```bash
 squeue -u $USER
 tail -f logs/ml4em_demo_conda_<JOBID>.out
 ```
 
-Output files:
+Outputs:
 
 - `/scratch.global/$USER/ml4em_data/features/demo.parquet` — extracted feature vectors
 - `/scratch.global/$USER/ml4em_data/models/logistic_demo/` — saved model
 
-### Interactive run (for debugging)
+### Interactive run (debugging only)
 
-!!! warning "Must be on a GPU compute node"
-    Never run GPU workloads on the login node. Request an interactive GPU node first:
+First, request a GPU compute node:
 
-    ```bash
-    srun --account=cough052 --partition=a100 --gres=gpu:a100:1 \
-         --mem=16g --time=1:00:00 --pty bash
-    ```
+**Run on MSI:**
+```bash
+srun --account=cough052 --partition=a100 --gres=gpu:a100:1 \
+     --mem=16g --time=1:00:00 --pty bash
+```
 
 Once on the compute node:
 
+**Run on MSI (compute node):**
 ```bash
-DATA=/scratch.global/$USER/ml4em_data
-
 module load conda cuda/11.8.0
 conda activate ml4em-gpu
 
-set -a; source "${DATA}/.env"; set +a
+set -a; source /scratch.global/$USER/ml4em_data/.env; set +a
 
-python scripts/run_demo.py --config "${DATA}/config_msi.yaml"
+python ~/ml4em/scripts/run_demo.py --config /scratch.global/$USER/ml4em_data/config_msi.yaml
 ```
 
 ---
+
+## Day-to-day workflow
+
+The conda environment is a one-time build. All Python code lives in your git
+checkout as an editable install. Updating the pipeline is:
+
+**Run on MSI:**
+```bash
+git pull
+sbatch slurm/run_demo_conda.sh
+```
 
 ## When to rebuild the environment
 
 | Change | Action |
 |--------|--------|
-| `src/ml4em/` code changes | **None** — `git pull` is enough (editable install) |
-| `pyproject.toml` pure-Python dep changes | `pip install -e ".[ztf,catalog,training,dev]"` inside the active env |
+| `src/ml4em/` Python code | `git pull` only |
+| `scripts/`, `slurm/`, `docs/` | `git pull` only |
+| `pyproject.toml` — new pure-Python dep | `pip install -e ".[ztf,catalog,training,dev]"` inside the active env |
 | `external/periodfind` submodule update | Full rebuild (see below) |
 | CUDA version change | Full rebuild (see below) |
 
 Full rebuild from scratch:
 
+**Run on MSI:**
 ```bash
 conda env remove -n ml4em-gpu --yes
+cd ~/ml4em && mkdir -p logs
 sbatch slurm/setup_conda.sh
 ```
