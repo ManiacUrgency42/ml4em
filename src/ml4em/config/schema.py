@@ -22,7 +22,7 @@ config.yaml needed.  Users only override what differs from defaults.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import ClassVar, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -152,7 +152,7 @@ class PeriodConfig(BaseModel):
     # Typical values: 5 (coarse) to 10 (fine). None → period-spaced linspace.
     samples_per_peak : Optional[float] = None
 
-    _KNOWN = frozenset({"CE", "AOV", "LS", "FPW", "BLS", "MHF"})
+    _KNOWN: ClassVar[frozenset] = frozenset({"CE", "AOV", "LS", "FPW", "BLS", "MHF"})
 
     @field_validator("algorithms")
     @classmethod
