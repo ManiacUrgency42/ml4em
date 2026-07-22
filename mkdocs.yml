@@ -90,16 +90,14 @@ nav:
   - Architecture:
     - Overview: architecture/overview.md
     - Design Principles: architecture/design-principles.md
-
-  - Data Contracts: data-contracts.md
-
-  - Layer Reference:
-    - Foundation: layers/foundation.md
-    - Data: layers/data.md
-    - Features: layers/features.md
-    - Models: layers/models.md
-    - Training: layers/training.md
-    - Inference: layers/inference.md
+    - Data Contracts: data-contracts.md
+    - Layers:
+      - Foundation: layers/foundation.md
+      - Data: layers/data.md
+      - Features: layers/features.md
+      - Models: layers/models.md
+      - Training: layers/training.md
+      - Inference: layers/inference.md
 
   - Guides:
     - Add a Data Source: guides/add-data-source.md
