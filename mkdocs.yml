@@ -99,19 +99,8 @@ nav:
       - Training: layers/training.md
       - Inference: layers/inference.md
 
-  - Guides:
+  - Extending:
     - Add a Data Source: guides/add-data-source.md
     - Add an Extractor: guides/add-extractor.md
     - Add a Model: guides/add-model.md
     - Preparing Labels: guides/label-preparation.md
-
-
-  - API Reference:
-    - Types: api/types.md
-    - Constants: api/constants.md
-    - Config: api/config.md
-    - Data: api/data.md
-    - Features: api/features.md
-    - Models: api/models.md
-    - Training: api/training.md
-    - Inference: api/inference.md
