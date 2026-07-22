@@ -137,12 +137,20 @@ class PeriodConfig(BaseModel):
     MHF  Multi-Harmonic Fit
     """
 
-    algorithms      : list[str] = ["CE", "AOV", "LS", "MHF"]
-    min_period_days : float     = 0.01   # days — override for your science case
-    max_period_days : float     = 10.0   # days — override for your science case
-    n_freq_grid     : int       = 5000   # number of trial periods in the search grid
-    top_n_periods   : int       = 3      # periods retained per algorithm before scoring
-    min_agreement   : int       = 2      # algorithms that must agree → "high confidence"
+    algorithms      : list[str]    = ["CE", "AOV", "LS", "MHF"]
+    min_period_days : float        = 0.01   # days
+    max_period_days : float        = 10.0   # days
+    n_freq_grid     : int          = 5000   # trial periods when using period-spaced grid
+    top_n_periods   : int          = 3      # periods retained per algorithm before scoring
+    min_agreement   : int          = 2      # algorithms that must agree → "high confidence"
+
+    # When set, overrides n_freq_grid and builds the trial grid evenly spaced
+    # in frequency with step df = 1 / (samples_per_peak * baseline), where
+    # baseline is the longest light curve time span in the batch.
+    # This matches scope-ml's grid construction and is the scientifically
+    # correct sampling for Lomb-Scargle and related algorithms.
+    # Typical values: 5 (coarse) to 10 (fine). None → period-spaced linspace.
+    samples_per_peak : Optional[float] = None
 
     _KNOWN = frozenset({"CE", "AOV", "LS", "FPW", "BLS", "MHF"})
 

@@ -56,14 +56,39 @@ class PeriodExtractor:
 
     def __init__(self, config: PeriodConfig) -> None:
         self._cfg = config
-        self._periods = np.linspace(
-            config.min_period_days,
-            config.max_period_days,
-            config.n_freq_grid,
-            dtype=np.float32,
-        )
+        if config.samples_per_peak is None:
+            # Period-spaced grid, built once and reused across all batches.
+            self._static_periods: np.ndarray | None = np.linspace(
+                config.min_period_days,
+                config.max_period_days,
+                config.n_freq_grid,
+                dtype=np.float32,
+            )
+        else:
+            # Frequency-spaced grid, computed per-batch from actual baseline.
+            self._static_periods = None
         self._period_dts = np.zeros(1, dtype=np.float32)  # no chirp
         self._algos = self._build_algos()
+
+    def _build_freq_grid(self, times: list[np.ndarray]) -> np.ndarray:
+        """Build a frequency-spaced period grid from the batch time baseline.
+
+        Matches scope-ml's grid construction: evenly spaced in frequency with
+        step df = 1 / (samples_per_peak * baseline), where baseline is the
+        longest time span across all sources in the batch.
+        """
+        baseline = max(float(t.max() - t.min()) for t in times)
+        if baseline <= 0:
+            baseline = 1.0
+        f_min = 1.0 / self._cfg.max_period_days
+        f_max = 1.0 / self._cfg.min_period_days
+        df = 1.0 / (self._cfg.samples_per_peak * baseline)  # type: ignore[operator]
+        freqs = np.arange(f_min, f_max, df, dtype=np.float64)
+        freqs = freqs[(freqs >= f_min) & (freqs <= f_max)]
+        if len(freqs) == 0:
+            freqs = np.array([f_min], dtype=np.float64)
+        # Convert to periods in ascending order to match linspace(min, max) convention.
+        return (1.0 / freqs[::-1]).astype(np.float32).copy()
 
     def _build_algos(self) -> dict[str, Any]:
         import periodfind
@@ -227,6 +252,12 @@ class PeriodExtractor:
             return results
 
         # ── 2. Run period-finding algorithms ─────────────────────────────
+        periods = (
+            self._static_periods
+            if self._static_periods is not None
+            else self._build_freq_grid(times)
+        )
+
         all_peaks: dict[str, list[list[Any]]] = {}
         n_peaks = self._cfg.top_n_periods
 
@@ -240,7 +271,7 @@ class PeriodExtractor:
                 if needs_errs:
                     kwargs["errs"] = errs
                 peaks = algo.calc(
-                    times, mags, self._periods, self._period_dts, **kwargs
+                    times, mags, periods, self._period_dts, **kwargs
                 )
                 all_peaks[algo_name] = peaks
             except Exception:

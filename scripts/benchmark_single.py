@@ -76,6 +76,10 @@ def main() -> None:
     parser.add_argument("--device", default=None,
                         choices=["cpu", "cuda", "auto"],
                         help="Override features.device from config")
+    parser.add_argument("--algorithms", default=None,
+                        help="Comma-separated algorithm list, e.g. CE,AOV,LS (overrides config)")
+    parser.add_argument("--samples-per-peak", type=float, default=None,
+                        help="Build frequency-spaced grid with this oversampling factor (overrides n_freq_grid)")
     args = parser.parse_args()
 
     # ── Config ──────────────────────────────────────────────────────────────────
@@ -83,6 +87,10 @@ def main() -> None:
     cfg = load_config(args.config)
     if args.device:
         cfg.features.device = args.device
+    if args.algorithms:
+        cfg.features.period.algorithms = args.algorithms.split(",")
+    if args.samples_per_peak:
+        cfg.features.period.samples_per_peak = args.samples_per_peak
     device = cfg.features.device
 
     log.info("Config loaded  |  device=%s  |  ra=%.4f  dec=%.4f  radius=%.1f\"",
@@ -133,6 +141,30 @@ def main() -> None:
 
     source_batch = [target_lcs]  # single source wrapped in list
 
+    # ── Period grid info ─────────────────────────────────────────────────────
+    if cfg.features.period.samples_per_peak is not None:
+        primary = max(target_lcs, key=lambda lc: lc.n_obs)
+        baseline = float(primary.time.max() - primary.time.min())
+        f_min = 1.0 / cfg.features.period.max_period_days
+        f_max = 1.0 / cfg.features.period.min_period_days
+        df = 1.0 / (cfg.features.period.samples_per_peak * baseline)
+        n_grid = max(1, int((f_max - f_min) / df))
+        grid_desc = (f"freq-spaced  spp={cfg.features.period.samples_per_peak}"
+                     f"  baseline={baseline:.1f}d")
+    else:
+        n_grid = cfg.features.period.n_freq_grid
+        grid_desc = "period-spaced  (linspace)"
+    log.info("Period grid: %d points — %s", n_grid, grid_desc)
+
+    # ── CUDA warmup ──────────────────────────────────────────────────────────
+    # First GPU call on a fresh process pays CUDA JIT compilation overhead.
+    # Run a throwaway call so timing reflects steady-state GPU throughput.
+    if device == "cuda":
+        log.info("CUDA warmup (not timed)...")
+        t0 = time.perf_counter()
+        PeriodExtractor(cfg.features.period).extract(source_batch)
+        log.info("Warmup complete (%.3fs)", time.perf_counter() - t0)
+
     t0 = time.perf_counter()
     StatisticsExtractor().extract(source_batch)
     t_stats = time.perf_counter() - t0
@@ -171,6 +203,8 @@ def main() -> None:
     print(f"  Bands:        {', '.join(bands)}")
     print(f"  Max obs:      {n_obs_max}")
     print(f"  Device:       {device}")
+    print(f"  Algorithms:   {', '.join(cfg.features.period.algorithms)}")
+    print(f"  Period grid:  {n_grid} points  ({grid_desc})")
     print()
 
 
