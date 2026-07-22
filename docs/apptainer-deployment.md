@@ -99,7 +99,7 @@ and password, fetches a token, and saves it to your scratch directory.
 
 **Run on MSI:**
 ```bash
-python3 ~/ml4em/scripts/get_credentials.py
+python3 ~/ml4em/scripts/get_credentials.py --show-password
 ```
 
 Your token is stored at `/scratch.global/$USER/ml4em_data/.env`. To update
