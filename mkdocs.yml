@@ -69,23 +69,6 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Deployment:
-    - Overview: deployment.md
-    - Apptainer: apptainer-deployment.md
-    - Conda: conda-deployment.md
-
-  - Background:
-    - background/index.md
-    - Astrophysics:
-      - Light Curves: background/light-curves.md
-      - Surveys (ZTF & Rubin): background/surveys.md
-      - Period Finding: background/period-finding.md
-      - Variability Statistics: background/variability-statistics.md
-      - The dm/dt Histogram: background/dmdt.md
-      - Gaia & Stellar Catalogs: background/gaia.md
-    - Infrastructure:
-      - periodfind: background/periodfind.md
-      - Docker & GHCR: background/docker-ghcr.md
 
   - Architecture:
     - Overview: architecture/overview.md
@@ -99,8 +82,26 @@ nav:
       - Training: layers/training.md
       - Inference: layers/inference.md
 
+  - Deployment:
+    - Overview: deployment.md
+    - Conda: conda-deployment.md
+    - Apptainer: apptainer-deployment.md
+
   - Extending:
     - Add a Data Source: guides/add-data-source.md
     - Add an Extractor: guides/add-extractor.md
     - Add a Model: guides/add-model.md
     - Preparing Labels: guides/label-preparation.md
+
+  - Background:
+    - background/index.md
+    - Astrophysics:
+      - Light Curves: background/light-curves.md
+      - Surveys (ZTF & Rubin): background/surveys.md
+      - Period Finding: background/period-finding.md
+      - Variability Statistics: background/variability-statistics.md
+      - The dm/dt Histogram: background/dmdt.md
+      - Gaia & Stellar Catalogs: background/gaia.md
+    - Infrastructure:
+      - periodfind: background/periodfind.md
+      - Docker & GHCR: background/docker-ghcr.md
