@@ -141,7 +141,7 @@ class PeriodConfig(BaseModel):
     min_period_days : float        = 0.01   # days
     max_period_days : float        = 10.0   # days
     n_freq_grid     : int          = 5000   # trial periods when using period-spaced grid
-    top_n_periods   : int          = 3      # periods retained per algorithm before scoring
+    top_n_periods   : int          = 10     # periods retained per algorithm before scoring (matches scope-ml)
     min_agreement   : int          = 2      # algorithms that must agree → "high confidence"
 
     # When set, overrides n_freq_grid and builds the trial grid evenly spaced

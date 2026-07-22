@@ -47,7 +47,8 @@ class LightCurve:
         Unique identifier within the survey (ZTF source ID, Rubin objectId,
         or simulation label).
     time : ndarray, shape (N,)
-        Observation times in Modified Julian Date (MJD).
+        Observation times in Heliocentric Julian Date (HJD) for ZTF,
+        or the native time system of the originating survey.
     mag : ndarray, shape (N,)
         Apparent magnitude at each epoch.
     mag_err : ndarray, shape (N,)

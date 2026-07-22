@@ -8,13 +8,19 @@ production pipeline.
 Pipeline per batch
 ------------------
 1. Preprocess: select primary band per source, cast to float32.
+   Period-finding step: zero times (subtract t_min) and normalise mags to
+   [0, 1] to match scope-ml's _prepare_lightcurves convention.
+   Fourier step: use original (un-normalised) times and mags.
 2. Run each configured algorithm across all N sources in a single batched
    call with output='peaks' (memory-efficient — no full periodogram stored).
 3. Agreement scoring (pure Python): find the period confirmed by the most
-   algorithms within a 2% fractional tolerance per source.
+   algorithms within _AGREE_TOL, with harmonic-aware matching and a
+   minimum-period guard against sub-cadence spurious peaks.
 4. Batch Fourier decomposition: one FourierDecomposition call for all sources
    that have a valid period.
-5. Unpack the 14 Fourier columns into FeatureVector field names.
+5. Unpack the 14 Fourier columns into FeatureVector field names using
+   scope-ml's phase convention: phi = arctan2(A, B), relative phases
+   normalised as (phi_k/k − phi_1) / (2π/k) % 1.
 
 Algorithms (scope-ml production set)
 -------------------------------------
@@ -39,7 +45,31 @@ from ml4em.config.schema import PeriodConfig
 from ml4em.types import LightCurve
 
 # Fractional period tolerance for cross-algorithm agreement scoring.
-_AGREE_TOL = 0.02
+# 5% matches scope-ml's default tolerance.
+_AGREE_TOL: float = 0.05
+
+# Harmonic ratios checked during agreement scoring.
+# A period pair (P_a, P_b) agrees if P_a ≈ h * P_b for any h in this list.
+# Catches the common aliases: half-period, double-period, 1/3, 3x period.
+_AGREE_HARMONICS: list[float] = [1.0, 0.5, 2.0, 1.0 / 3, 3.0]
+
+# Minimum period (days) considered physically meaningful.
+# Periods shorter than this are treated as spurious during agreement scoring.
+_MIN_AGREE_PERIOD: float = 0.007   # ~10 minutes
+
+
+def _period_match(p_a: float, p_b: float) -> bool:
+    """True if p_a and p_b agree within _AGREE_TOL, allowing harmonics.
+
+    Checks all ratios in _AGREE_HARMONICS: a pair agrees if
+    |p_a / (p_b * h) - 1| < _AGREE_TOL for any harmonic h.
+    """
+    if np.isnan(p_a) or np.isnan(p_b) or p_a <= _MIN_AGREE_PERIOD or p_b <= _MIN_AGREE_PERIOD:
+        return False
+    for h in _AGREE_HARMONICS:
+        if abs(p_a / (p_b * h) - 1.0) < _AGREE_TOL:
+            return True
+    return False
 
 
 class PeriodExtractor:
@@ -71,16 +101,17 @@ class PeriodExtractor:
         self._algos = self._build_algos()
 
     def _build_freq_grid(self, times: list[np.ndarray]) -> np.ndarray:
-        """Build a frequency-spaced period grid from the batch time baseline.
+        """Build a frequency-spaced period grid matching scope-ml's convention.
 
-        Matches scope-ml's grid construction: evenly spaced in frequency with
-        step df = 1 / (samples_per_peak * baseline), where baseline is the
-        longest time span across all sources in the batch.
+        fmin = 2 / baseline   — scope-ml convention: require at least 2 full
+                                cycles in the data baseline.
+        fmax = 1 / min_period_days
+        df   = 1 / (samples_per_peak * baseline)
         """
         baseline = max(float(t.max() - t.min()) for t in times)
         if baseline <= 0:
             baseline = 1.0
-        f_min = 1.0 / self._cfg.max_period_days
+        f_min = 2.0 / baseline                              # scope-ml: 2 cycles minimum
         f_max = 1.0 / self._cfg.min_period_days
         df = 1.0 / (self._cfg.samples_per_peak * baseline)  # type: ignore[operator]
         freqs = np.arange(f_min, f_max, df, dtype=np.float64)
@@ -97,9 +128,9 @@ class PeriodExtractor:
             "CE" : periodfind.ConditionalEntropy(n_phase=20, n_mag=10),
             "AOV": periodfind.AOV(n_phase=20),
             "LS" : periodfind.LombScargle(),
-            "MHF": periodfind.MultiHarmonicFourier(max_harmonics=5),
+            "MHF": periodfind.MultiHarmonicFourier(max_harmonics=3),
             "FPW": periodfind.FPW(n_bins=10),
-            "BLS": periodfind.BoxLeastSquares(n_bins=50),
+            "BLS": periodfind.BoxLeastSquares(n_bins=50, qmin=0.01, qmax=0.5),
         }
         return {
             name: factories[name]
@@ -119,8 +150,9 @@ class PeriodExtractor:
         """Return (best_period, significance, algo_name) for one source.
 
         Collects the top peak from each algorithm, finds the period confirmed
-        by the most algorithms within _AGREE_TOL, falls back to highest
-        significance if no pair agrees.
+        by the most algorithms within _AGREE_TOL (harmonic-aware), falls back
+        to highest significance if no pair agrees.  Periods below
+        _MIN_AGREE_PERIOD are excluded as sub-cadence artifacts.
         """
         candidates: list[tuple[float, float, str]] = []
         for algo_name, peaks_per_source in all_peaks.items():
@@ -130,7 +162,7 @@ class PeriodExtractor:
             top = src_peaks[0]
             period = float(top.params[0])
             sig = float(top.significance)
-            if period > 0 and not np.isnan(period):
+            if period > _MIN_AGREE_PERIOD and not np.isnan(period):
                 candidates.append((period, sig, algo_name))
 
         if not candidates:
@@ -145,7 +177,7 @@ class PeriodExtractor:
         for i, (p_i, s_i, a_i) in enumerate(candidates):
             count = sum(
                 1 for j, (p_j, _, _) in enumerate(candidates)
-                if i != j and abs(p_i - p_j) / min(p_i, p_j) < _AGREE_TOL
+                if i != j and _period_match(p_i, p_j)
             )
             if count > best_count or (count == best_count and s_i > best_sig):
                 best_count = count
@@ -163,6 +195,10 @@ class PeriodExtractor:
 
         Column order: [power, BIC, offset, slope, A1, B1, A2, B2, A3, B3,
                        A4, B4, A5, B5]
+
+        Phase convention matches scope-ml (_ab_to_amp_phi in periodsearch.py):
+            phi    = arctan2(A, B)                          (not arctan2(B, A))
+            relphi = (phi_k / k − phi_1) / (2π/k) % 1     (normalised to [0, 1])
         """
         out: dict[str, Any] = {
             "f1_power": float(row[0]),
@@ -174,11 +210,12 @@ class PeriodExtractor:
 
         a1, b1 = float(row[4]), float(row[5])
         amp1 = float(np.sqrt(a1**2 + b1**2))
-        phi1 = float(np.arctan2(b1, a1))
+        phi1 = float(np.arctan2(a1, b1))        # scope-ml convention: arctan2(A, B)
         out["f1_amp"]  = amp1
         out["f1_phi0"] = phi1
 
         for k in range(1, 5):          # harmonics 2–5 → relative indices 1–4
+            n = k + 1                  # harmonic number (2, 3, 4, 5)
             a_k = float(row[4 + 2 * k])
             b_k = float(row[5 + 2 * k])
             if a_k == 0.0 and b_k == 0.0:
@@ -186,9 +223,12 @@ class PeriodExtractor:
                 out[f"f1_relphi{k}"] = np.nan
             else:
                 amp_k = float(np.sqrt(a_k**2 + b_k**2))
-                phi_k = float(np.arctan2(b_k, a_k))
+                phi_k = float(np.arctan2(a_k, b_k))   # scope-ml convention: arctan2(A, B)
                 out[f"f1_relamp{k}"] = amp_k / amp1 if amp1 > 0 else np.nan
-                out[f"f1_relphi{k}"] = phi_k - phi1
+                # scope-ml normalization: (phi_k / k − phi_1) / (2π/k) % 1
+                out[f"f1_relphi{k}"] = float(
+                    (phi_k / n - phi1) / (2.0 * np.pi / n) % 1
+                )
 
         return out
 
@@ -234,16 +274,30 @@ class PeriodExtractor:
         }
 
         # ── 1. Preprocess ────────────────────────────────────────────────
+        # times / mags / errs : original arrays, used for Fourier decomposition.
+        # times_pf / mags_pf  : zeroed times + [0,1]-normalised mags, used for
+        #                        period finding (matches scope-ml's
+        #                        _prepare_lightcurves convention).
         times, mags, errs, valid_idx = [], [], [], []
+        times_pf, mags_pf = [], []
         for i, lcs in enumerate(sources):
             if not lcs:
                 continue
             primary = max(lcs, key=lambda lc: lc.n_obs)
             if primary.n_obs < 4:
                 continue
-            times.append(primary.time.astype(np.float32))
-            mags.append(primary.mag.astype(np.float32))
-            errs.append(primary.mag_err.astype(np.float32))
+            t = primary.time.astype(np.float32)
+            m = primary.mag.astype(np.float32)
+            e = primary.mag_err.astype(np.float32)
+            times.append(t)
+            mags.append(m)
+            errs.append(e)
+            # Zero times and normalise mags to [0, 1] for period finding.
+            t_zero = t - t.min()
+            m_range = m.max() - m.min()
+            m_norm = (m - m.min()) / m_range if m_range > 0 else np.zeros_like(m)
+            times_pf.append(t_zero)
+            mags_pf.append(m_norm)
             valid_idx.append(i)
 
         results: list[dict[str, Any]] = [dict(nan_result) for _ in sources]
@@ -255,7 +309,7 @@ class PeriodExtractor:
         periods = (
             self._static_periods
             if self._static_periods is not None
-            else self._build_freq_grid(times)
+            else self._build_freq_grid(times_pf)
         )
 
         all_peaks: dict[str, list[list[Any]]] = {}
@@ -271,7 +325,7 @@ class PeriodExtractor:
                 if needs_errs:
                     kwargs["errs"] = errs
                 peaks = algo.calc(
-                    times, mags, periods, self._period_dts, **kwargs
+                    times_pf, mags_pf, periods, self._period_dts, **kwargs
                 )
                 all_peaks[algo_name] = peaks
             except Exception:
@@ -292,6 +346,8 @@ class PeriodExtractor:
             best_algos[batch_pos]   = a
 
         # ── 4. Batch Fourier decomposition ───────────────────────────────
+        # Uses original (un-normalised) times and mags to match scope-ml's
+        # compute_fourier_features, which does not apply [0,1] normalisation.
         fourier_mask = ~np.isnan(best_periods)
         fourier_raw: np.ndarray | None = None
 

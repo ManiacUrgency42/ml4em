@@ -145,12 +145,12 @@ def main() -> None:
     if cfg.features.period.samples_per_peak is not None:
         primary = max(target_lcs, key=lambda lc: lc.n_obs)
         baseline = float(primary.time.max() - primary.time.min())
-        f_min = 1.0 / cfg.features.period.max_period_days
+        f_min = 2.0 / baseline                                   # scope-ml: 2 cycles minimum
         f_max = 1.0 / cfg.features.period.min_period_days
         df = 1.0 / (cfg.features.period.samples_per_peak * baseline)
         n_grid = max(1, int((f_max - f_min) / df))
         grid_desc = (f"freq-spaced  spp={cfg.features.period.samples_per_peak}"
-                     f"  baseline={baseline:.1f}d")
+                     f"  baseline={baseline:.1f}d  fmin=2/baseline")
     else:
         n_grid = cfg.features.period.n_freq_grid
         grid_desc = "period-spaced  (linspace)"
