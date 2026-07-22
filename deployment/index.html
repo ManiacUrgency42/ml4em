@@ -2079,26 +2079,24 @@
 <div class="grid cards">
 <ul>
 <li>
-<p><strong>Apptainer</strong> — recommended for most users</p>
+<p><strong>Conda</strong> — recommended for most users</p>
 <hr />
-<p>Download a pre-built software package and run it directly on MSI. No compilation
-or environment setup required — the package is rebuilt automatically whenever
-the codebase changes. Setup takes about 30 minutes, mostly waiting for a ~6 GB
-download to complete.</p>
+<p>Build a Python environment using the standard conda and pip tools. Supports
+Jupyter notebooks and interactive work via MSI Open OnDemand. Setup compiles
+the period-finding library from source — submit one SLURM job and wait.</p>
+<p><strong>MSI and local</strong> — the same setup works on MSI GPU nodes and on a personal
+laptop (CPU-only mode).</p>
+<p><a href="../conda-deployment/">Conda deployment →</a></p>
+</li>
+<li>
+<p><strong>Apptainer</strong></p>
+<hr />
+<p>Download a pre-built container image and run it directly on MSI. No
+compilation required. The right choice if you want guaranteed reproducibility
+for production batch jobs and do not need Jupyter.</p>
 <p><strong>MSI only</strong> — Apptainer is available on MSI via <code>module load</code> but is not
 a standard tool on personal laptops.</p>
 <p><a href="../apptainer-deployment/">Apptainer deployment →</a></p>
-</li>
-<li>
-<p><strong>Conda</strong></p>
-<hr />
-<p>Build a Python environment using the standard conda and pip tools you may already
-know. The right choice if you want to run ml4em interactively in a Jupyter
-notebook, or if you are developing locally on your own machine. Setup compiles
-the period-finding library from source.</p>
-<p><strong>MSI and local</strong> — the same Conda setup works on MSI GPU nodes and on a
-personal laptop (CPU-only mode).</p>
-<p><a href="../conda-deployment/">Conda deployment →</a></p>
 </li>
 </ul>
 </div>
@@ -2107,53 +2105,55 @@ personal laptop (CPU-only mode).</p>
 <pre class="mermaid"><code>flowchart TD
     A([Where am I running ml4em?]) --&gt; B{MSI or local laptop?}
     B -- Local laptop --&gt; C[Conda — CPU mode]
-    B -- MSI --&gt; D{Do I want Jupyter\nor interactive work?}
-    D -- Yes --&gt; E[Conda — GPU mode]
-    D -- No --&gt; F[Apptainer ★ recommended]</code></pre>
-<p>If you are on MSI and have no strong preference, go with <strong>Apptainer</strong>. It requires
-less setup and is the path used and tested by the core team.</p>
+    B -- MSI --&gt; D{Do I need Jupyter\nor interactive work?}
+    D -- Yes --&gt; E[Conda — GPU mode ★ recommended]
+    D -- No, pure batch jobs --&gt; F[Apptainer]</code></pre>
+<p>If you have no strong preference, go with <strong>Conda</strong>. It works for both
+interactive exploration and batch jobs, and is the setup used and tested by
+the core team.</p>
 <hr />
 <h2 id="side-by-side-comparison">Side-by-side comparison<a class="headerlink" href="#side-by-side-comparison" title="Permanent link">&para;</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Why does Conda setup take 30–45 minutes?</p>
-<p>The setup time is not spent installing Python packages — it is spent compiling
-the period-finding library (<code>periodfind</code>) from Rust and CUDA C++ source code.
-See <a href="../background/periodfind/#why-setup-takes-so-long">Background → periodfind</a>
-for a full explanation of what is being compiled and why it only needs to happen once.</p>
+<p>The setup time is not spent installing Python packages — it is spent
+compiling the period-finding library (<code>periodfind</code>) from Rust and CUDA C++
+source code. See <a href="../background/periodfind/#why-setup-takes-so-long">Background → periodfind</a>
+for a full explanation of what is being compiled and why it only needs to
+happen once.</p>
 </div>
 <table>
 <thead>
 <tr>
 <th></th>
-<th>Apptainer ★</th>
-<th>Conda</th>
+<th>Conda ★</th>
+<th>Apptainer</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Recommended</strong></td>
-<td>Yes, for most MSI users</td>
-<td>For Jupyter / interactive work, or local development</td>
+<td>Yes, for most users</td>
+<td>For pure batch jobs requiring strict reproducibility</td>
 </tr>
 <tr>
 <td><strong>Where it runs</strong></td>
-<td>MSI only</td>
 <td>MSI + local laptop</td>
+<td>MSI only</td>
 </tr>
 <tr>
 <td><strong>Setup time</strong></td>
-<td>~30 min</td>
 <td>~30–45 min</td>
+<td>~30 min</td>
 </tr>
 <tr>
 <td><strong>What setup involves</strong></td>
-<td>Downloading a pre-built ~6 GB software package to MSI</td>
-<td>Compiling the period-finding library from source, then installing Python packages</td>
+<td>Compiling periodfind from source, then installing Python packages</td>
+<td>Downloading a pre-built ~6 GB container image</td>
 </tr>
 <tr>
-<td><strong>Tools required</strong></td>
-<td>Apptainer (already available on MSI via <code>module load</code>)</td>
-<td>Conda (already available on MSI via <code>module load</code>, or via Miniforge locally)</td>
+<td><strong>Jupyter notebooks</strong></td>
+<td>Supported — works with MSI Open OnDemand</td>
+<td>Not supported</td>
 </tr>
 <tr>
 <td><strong>After a code change</strong></td>
@@ -2161,19 +2161,14 @@ for a full explanation of what is being compiled and why it only needs to happen
 <td><code>git pull</code> — nothing else needed</td>
 </tr>
 <tr>
-<td><strong>Jupyter notebooks</strong></td>
-<td>Not supported</td>
-<td>Supported</td>
-</tr>
-<tr>
 <td><strong>When you need to redo setup</strong></td>
-<td>Only if the compiled dependencies change (rare)</td>
-<td>Only if the compiled dependencies change (rare)</td>
+<td>Only if compiled dependencies change (rare)</td>
+<td>Only if compiled dependencies change (rare)</td>
 </tr>
 </tbody>
 </table>
-<p>Both paths install ml4em in <strong>editable mode</strong>: changes to Python source files are
-picked up immediately with <code>git pull</code> — no rebuild or reinstall needed.</p>
+<p>Both paths install ml4em in <strong>editable mode</strong>: changes to Python source files
+are picked up immediately with <code>git pull</code> — no rebuild or reinstall needed.</p>
 
 
 
