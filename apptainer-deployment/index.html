@@ -2397,7 +2397,7 @@ Token (PAT) embedded in the HTTPS URL. Replace <code>&lt;PAT&gt;</code> with you
 <p>Run this script on the MSI login node. It prompts for your Kowalski username
 and password, fetches a token, and saves it to your scratch directory.</p>
 <p><strong>Run on MSI:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>~/ml4em/scripts/get_credentials.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>~/ml4em/scripts/get_credentials.py<span class="w"> </span>--show-password
 </code></pre></div></p>
 <p>Your token is stored at <code>/scratch.global/$USER/ml4em_data/.env</code>. To update
 your credentials at any time — for example if your token expires — just re-run
