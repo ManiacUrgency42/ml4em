@@ -241,6 +241,14 @@ class FeatureConfig(BaseModel):
     # Controls GPU memory usage — lower this if you hit OOM on large light curves.
     feature_batch_size : int = 1000
 
+    # Directory for batch checkpoint files.
+    # When set, the pipeline saves a checkpoint after every feature_batch_size
+    # chunk so that a crashed MSI job can resume from where it left off.
+    # None → no checkpointing (default for local/single-source runs).
+    # Example MSI path: /scratch.global/jin00404/ml4em/checkpoints/run_001
+    # Each run should use a unique subdirectory to avoid cross-run conflicts.
+    checkpoint_dir : Optional[str] = None
+
 
 # ---------------------------------------------------------------------------
 # Storage  (shared across all layers)
