@@ -178,7 +178,7 @@ def main() -> None:
     t_dmdt = time.perf_counter() - t0
 
     t0 = time.perf_counter()
-    CatalogExtractor(cfg.features.catalog).extract(source_batch)
+    CatalogExtractor(cfg.features.catalog, kowalski_client=ztf.client).extract(source_batch)
     t_catalog = time.perf_counter() - t0
 
     t_features_total = t_stats + t_period + t_dmdt + t_catalog

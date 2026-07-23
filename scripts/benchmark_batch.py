@@ -129,7 +129,11 @@ def _time_extractors(
 ) -> dict:
     """Time each extractor independently on the same source list.
 
-    Returns dict of {stage_name: seconds}.
+    Catalog (Gaia xmatch) is excluded: it requires a live Kowalski connection
+    and is a network-bound stage, not a GPU compute stage.  Use
+    benchmark_single.py to measure real Gaia query latency against melman.
+
+    Returns (timings dict, period_results list).
     """
     import periodfind
     from ml4em.features.statistics import StatisticsExtractor
@@ -160,6 +164,10 @@ def _time_extractors(
     for i in range(0, len(sources), batch_size):
         ext_dmdt.extract(sources[i : i + batch_size])
     timings["dm/dt histogram"] = time.perf_counter() - t0
+
+    # -- Catalog (Gaia xmatch) ------------------------------------------------
+    # Excluded: requires live Kowalski connection (network-bound, not GPU-bound).
+    # Benchmark via benchmark_single.py which uses a real Kowalski session.
 
     return timings, period_results
 
@@ -246,6 +254,7 @@ def main() -> None:
     sep2 = "─" * 68
     print(f"\n  N sources: {n}    N obs: {args.n_obs}    "
           f"Device: {args.device}    Batch size: {args.batch_size}")
+    print(f"  Note: Catalog (Gaia xmatch) excluded — network-bound, use benchmark_single.py")
     print(f"\n{sep}")
     print(f"  {'Stage':<26}{'Total (s)':>12}{'Per src (ms)':>15}{'Throughput':>13}")
     print(sep)
@@ -258,6 +267,7 @@ def main() -> None:
     print(sep)
     print(f"  {'Total pipeline':<26}{t_total:>11.3f}s"
           f"{t_total / n * 1000:>13.2f}  {n / t_total:>9.0f}/s")
+    print(f"  {'(excl. Gaia xmatch)':<26}")
     print(sep)
 
     print(f"\n  Period algorithm breakdown ({n} sources):")
