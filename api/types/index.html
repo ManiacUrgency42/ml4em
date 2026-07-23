@@ -2089,7 +2089,9 @@ downstream code can check for nan to detect uncomputed features.</p>
 <span class="normal"><a href="#__codelineno-0-180">180</a></span>
 <span class="normal"><a href="#__codelineno-0-181">181</a></span>
 <span class="normal"><a href="#__codelineno-0-182">182</a></span>
-<span class="normal"><a href="#__codelineno-0-183">183</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="nd">@dataclass</span>
+<span class="normal"><a href="#__codelineno-0-183">183</a></span>
+<span class="normal"><a href="#__codelineno-0-184">184</a></span>
+<span class="normal"><a href="#__codelineno-0-185">185</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="nd">@dataclass</span>
 <a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureVector</span><span class="p">:</span>
 <a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Fully extracted feature set for one source.</span>
 <a id="__codelineno-0-98" name="__codelineno-0-98"></a>
@@ -2173,11 +2175,13 @@ downstream code can check for nan to detect uncomputed features.</p>
 <a id="__codelineno-0-176" name="__codelineno-0-176"></a>
 <a id="__codelineno-0-177" name="__codelineno-0-177"></a>    <span class="c1"># ── 5. Gaia EDR3 cross-match ─────────────────────────────────────────────</span>
 <a id="__codelineno-0-178" name="__codelineno-0-178"></a>    <span class="c1"># Nearest Gaia source within XMATCH_RADIUS_ARCSEC. None if no match.</span>
-<a id="__codelineno-0-179" name="__codelineno-0-179"></a>    <span class="c1"># Used to confirm WD nature: blue BP-RP + high parallax + low RUWE.</span>
-<a id="__codelineno-0-180" name="__codelineno-0-180"></a>    <span class="n">gaia_parallax</span>       <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># mas</span>
-<a id="__codelineno-0-181" name="__codelineno-0-181"></a>    <span class="n">gaia_parallax_error</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># mas</span>
-<a id="__codelineno-0-182" name="__codelineno-0-182"></a>    <span class="n">gaia_bp_rp</span>          <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># BP − RP colour, mag</span>
-<a id="__codelineno-0-183" name="__codelineno-0-183"></a>    <span class="n">gaia_ruwe</span>           <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># astrometric quality (&lt; 1.4 = clean)</span>
+<a id="__codelineno-0-179" name="__codelineno-0-179"></a>    <span class="c1"># Used to confirm WD nature: blue BP-RP + high parallax + clean astrometry.</span>
+<a id="__codelineno-0-180" name="__codelineno-0-180"></a>    <span class="c1"># Field names and choice of astrometric quality indicator match scope-ml&#39;s</span>
+<a id="__codelineno-0-181" name="__codelineno-0-181"></a>    <span class="c1"># external_xmatch.py projection (Gaia_EDR3 catalog on Kowalski).</span>
+<a id="__codelineno-0-182" name="__codelineno-0-182"></a>    <span class="n">gaia_parallax</span>                  <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># mas</span>
+<a id="__codelineno-0-183" name="__codelineno-0-183"></a>    <span class="n">gaia_parallax_error</span>            <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># mas</span>
+<a id="__codelineno-0-184" name="__codelineno-0-184"></a>    <span class="n">gaia_bp_rp</span>                     <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># BP − RP colour, mag</span>
+<a id="__codelineno-0-185" name="__codelineno-0-185"></a>    <span class="n">gaia_astrometric_excess_noise</span>  <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># astrometric residual noise; lower = cleaner single-source fit</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2242,9 +2246,7 @@ label : int
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/types.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-190">190</a></span>
-<span class="normal"><a href="#__codelineno-0-191">191</a></span>
-<span class="normal"><a href="#__codelineno-0-192">192</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-192">192</a></span>
 <span class="normal"><a href="#__codelineno-0-193">193</a></span>
 <span class="normal"><a href="#__codelineno-0-194">194</a></span>
 <span class="normal"><a href="#__codelineno-0-195">195</a></span>
@@ -2261,26 +2263,28 @@ label : int
 <span class="normal"><a href="#__codelineno-0-206">206</a></span>
 <span class="normal"><a href="#__codelineno-0-207">207</a></span>
 <span class="normal"><a href="#__codelineno-0-208">208</a></span>
-<span class="normal"><a href="#__codelineno-0-209">209</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-190" name="__codelineno-0-190"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-0-191" name="__codelineno-0-191"></a><span class="k">class</span><span class="w"> </span><span class="nc">LabeledSample</span><span class="p">:</span>
-<a id="__codelineno-0-192" name="__codelineno-0-192"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A FeatureVector paired with a ground-truth label for training.</span>
-<a id="__codelineno-0-193" name="__codelineno-0-193"></a>
-<a id="__codelineno-0-194" name="__codelineno-0-194"></a><span class="sd">    Data contract between upstream label preparation (e.g. Gaia cross-match</span>
-<a id="__codelineno-0-195" name="__codelineno-0-195"></a><span class="sd">    in wdb-ml) and the training layer.  The training layer never produces</span>
-<a id="__codelineno-0-196" name="__codelineno-0-196"></a><span class="sd">    labels — it only consumes them.</span>
-<a id="__codelineno-0-197" name="__codelineno-0-197"></a>
-<a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="sd">    Fields</span>
-<a id="__codelineno-0-199" name="__codelineno-0-199"></a><span class="sd">    ------</span>
-<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">    feature : FeatureVector</span>
-<a id="__codelineno-0-201" name="__codelineno-0-201"></a><span class="sd">        Fully extracted feature set for this source.</span>
-<a id="__codelineno-0-202" name="__codelineno-0-202"></a><span class="sd">    label : int</span>
-<a id="__codelineno-0-203" name="__codelineno-0-203"></a><span class="sd">        Ground-truth class.</span>
-<a id="__codelineno-0-204" name="__codelineno-0-204"></a><span class="sd">        1 = positive (WDB candidate confirmed by Gaia WD catalog).</span>
-<a id="__codelineno-0-205" name="__codelineno-0-205"></a><span class="sd">        0 = negative (background / non-WDB source).</span>
-<a id="__codelineno-0-206" name="__codelineno-0-206"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-207" name="__codelineno-0-207"></a>
-<a id="__codelineno-0-208" name="__codelineno-0-208"></a>    <span class="n">feature</span> <span class="p">:</span> <span class="n">FeatureVector</span>
-<a id="__codelineno-0-209" name="__codelineno-0-209"></a>    <span class="n">label</span>   <span class="p">:</span> <span class="nb">int</span>
+<span class="normal"><a href="#__codelineno-0-209">209</a></span>
+<span class="normal"><a href="#__codelineno-0-210">210</a></span>
+<span class="normal"><a href="#__codelineno-0-211">211</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-192" name="__codelineno-0-192"></a><span class="nd">@dataclass</span>
+<a id="__codelineno-0-193" name="__codelineno-0-193"></a><span class="k">class</span><span class="w"> </span><span class="nc">LabeledSample</span><span class="p">:</span>
+<a id="__codelineno-0-194" name="__codelineno-0-194"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A FeatureVector paired with a ground-truth label for training.</span>
+<a id="__codelineno-0-195" name="__codelineno-0-195"></a>
+<a id="__codelineno-0-196" name="__codelineno-0-196"></a><span class="sd">    Data contract between upstream label preparation (e.g. Gaia cross-match</span>
+<a id="__codelineno-0-197" name="__codelineno-0-197"></a><span class="sd">    in wdb-ml) and the training layer.  The training layer never produces</span>
+<a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="sd">    labels — it only consumes them.</span>
+<a id="__codelineno-0-199" name="__codelineno-0-199"></a>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">    Fields</span>
+<a id="__codelineno-0-201" name="__codelineno-0-201"></a><span class="sd">    ------</span>
+<a id="__codelineno-0-202" name="__codelineno-0-202"></a><span class="sd">    feature : FeatureVector</span>
+<a id="__codelineno-0-203" name="__codelineno-0-203"></a><span class="sd">        Fully extracted feature set for this source.</span>
+<a id="__codelineno-0-204" name="__codelineno-0-204"></a><span class="sd">    label : int</span>
+<a id="__codelineno-0-205" name="__codelineno-0-205"></a><span class="sd">        Ground-truth class.</span>
+<a id="__codelineno-0-206" name="__codelineno-0-206"></a><span class="sd">        1 = positive (WDB candidate confirmed by Gaia WD catalog).</span>
+<a id="__codelineno-0-207" name="__codelineno-0-207"></a><span class="sd">        0 = negative (background / non-WDB source).</span>
+<a id="__codelineno-0-208" name="__codelineno-0-208"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a>
+<a id="__codelineno-0-210" name="__codelineno-0-210"></a>    <span class="n">feature</span> <span class="p">:</span> <span class="n">FeatureVector</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>    <span class="n">label</span>   <span class="p">:</span> <span class="nb">int</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2355,9 +2359,7 @@ confidence : Confidence
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/types.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-216">216</a></span>
-<span class="normal"><a href="#__codelineno-0-217">217</a></span>
-<span class="normal"><a href="#__codelineno-0-218">218</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-218">218</a></span>
 <span class="normal"><a href="#__codelineno-0-219">219</a></span>
 <span class="normal"><a href="#__codelineno-0-220">220</a></span>
 <span class="normal"><a href="#__codelineno-0-221">221</a></span>
@@ -2391,43 +2393,45 @@ confidence : Confidence
 <span class="normal"><a href="#__codelineno-0-249">249</a></span>
 <span class="normal"><a href="#__codelineno-0-250">250</a></span>
 <span class="normal"><a href="#__codelineno-0-251">251</a></span>
-<span class="normal"><a href="#__codelineno-0-252">252</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-216" name="__codelineno-0-216"></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-0-217" name="__codelineno-0-217"></a><span class="k">class</span><span class="w"> </span><span class="nc">Candidate</span><span class="p">:</span>
-<a id="__codelineno-0-218" name="__codelineno-0-218"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Inference result for a single source.  Generic — not science-case specific.</span>
-<a id="__codelineno-0-219" name="__codelineno-0-219"></a>
-<a id="__codelineno-0-220" name="__codelineno-0-220"></a><span class="sd">    Produced by the inference post-processing step. Immutable once created.</span>
+<span class="normal"><a href="#__codelineno-0-252">252</a></span>
+<span class="normal"><a href="#__codelineno-0-253">253</a></span>
+<span class="normal"><a href="#__codelineno-0-254">254</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-218" name="__codelineno-0-218"></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-0-219" name="__codelineno-0-219"></a><span class="k">class</span><span class="w"> </span><span class="nc">Candidate</span><span class="p">:</span>
+<a id="__codelineno-0-220" name="__codelineno-0-220"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Inference result for a single source.  Generic — not science-case specific.</span>
 <a id="__codelineno-0-221" name="__codelineno-0-221"></a>
-<a id="__codelineno-0-222" name="__codelineno-0-222"></a><span class="sd">    The researcher&#39;s science case (WDB, AGN, eclipsing binary, etc.) is</span>
-<a id="__codelineno-0-223" name="__codelineno-0-223"></a><span class="sd">    encoded in the trained model and the labels used during training —</span>
-<a id="__codelineno-0-224" name="__codelineno-0-224"></a><span class="sd">    not in this type.</span>
-<a id="__codelineno-0-225" name="__codelineno-0-225"></a>
-<a id="__codelineno-0-226" name="__codelineno-0-226"></a><span class="sd">    Fields</span>
-<a id="__codelineno-0-227" name="__codelineno-0-227"></a><span class="sd">    ------</span>
-<a id="__codelineno-0-228" name="__codelineno-0-228"></a><span class="sd">    source_id : str</span>
-<a id="__codelineno-0-229" name="__codelineno-0-229"></a><span class="sd">        Survey source identifier.</span>
-<a id="__codelineno-0-230" name="__codelineno-0-230"></a><span class="sd">    ra, dec : float</span>
-<a id="__codelineno-0-231" name="__codelineno-0-231"></a><span class="sd">        Sky position in decimal degrees (J2000).</span>
-<a id="__codelineno-0-232" name="__codelineno-0-232"></a><span class="sd">    survey : Survey</span>
-<a id="__codelineno-0-233" name="__codelineno-0-233"></a><span class="sd">        Originating survey.</span>
-<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="sd">    probability : float</span>
-<a id="__codelineno-0-235" name="__codelineno-0-235"></a><span class="sd">        Model output in [0, 1] — P(positive class) as defined by training labels.</span>
-<a id="__codelineno-0-236" name="__codelineno-0-236"></a><span class="sd">    period : float</span>
-<a id="__codelineno-0-237" name="__codelineno-0-237"></a><span class="sd">        Detected dominant period in days.  np.nan if not computed.</span>
-<a id="__codelineno-0-238" name="__codelineno-0-238"></a><span class="sd">    period_algorithm : str</span>
-<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="sd">        Algorithm that found the period.  Empty string if not computed.</span>
-<a id="__codelineno-0-240" name="__codelineno-0-240"></a><span class="sd">    confidence : Confidence</span>
-<a id="__codelineno-0-241" name="__codelineno-0-241"></a><span class="sd">        Qualitative tier derived from probability thresholds defined in</span>
-<a id="__codelineno-0-242" name="__codelineno-0-242"></a><span class="sd">        InferenceConfig.confidence_thresholds.</span>
-<a id="__codelineno-0-243" name="__codelineno-0-243"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-244" name="__codelineno-0-244"></a>
-<a id="__codelineno-0-245" name="__codelineno-0-245"></a>    <span class="n">source_id</span>        <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-0-246" name="__codelineno-0-246"></a>    <span class="n">ra</span>               <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-0-247" name="__codelineno-0-247"></a>    <span class="n">dec</span>              <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-0-248" name="__codelineno-0-248"></a>    <span class="n">survey</span>           <span class="p">:</span> <span class="n">Survey</span>
-<a id="__codelineno-0-249" name="__codelineno-0-249"></a>    <span class="n">probability</span>      <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="n">period</span>           <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-0-251" name="__codelineno-0-251"></a>    <span class="n">period_algorithm</span> <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-0-252" name="__codelineno-0-252"></a>    <span class="n">confidence</span>       <span class="p">:</span> <span class="n">Confidence</span>
+<a id="__codelineno-0-222" name="__codelineno-0-222"></a><span class="sd">    Produced by the inference post-processing step. Immutable once created.</span>
+<a id="__codelineno-0-223" name="__codelineno-0-223"></a>
+<a id="__codelineno-0-224" name="__codelineno-0-224"></a><span class="sd">    The researcher&#39;s science case (WDB, AGN, eclipsing binary, etc.) is</span>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a><span class="sd">    encoded in the trained model and the labels used during training —</span>
+<a id="__codelineno-0-226" name="__codelineno-0-226"></a><span class="sd">    not in this type.</span>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a>
+<a id="__codelineno-0-228" name="__codelineno-0-228"></a><span class="sd">    Fields</span>
+<a id="__codelineno-0-229" name="__codelineno-0-229"></a><span class="sd">    ------</span>
+<a id="__codelineno-0-230" name="__codelineno-0-230"></a><span class="sd">    source_id : str</span>
+<a id="__codelineno-0-231" name="__codelineno-0-231"></a><span class="sd">        Survey source identifier.</span>
+<a id="__codelineno-0-232" name="__codelineno-0-232"></a><span class="sd">    ra, dec : float</span>
+<a id="__codelineno-0-233" name="__codelineno-0-233"></a><span class="sd">        Sky position in decimal degrees (J2000).</span>
+<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="sd">    survey : Survey</span>
+<a id="__codelineno-0-235" name="__codelineno-0-235"></a><span class="sd">        Originating survey.</span>
+<a id="__codelineno-0-236" name="__codelineno-0-236"></a><span class="sd">    probability : float</span>
+<a id="__codelineno-0-237" name="__codelineno-0-237"></a><span class="sd">        Model output in [0, 1] — P(positive class) as defined by training labels.</span>
+<a id="__codelineno-0-238" name="__codelineno-0-238"></a><span class="sd">    period : float</span>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="sd">        Detected dominant period in days.  np.nan if not computed.</span>
+<a id="__codelineno-0-240" name="__codelineno-0-240"></a><span class="sd">    period_algorithm : str</span>
+<a id="__codelineno-0-241" name="__codelineno-0-241"></a><span class="sd">        Algorithm that found the period.  Empty string if not computed.</span>
+<a id="__codelineno-0-242" name="__codelineno-0-242"></a><span class="sd">    confidence : Confidence</span>
+<a id="__codelineno-0-243" name="__codelineno-0-243"></a><span class="sd">        Qualitative tier derived from probability thresholds defined in</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="sd">        InferenceConfig.confidence_thresholds.</span>
+<a id="__codelineno-0-245" name="__codelineno-0-245"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-246" name="__codelineno-0-246"></a>
+<a id="__codelineno-0-247" name="__codelineno-0-247"></a>    <span class="n">source_id</span>        <span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-0-248" name="__codelineno-0-248"></a>    <span class="n">ra</span>               <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a>    <span class="n">dec</span>              <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="n">survey</span>           <span class="p">:</span> <span class="n">Survey</span>
+<a id="__codelineno-0-251" name="__codelineno-0-251"></a>    <span class="n">probability</span>      <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-252" name="__codelineno-0-252"></a>    <span class="n">period</span>           <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-253" name="__codelineno-0-253"></a>    <span class="n">period_algorithm</span> <span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a>    <span class="n">confidence</span>       <span class="p">:</span> <span class="n">Confidence</span>
 </code></pre></div></td></tr></table></div>
               </details>
 

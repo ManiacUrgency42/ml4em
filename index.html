@@ -1711,10 +1711,20 @@
 
 
 <h1 id="ml4em">ml4em<a class="headerlink" href="#ml4em" title="Permanent link">&para;</a></h1>
-<p><strong>Machine learning for electromagnetic light curve analysis.</strong></p>
-<p>ml4em is a modular, science-case-agnostic ML pipeline library for classifying variable
-astronomical sources from photometric time-series data. You supply training labels and
-a model; the library handles data fetching, feature extraction, training, and inference.</p>
+<p><strong>Production-scale machine learning for electromagnetic light curve analysis.</strong></p>
+<p>ml4em is a modular, science-case-agnostic ML pipeline designed for <strong>massive HPC/GPU
+production runs</strong> — not single-source exploratory work.  The architecture is built around
+processing tens of thousands of ZTF sources per batch on GPU clusters (MSI, TACC, etc.):
+GPU-batched period finding via periodfind (Rust/CUDA), batched Kowalski queries,
+chunked FeatureVector assembly, and parquet I/O at quad scale.</p>
+<p>If you are running on a single light curve to explore a result, use the benchmark script
+(<code>scripts/benchmark_single.py</code>).  The pipeline itself is sized for production.</p>
+<div class="admonition warning">
+<p class="admonition-title">Scale is the design constraint</p>
+<p>Every architectural decision — batch sizes, GPU memory management, Kowalski query
+batching, the FeatureVector data contract — is optimized for throughput across
+100k+ sources, not latency on one.  Do not judge performance from single-source runs.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Science-case agnostic by design</p>
 <p>ml4em does not decide what you are looking for. The target class (white dwarf binaries,
@@ -1800,7 +1810,7 @@ each requires exactly one new file.</p>
 <tr>
 <td>Features</td>
 <td><code>features/catalog.py</code></td>
-<td>Stub — Gaia TAP query pending</td>
+<td>Complete — Kowalski Gaia_EDR3 cone search, batch</td>
 </tr>
 <tr>
 <td>Features</td>
