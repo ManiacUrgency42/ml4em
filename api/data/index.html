@@ -2659,7 +2659,20 @@ lcs = source.fetch_batch(["1234567890", "1234567891", "1234567892"])</p>
 <span class="normal"><a href="#__codelineno-0-294">294</a></span>
 <span class="normal"><a href="#__codelineno-0-295">295</a></span>
 <span class="normal"><a href="#__codelineno-0-296">296</a></span>
-<span class="normal"><a href="#__codelineno-0-297">297</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="k">class</span><span class="w"> </span><span class="nc">ZTFSource</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#__codelineno-0-303">303</a></span>
+<span class="normal"><a href="#__codelineno-0-304">304</a></span>
+<span class="normal"><a href="#__codelineno-0-305">305</a></span>
+<span class="normal"><a href="#__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#__codelineno-0-309">309</a></span>
+<span class="normal"><a href="#__codelineno-0-310">310</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="k">class</span><span class="w"> </span><span class="nc">ZTFSource</span><span class="p">:</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch ZTF light curves from Kowalski using the penquins client.</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Parameters</span>
@@ -2899,26 +2912,39 @@ lcs = source.fetch_batch(["1234567890", "1234567891", "1234567892"])</p>
 <a id="__codelineno-0-275" name="__codelineno-0-275"></a>        <span class="k">return</span> <span class="n">light_curves</span>
 <a id="__codelineno-0-276" name="__codelineno-0-276"></a>
 <a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch light curves for multiple ZTF source _ids in one query.</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch light curves for multiple ZTF source _ids in parallel queries.</span>
 <a id="__codelineno-0-279" name="__codelineno-0-279"></a>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">        Parameters</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">        ----------</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">        source_ids:</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a><span class="sd">            ZTF integer _ids represented as strings.</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">        Returns</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">        -------</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">        list[LightCurve]</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">            Clean, cadence-filtered LightCurves.  Empty list if none found.</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">        &quot;&quot;&quot;</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">source_ids</span><span class="p">]</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a>        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_query</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a>        <span class="n">responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a>            <span class="n">queries</span><span class="o">=</span><span class="p">[</span><span class="n">query</span><span class="p">],</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a>            <span class="n">use_batch_query</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>            <span class="n">max_n_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>        <span class="p">)</span>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_responses</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">        Splits source_ids into n_workers chunks and sends them as simultaneous</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">        Kowalski &#39;find&#39; queries — matching scope-ml&#39;s get_lightcurves_via_ids</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">        parallel batching pattern.  Set ZTFConfig.n_workers ≥ 8 on MSI.</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="sd">        Parameters</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">        ----------</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">        source_ids:</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">            ZTF integer _ids represented as strings.</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">        Returns</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">        -------</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a><span class="sd">        list[LightCurve]</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">            Clean, cadence-filtered LightCurves.  Empty list if none found.</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_ids</span><span class="p">:</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>            <span class="k">return</span> <span class="p">[]</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">source_ids</span><span class="p">]</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>        <span class="n">n_workers</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">n_workers</span><span class="p">)</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>        <span class="c1"># Split IDs into n_workers chunks; each chunk becomes one parallel query</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>        <span class="n">chunk_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">//</span> <span class="n">n_workers</span><span class="p">))</span>   <span class="c1"># ceiling division</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">)]</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>        <span class="n">queries</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_query</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>        <span class="n">responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>            <span class="n">queries</span><span class="o">=</span><span class="n">queries</span><span class="p">,</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>            <span class="n">use_batch_query</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>            <span class="n">max_n_threads</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>        <span class="p">)</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_responses</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3120,7 +3146,10 @@ radius_arcsec:
 
     <div class="doc doc-contents ">
 
-        <p>Fetch light curves for multiple ZTF source _ids in one query.</p>
+        <p>Fetch light curves for multiple ZTF source _ids in parallel queries.</p>
+<p>Splits source_ids into n_workers chunks and sends them as simultaneous
+Kowalski 'find' queries — matching scope-ml's get_lightcurves_via_ids
+parallel batching pattern.  Set ZTFConfig.n_workers ≥ 8 on MSI.</p>
 <h5 id="ml4em.data.ztf.ZTFSource.fetch_batch--parameters">Parameters<a class="headerlink" href="#ml4em.data.ztf.ZTFSource.fetch_batch--parameters" title="Permanent link">&para;</a></h5>
 <p>source_ids:
     ZTF integer _ids represented as strings.</p>
@@ -3151,27 +3180,53 @@ radius_arcsec:
 <span class="normal"><a href="#__codelineno-0-294">294</a></span>
 <span class="normal"><a href="#__codelineno-0-295">295</a></span>
 <span class="normal"><a href="#__codelineno-0-296">296</a></span>
-<span class="normal"><a href="#__codelineno-0-297">297</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch light curves for multiple ZTF source _ids in one query.</span>
+<span class="normal"><a href="#__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#__codelineno-0-303">303</a></span>
+<span class="normal"><a href="#__codelineno-0-304">304</a></span>
+<span class="normal"><a href="#__codelineno-0-305">305</a></span>
+<span class="normal"><a href="#__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#__codelineno-0-309">309</a></span>
+<span class="normal"><a href="#__codelineno-0-310">310</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch light curves for multiple ZTF source _ids in parallel queries.</span>
 <a id="__codelineno-0-279" name="__codelineno-0-279"></a>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">    source_ids:</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a><span class="sd">        ZTF integer _ids represented as strings.</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">    list[LightCurve]</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">        Clean, cadence-filtered LightCurves.  Empty list if none found.</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>    <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">source_ids</span><span class="p">]</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a>    <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_query</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a>    <span class="n">responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a>        <span class="n">queries</span><span class="o">=</span><span class="p">[</span><span class="n">query</span><span class="p">],</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a>        <span class="n">use_batch_query</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>        <span class="n">max_n_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>    <span class="p">)</span>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_responses</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">    Splits source_ids into n_workers chunks and sends them as simultaneous</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">    Kowalski &#39;find&#39; queries — matching scope-ml&#39;s get_lightcurves_via_ids</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">    parallel batching pattern.  Set ZTFConfig.n_workers ≥ 8 on MSI.</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">    source_ids:</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">        ZTF integer _ids represented as strings.</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a><span class="sd">    list[LightCurve]</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">        Clean, cadence-filtered LightCurves.  Empty list if none found.</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_ids</span><span class="p">:</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>        <span class="k">return</span> <span class="p">[]</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">source_ids</span><span class="p">]</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>    <span class="n">n_workers</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">n_workers</span><span class="p">)</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>    <span class="c1"># Split IDs into n_workers chunks; each chunk becomes one parallel query</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>    <span class="n">chunk_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">//</span> <span class="n">n_workers</span><span class="p">))</span>   <span class="c1"># ceiling division</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">)]</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="n">queries</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_query</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="n">responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>        <span class="n">queries</span><span class="o">=</span><span class="n">queries</span><span class="p">,</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>        <span class="n">use_batch_query</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>        <span class="n">max_n_threads</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>    <span class="p">)</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_responses</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
