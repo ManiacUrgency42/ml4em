@@ -1,10 +1,20 @@
 # ml4em
 
-**Machine learning for electromagnetic light curve analysis.**
+**Production-scale machine learning for electromagnetic light curve analysis.**
 
-ml4em is a modular, science-case-agnostic ML pipeline library for classifying variable
-astronomical sources from photometric time-series data. You supply training labels and
-a model; the library handles data fetching, feature extraction, training, and inference.
+ml4em is a modular, science-case-agnostic ML pipeline designed for **massive HPC/GPU
+production runs** — not single-source exploratory work.  The architecture is built around
+processing tens of thousands of ZTF sources per batch on GPU clusters (MSI, TACC, etc.):
+GPU-batched period finding via periodfind (Rust/CUDA), batched Kowalski queries,
+chunked FeatureVector assembly, and parquet I/O at quad scale.
+
+If you are running on a single light curve to explore a result, use the benchmark script
+(`scripts/benchmark_single.py`).  The pipeline itself is sized for production.
+
+!!! warning "Scale is the design constraint"
+    Every architectural decision — batch sizes, GPU memory management, Kowalski query
+    batching, the FeatureVector data contract — is optimized for throughput across
+    100k+ sources, not latency on one.  Do not judge performance from single-source runs.
 
 !!! note "Science-case agnostic by design"
     ml4em does not decide what you are looking for. The target class (white dwarf binaries,
@@ -60,7 +70,7 @@ a model; the library handles data fetching, feature extraction, training, and in
 | Features | `features/statistics.py` | Complete — periodfind BasicStats backend |
 | Features | `features/period.py` | Complete — CE/AOV/LS/MHF via periodfind |
 | Features | `features/dmdt.py` | Complete — periodfind DmDt backend |
-| Features | `features/catalog.py` | Stub — Gaia TAP query pending |
+| Features | `features/catalog.py` | Complete — Kowalski Gaia_EDR3 cone search, batch |
 | Features | `features/pipeline.py` | Complete |
 | Models | `models/base.py` | Complete |
 | Models | `models/xgboost.py` | Reference pattern (predict/save/load shells) |

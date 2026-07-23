@@ -84,10 +84,24 @@ class FeaturePipeline:
     # ------------------------------------------------------------------
 
     @classmethod
-    def default(cls, config: FeatureConfig) -> "FeaturePipeline":
+    def default(
+        cls,
+        config: FeatureConfig,
+        kowalski_client=None,
+    ) -> "FeaturePipeline":
         """Build the standard pipeline from a FeatureConfig.
 
         Extractor order: statistics → period → dmdt → catalog.
+
+        Parameters
+        ----------
+        config:
+            FeatureConfig section from the root PipelineConfig.
+        kowalski_client:
+            Optional authenticated penquins Kowalski instance.
+            Pass ``ztf_source.client`` here to enable live Gaia EDR3
+            cross-matching.  If None, Gaia features are skipped and all
+            gaia_* fields in every FeatureVector remain None.
         """
         extractors: list[FeatureExtractor] = [
             StatisticsExtractor(),
@@ -95,7 +109,7 @@ class FeaturePipeline:
         ]
         if config.compute_dmdt:
             extractors.append(DmdtExtractor(config.dmdt))
-        extractors.append(CatalogExtractor(config.catalog))
+        extractors.append(CatalogExtractor(config.catalog, kowalski_client=kowalski_client))
 
         return cls(
             extractors=extractors,

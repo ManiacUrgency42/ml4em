@@ -63,6 +63,15 @@ class ZTFSource:
     # Connection
     # ------------------------------------------------------------------
 
+    @property
+    def client(self):
+        """The underlying penquins Kowalski client.
+
+        Pass to CatalogExtractor (Gaia xmatch) and FeaturePipeline.default()
+        so all catalog queries reuse the same authenticated connection.
+        """
+        return self._client
+
     def _connect(self):
         """Establish a single-instance penquins Kowalski connection."""
         try:

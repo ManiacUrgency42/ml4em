@@ -176,11 +176,13 @@ class FeatureVector:
 
     # ── 5. Gaia EDR3 cross-match ─────────────────────────────────────────────
     # Nearest Gaia source within XMATCH_RADIUS_ARCSEC. None if no match.
-    # Used to confirm WD nature: blue BP-RP + high parallax + low RUWE.
-    gaia_parallax       : Optional[float] = None  # mas
-    gaia_parallax_error : Optional[float] = None  # mas
-    gaia_bp_rp          : Optional[float] = None  # BP − RP colour, mag
-    gaia_ruwe           : Optional[float] = None  # astrometric quality (< 1.4 = clean)
+    # Used to confirm WD nature: blue BP-RP + high parallax + clean astrometry.
+    # Field names and choice of astrometric quality indicator match scope-ml's
+    # external_xmatch.py projection (Gaia_EDR3 catalog on Kowalski).
+    gaia_parallax                  : Optional[float] = None  # mas
+    gaia_parallax_error            : Optional[float] = None  # mas
+    gaia_bp_rp                     : Optional[float] = None  # BP − RP colour, mag
+    gaia_astrometric_excess_noise  : Optional[float] = None  # astrometric residual noise; lower = cleaner single-source fit
 
 
 # ---------------------------------------------------------------------------
