@@ -275,7 +275,11 @@ class ZTFSource:
         return light_curves
 
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
-        """Fetch light curves for multiple ZTF source _ids in one query.
+        """Fetch light curves for multiple ZTF source _ids in parallel queries.
+
+        Splits source_ids into n_workers chunks and sends them as simultaneous
+        Kowalski 'find' queries — matching scope-ml's get_lightcurves_via_ids
+        parallel batching pattern.  Set ZTFConfig.n_workers ≥ 8 on MSI.
 
         Parameters
         ----------
@@ -287,12 +291,21 @@ class ZTFSource:
         list[LightCurve]
             Clean, cadence-filtered LightCurves.  Empty list if none found.
         """
+        if not source_ids:
+            return []
+
         ids = [int(sid) for sid in source_ids]
-        query = self._build_query(ids)
+        n_workers = max(1, self._cfg.n_workers)
+
+        # Split IDs into n_workers chunks; each chunk becomes one parallel query
+        chunk_size = max(1, -(-len(ids) // n_workers))   # ceiling division
+        chunks = [ids[i : i + chunk_size] for i in range(0, len(ids), chunk_size)]
+        queries = [self._build_query(chunk) for chunk in chunks]
+
         responses = self._client.query(
-            queries=[query],
+            queries=queries,
             use_batch_query=True,
-            max_n_threads=1,
+            max_n_threads=n_workers,
         )
         return self._parse_responses(responses)
 

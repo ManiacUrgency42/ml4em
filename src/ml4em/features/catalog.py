@@ -180,26 +180,38 @@ class CatalogExtractor:
         # Kowalski echoes these keys in the response, allowing per-source lookup.
         radec = {sid: [ra, dec] for _, sid, ra, dec in valid}
 
-        query = {
-            "query_type": "cone_search",
-            "query": {
-                "object_coordinates": {
-                    "radec"              : radec,
-                    "cone_search_radius" : self._cfg.xmatch_radius_arcsec,
-                    "cone_search_unit"   : "arcsec",
+        # Split radec dict across n_workers — each worker gets one cone_search
+        # query covering a subset of sources.  Kowalski executes them in
+        # parallel (max_n_threads).  Matches scope-ml's split_dict / Ncore
+        # pattern in external_xmatch.py.
+        n_workers = max(1, self._cfg.n_workers)
+        items = list(radec.items())
+        chunk_size = max(1, -(-len(items) // n_workers))   # ceiling division
+        chunks = [dict(items[i : i + chunk_size]) for i in range(0, len(items), chunk_size)]
+
+        queries = [
+            {
+                "query_type": "cone_search",
+                "query": {
+                    "object_coordinates": {
+                        "radec"              : chunk,
+                        "cone_search_radius" : self._cfg.xmatch_radius_arcsec,
+                        "cone_search_unit"   : "arcsec",
+                    },
+                    "catalogs": {
+                        _GAIA_CATALOG: {
+                            "filter"    : {},
+                            "projection": _GAIA_PROJECTION,
+                        }
+                    },
                 },
-                "catalogs": {
-                    _GAIA_CATALOG: {
-                        "filter"    : {},
-                        "projection": _GAIA_PROJECTION,
-                    }
-                },
-            },
-        }
+            }
+            for chunk in chunks
+        ]
 
         try:
             responses = self._client.query(
-                queries=[query], use_batch_query=True, max_n_threads=1
+                queries=queries, use_batch_query=True, max_n_threads=n_workers
             )
 
             # Flatten response: data -> Gaia_EDR3 -> {source_id: [matches]}

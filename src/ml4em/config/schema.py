@@ -72,6 +72,11 @@ class ZTFConfig(BaseModel):
     # Removes intra-night duplicates that bias period-finding.
     min_cadence_days : float = ZTF_MIN_CADENCE_DAYS
 
+    # Number of parallel Kowalski threads for batch light curve fetching.
+    # scope-ml equivalent: Ncore in get_lightcurves_via_ids().
+    # On MSI set to 8–16; leave at 1 for local/single-source runs.
+    n_workers : int = 1
+
     @field_validator("bands")
     @classmethod
     def _valid_bands(cls, v: list[str]) -> list[str]:
@@ -200,11 +205,17 @@ class CatalogConfig(BaseModel):
 
     Note: Gaia is NOT a light curve source — it is a feature enrichment step.
     The CatalogExtractor queries Gaia EDR3 for each source's (ra, dec) and
-    appends parallax / colour / RUWE to the FeatureVector.
+    appends parallax / colour / astrometric_excess_noise to the FeatureVector.
     """
 
     xmatch_radius_arcsec : float = XMATCH_RADIUS_ARCSEC
     include_gaia         : bool  = True
+
+    # Number of parallel Kowalski threads for batch Gaia cone searches.
+    # scope-ml equivalent: Ncore in external_xmatch.py (splits radec dict
+    # across threads for simultaneous cone_search queries).
+    # On MSI set to 8–16; leave at 1 for local/single-source runs.
+    n_workers : int = 1
 
 
 class FeatureConfig(BaseModel):
