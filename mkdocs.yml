@@ -86,13 +86,13 @@ nav:
     - Overview: deployment.md
     - Conda: conda-deployment.md
     - Apptainer: apptainer-deployment.md
+    - Benchmarking: guides/benchmarking.md
 
   - Extending:
     - Add a Data Source: guides/add-data-source.md
     - Add an Extractor: guides/add-extractor.md
     - Add a Model: guides/add-model.md
     - Preparing Labels: guides/label-preparation.md
-    - Benchmarking: guides/benchmarking.md
 
   - Background:
     - background/index.md
