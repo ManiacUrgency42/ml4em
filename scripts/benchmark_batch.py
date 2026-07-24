@@ -178,6 +178,9 @@ def main():
                         help="Comma-separated algorithm list, e.g. CE,AOV,LS")
     parser.add_argument("--warmup",        action="store_true",
                         help="Run one throwaway batch before timing (GPU warmup)")
+    parser.add_argument("--n-workers",     type=int, default=None,
+                        help="Parallel Kowalski threads for LC fetch and Gaia xmatch "
+                             "(overrides config.yaml; on MSI try 8–16)")
 
     args = parser.parse_args()
 
@@ -202,6 +205,9 @@ def main():
         token = get_ztf_token()
         if args.algorithms:
             cfg.features.period.algorithms = args.algorithms.split(",")
+        if args.n_workers is not None:
+            cfg.sources.ztf.n_workers      = args.n_workers
+            cfg.features.catalog.n_workers = args.n_workers
 
     # ── Data acquisition ─────────────────────────────────────────────────────
     kowalski_client = None
@@ -307,7 +313,15 @@ def main():
 
     sep = "─" * 76
 
-    print(f"\n  Region: {region_label}    Device: {args.device}    Batch: {args.batch_size}")
+    if not args.synthetic:
+        ztf_workers  = cfg.sources.ztf.n_workers
+        gaia_workers = cfg.features.catalog.n_workers
+        limit        = cfg.sources.ztf.limit_per_query
+        worker_info  = f"    Workers: {ztf_workers} (LC) / {gaia_workers} (Gaia)    limit_per_query: {limit}"
+    else:
+        worker_info  = ""
+
+    print(f"\n  Region: {region_label}    Device: {args.device}    Batch: {args.batch_size}{worker_info}")
     print(f"\n{sep}")
     print(f"  {'Stage':<28}{'Sources':>9}{'Total (s)':>11}{'Per src (ms)':>14}{'Throughput':>12}")
     print(sep)

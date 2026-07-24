@@ -92,6 +92,7 @@ nav:
     - Add an Extractor: guides/add-extractor.md
     - Add a Model: guides/add-model.md
     - Preparing Labels: guides/label-preparation.md
+    - Benchmarking: guides/benchmarking.md
 
   - Background:
     - background/index.md

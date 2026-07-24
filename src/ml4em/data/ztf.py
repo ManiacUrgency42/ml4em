@@ -104,14 +104,20 @@ class ZTFSource:
         if self._cfg.max_timestamp_hjd is not None:
             time_filter["$lte"] = self._cfg.max_timestamp_hjd
 
+        filter_doc: dict = {
+            "_id": {"$in": ids},
+            "data.hjd": time_filter,
+        }
+        # Restrict to public + partnership + Caltech observations.
+        # Matches scope-ml's program_id_selector default [1,2,3].
+        if self._cfg.program_ids:
+            filter_doc["data.programid"] = {"$in": self._cfg.program_ids}
+
         return {
             "query_type": "find",
             "query": {
                 "catalog": self._cfg.collection_sources,
-                "filter": {
-                    "_id": {"$in": ids},
-                    "data.hjd": time_filter,
-                },
+                "filter": filter_doc,
                 "projection": {
                     "_id": 1,
                     "filter": 1,   # band ID: 1=g, 2=r, 3=i
@@ -121,6 +127,7 @@ class ZTFSource:
                     "data.mag": 1,
                     "data.magerr": 1,
                     "data.catflags": 1,
+                    "data.programid": 1,
                 },
             },
         }
@@ -352,9 +359,14 @@ class ZTFSource:
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:
         """Fetch light curves for multiple ZTF source _ids in parallel queries.
 
-        Splits source_ids into n_workers chunks and sends them as simultaneous
-        Kowalski 'find' queries — matching scope-ml's get_lightcurves_via_ids
-        parallel batching pattern.  Set ZTFConfig.n_workers ≥ 8 on MSI.
+        Matches scope-ml's get_lightcurves_via_ids sliding-window pattern:
+        - IDs are chunked into slices of limit_per_query (default 1000).
+        - Each iteration dispatches min(n_remaining_chunks, n_workers) queries
+          simultaneously (use_batch_query=True, max_n_threads=n_workers).
+        - This keeps n_workers Kowalski threads saturated without sending all
+          queries at once — important when len(source_ids) >> n_workers.
+
+        Set ZTFConfig.n_workers ≥ 8 and limit_per_query = 1000 on MSI.
 
         Parameters
         ----------
@@ -370,19 +382,29 @@ class ZTFSource:
             return []
 
         ids = [int(sid) for sid in source_ids]
-        n_workers = max(1, self._cfg.n_workers)
+        n_workers     = max(1, self._cfg.n_workers)
+        limit         = max(1, self._cfg.limit_per_query)
 
-        # Split IDs into n_workers chunks; each chunk becomes one parallel query
-        chunk_size = max(1, -(-len(ids) // n_workers))   # ceiling division
-        chunks = [ids[i : i + chunk_size] for i in range(0, len(ids), chunk_size)]
-        queries = [self._build_query(chunk) for chunk in chunks]
+        # Build one query per limit-sized slice of IDs
+        all_chunks = [ids[i : i + limit] for i in range(0, len(ids), limit)]
+        all_queries = [self._build_query(chunk) for chunk in all_chunks]
 
-        responses = self._client.query(
-            queries=queries,
-            use_batch_query=True,
-            max_n_threads=n_workers,
-        )
-        return self._parse_responses(responses)
+        light_curves: list[LightCurve] = []
+
+        # Sliding window: send n_workers queries at a time — matches scope-ml's
+        # while True loop with Nqueries = min(len(queries), Ncore).
+        i = 0
+        while i < len(all_queries):
+            batch = all_queries[i : i + n_workers]
+            responses = self._client.query(
+                queries=batch,
+                use_batch_query=True,
+                max_n_threads=len(batch),
+            )
+            light_curves.extend(self._parse_responses(responses))
+            i += len(batch)
+
+        return light_curves
 
 
 # ---------------------------------------------------------------------------

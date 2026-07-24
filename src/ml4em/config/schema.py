@@ -77,6 +77,15 @@ class ZTFConfig(BaseModel):
     # On MSI set to 8–16; leave at 1 for local/single-source runs.
     n_workers : int = 1
 
+    # ZTF programid filter: 1=public, 2=ZTF partnership, 3=Caltech private.
+    # Matches scope-ml's default program_id_selector=[1,2,3].
+    program_ids : list[int] = Field(default_factory=lambda: [1, 2, 3])
+
+    # Maximum source IDs per Kowalski find query.
+    # Matches scope-ml's limit_per_query=1000 in get_lightcurves_via_ids().
+    # fetch_batch() sends queries in a sliding window of this size.
+    limit_per_query : int = 1000
+
     @field_validator("bands")
     @classmethod
     def _valid_bands(cls, v: list[str]) -> list[str]:
