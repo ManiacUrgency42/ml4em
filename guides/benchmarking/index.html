@@ -1106,17 +1106,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#local-dev-no-kowalski" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Local dev (no Kowalski)
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1870,17 +1859,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#local-dev-no-kowalski" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Local dev (no Kowalski)
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2081,17 +2059,6 @@ batch includes CUDA JIT compile time, which inflates the timing.</p>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">8</span><span class="w"> </span>--warmup
 </code></pre></div>
-<hr />
-<h2 id="local-dev-no-kowalski">Local dev (no Kowalski)<a class="headerlink" href="#local-dev-no-kowalski" title="Permanent link">&para;</a></h2>
-<p>Run <code>batch_throughput.py</code> with synthetic data to test feature extraction
-without a Kowalski connection.  Kowalski fetch and Gaia xmatch are not timed.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>python<span class="w"> </span>benchmarks/batch_throughput.py<span class="w"> </span>--synthetic<span class="w"> </span>--n-sources<span class="w"> </span><span class="m">500</span><span class="w"> </span>--n-obs<span class="w"> </span><span class="m">300</span>
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Synthetic mode produces meaningless throughput numbers for Kowalski stages.
-Use real-data mode on MSI for any numbers you intend to act on.</p>
-</div>
 
 
 
