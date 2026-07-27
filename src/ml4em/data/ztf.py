@@ -281,6 +281,69 @@ class ZTFSource:
                         light_curves.append(lc)
         return light_curves
 
+    def near_ids(
+        self,
+        ra: float,
+        dec: float,
+        radius_arcsec: float,
+        limit: int = 100_000,
+    ) -> list[str]:
+        """Return ZTF source IDs within radius_arcsec of (ra, dec).
+
+        Sends a single Kowalski 'near' query against the spatial index.
+        Returns only _id fields — no light curve data.  Use fetch_batch()
+        on the returned IDs to get the actual light curves.
+
+        This is round trip 1 of the two-hop pattern used by fetch_by_region()
+        and matches scope-ml's get_lightcurves_via_coords near query exactly.
+
+        Parameters
+        ----------
+        ra, dec:
+            Region centre in decimal degrees (J2000).
+        radius_arcsec:
+            Search radius in arcseconds.
+        limit:
+            Maximum number of source IDs to return.  Default 100_000 covers
+            a full ZTF quad footprint (~3600 arcsec diameter).
+
+        Returns
+        -------
+        list[str]
+            ZTF integer source IDs as strings.  Empty list if none found.
+        """
+        near_query = {
+            "query_type": "near",
+            "query": {
+                "max_distance"   : radius_arcsec,
+                "distance_units" : "arcsec",
+                "radec"          : {"query_coords": [ra, dec]},
+                "catalogs"       : {
+                    self._cfg.collection_sources: {
+                        "filter"    : {},
+                        "projection": {"_id": 1},
+                    }
+                },
+            },
+            "kwargs": {"max_time_ms": 30000, "limit": limit},
+        }
+        responses = self._client.query(
+            queries=[near_query], use_batch_query=True, max_n_threads=1
+        )
+
+        source_ids: list[str] = []
+        for _instance, resp_list in responses.items():
+            for resp in resp_list:
+                if resp.get("status") != "success":
+                    continue
+                hits = (
+                    resp.get("data", {})
+                    .get(self._cfg.collection_sources, {})
+                    .get("query_coords", [])
+                )
+                source_ids.extend(str(doc["_id"]) for doc in hits)
+        return source_ids
+
     def fetch_by_region(
         self,
         ra: float,
@@ -290,8 +353,8 @@ class ZTFSource:
         """Fetch all ZTF sources in a sky region via two Kowalski round trips.
 
         Matches scope-ml's get_lightcurves_via_coords pattern exactly:
-          Round trip 1 — 'near' query: spatial index lookup, returns source IDs only.
-          Round trip 2 — 'find' query: fetches full light curve data for those IDs.
+          Round trip 1 — near_ids(): spatial index lookup, returns source IDs only.
+          Round trip 2 — fetch_batch(): fetches full light curve data for those IDs.
 
         Splitting the two steps is faster than a single cone_search because the
         near query hits a spatial index and returns only _ids (tiny response),
@@ -317,42 +380,9 @@ class ZTFSource:
         light_curves : list[LightCurve]
             Clean, cadence-filtered LightCurves for those sources.
         """
-        # ── Round trip 1: near query — returns IDs only ──────────────────
-        near_query = {
-            "query_type": "near",
-            "query": {
-                "max_distance"   : radius_arcsec,
-                "distance_units" : "arcsec",
-                "radec"          : {"query_coords": [ra, dec]},
-                "catalogs"       : {
-                    self._cfg.collection_sources: {
-                        "filter"    : {},
-                        "projection": {"_id": 1},
-                    }
-                },
-            },
-            "kwargs": {"max_time_ms": 30000, "limit": 100_000},
-        }
-        near_responses = self._client.query(
-            queries=[near_query], use_batch_query=True, max_n_threads=1
-        )
-
-        source_ids: list[str] = []
-        for _instance, resp_list in near_responses.items():
-            for resp in resp_list:
-                if resp.get("status") != "success":
-                    continue
-                hits = (
-                    resp.get("data", {})
-                    .get(self._cfg.collection_sources, {})
-                    .get("query_coords", [])
-                )
-                source_ids.extend(str(doc["_id"]) for doc in hits)
-
+        source_ids = self.near_ids(ra, dec, radius_arcsec)
         if not source_ids:
             return [], []
-
-        # ── Round trip 2: find query — fetches full light curve data ─────
         light_curves = self.fetch_batch(source_ids)
         return source_ids, light_curves
 

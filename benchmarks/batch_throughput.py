@@ -217,32 +217,8 @@ def main():
     log.info("Round trip 1 — near: RA=%.4f Dec=%.4f radius=%.0f arcsec",
              args.ra, args.dec, args.radius_arcsec)
     t0 = time.perf_counter()
-    near_query = {
-        "query_type": "near",
-        "query": {
-            "max_distance"  : args.radius_arcsec,
-            "distance_units": "arcsec",
-            "radec"         : {"query_coords": [args.ra, args.dec]},
-            "catalogs"      : {
-                cfg.sources.ztf.collection_sources: {
-                    "filter": {}, "projection": {"_id": 1},
-                }
-            },
-        },
-        "kwargs": {"max_time_ms": 30000, "limit": 100_000},
-    }
-    near_resp = ztf.client.query(queries=[near_query], use_batch_query=True, max_n_threads=1)
+    source_ids = ztf.near_ids(args.ra, args.dec, args.radius_arcsec)
     t_near = time.perf_counter() - t0
-
-    source_ids: list[str] = []
-    for _inst, resp_list in near_resp.items():
-        for resp in resp_list:
-            if resp.get("status") != "success":
-                continue
-            hits = (resp.get("data", {})
-                        .get(cfg.sources.ztf.collection_sources, {})
-                        .get("query_coords", []))
-            source_ids.extend(str(doc["_id"]) for doc in hits)
 
     log.info("Near query: %d source IDs (%.3fs)", len(source_ids), t_near)
     if not source_ids:
