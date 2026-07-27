@@ -1030,17 +1030,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-benchmark_batchpy-does" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What benchmark_batch.py does
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#canonical-benchmark-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1052,10 +1041,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#finding-the-right-n_workers" class="md-nav__link">
+  <a href="#step-1-end-to-end-baseline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Finding the right n_workers
+        Step 1 — End-to-end baseline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-find-the-n_workers-ceiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Find the n_workers ceiling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-find-the-gpu-batch-size-ceiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Find the GPU batch size ceiling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-understand-how-n_obs-drives-compute-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Understand how n_obs drives compute time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-final-compute-estimate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Final compute estimate
       
     </span>
   </a>
@@ -1074,21 +1107,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#synthetic-fallback-local-dev-only" class="md-nav__link">
+  <a href="#local-dev-no-kowalski" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Synthetic fallback (local dev only)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example output
+        Local dev (no Kowalski)
       
     </span>
   </a>
@@ -1772,17 +1794,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-benchmark_batchpy-does" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What benchmark_batch.py does
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#canonical-benchmark-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1794,10 +1805,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#finding-the-right-n_workers" class="md-nav__link">
+  <a href="#step-1-end-to-end-baseline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Finding the right n_workers
+        Step 1 — End-to-end baseline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-find-the-n_workers-ceiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Find the n_workers ceiling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-find-the-gpu-batch-size-ceiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Find the GPU batch size ceiling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-understand-how-n_obs-drives-compute-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Understand how n_obs drives compute time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-final-compute-estimate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Final compute estimate
       
     </span>
   </a>
@@ -1816,21 +1871,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#synthetic-fallback-local-dev-only" class="md-nav__link">
+  <a href="#local-dev-no-kowalski" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Synthetic fallback (local dev only)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example output
+        Local dev (no Kowalski)
       
     </span>
   </a>
@@ -1858,9 +1902,10 @@
 
 
 <h1 id="benchmarking">Benchmarking<a class="headerlink" href="#benchmarking" title="Permanent link">&para;</a></h1>
-<p>ml4em ships two benchmark scripts in <code>scripts/</code> for measuring end-to-end throughput
-on real ZTF data.  Run these on MSI before committing to a production config to find
-the right <code>n_workers</code> for your node allocation.</p>
+<p>ml4em has a dedicated <code>benchmarks/</code> directory with scripts for measuring
+end-to-end throughput, tuning parallelism, and projecting MSI compute hours.
+Run these on MSI before production runs to find the optimal configuration
+for your node allocation.</p>
 <hr />
 <h2 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h2>
 <table>
@@ -1872,35 +1917,33 @@ the right <code>n_workers</code> for your node allocation.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>scripts/benchmark_single.py</code></td>
-<td>Single-source latency — one ZTF source ID through the full feature pipeline</td>
+<td><code>benchmarks/batch_throughput.py</code></td>
+<td>End-to-end pipeline on a real ZTF region — primary benchmark for compute estimation</td>
 </tr>
 <tr>
-<td><code>scripts/benchmark_batch.py</code></td>
-<td>Batch throughput — real ZTF region, two-hop Kowalski fetch + full feature extraction</td>
+<td><code>benchmarks/single_latency.py</code></td>
+<td>Single-source latency — useful for CPU vs GPU comparison, not throughput estimation</td>
+</tr>
+<tr>
+<td><code>benchmarks/sweep_workers.py</code></td>
+<td>Sweep <code>n_workers</code> to find the Kowalski LC fetch throughput ceiling</td>
+</tr>
+<tr>
+<td><code>benchmarks/sweep_batch_size.py</code></td>
+<td>Sweep <code>feature_batch_size</code> to find the GPU throughput ceiling and VRAM limit</td>
+</tr>
+<tr>
+<td><code>benchmarks/sweep_nobs.py</code></td>
+<td>Bucket real ZTF LCs by observation count, time period finding per bucket</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Use <code>benchmark_batch.py</code> for all MSI performance work.</strong>  The single-source script
-is for local development only; single-source latency is not meaningful at production
-scale.</p>
-<hr />
-<h2 id="what-benchmark_batchpy-does">What benchmark_batch.py does<a class="headerlink" href="#what-benchmark_batchpy-does" title="Permanent link">&para;</a></h2>
-<p>The script mirrors the exact production workflow, staged and timed separately:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Round trip 1  near query    Kowalski spatial index → source IDs in sky region
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Round trip 2  find query    fetch_batch() sliding window → full light curves
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>              Statistics    periodfind BasicStats
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>              Period        CE / AOV / LS / MHF (GPU batched)
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>              dm/dt         periodfind DmDt histogram
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Round trip 3  Gaia xmatch   CatalogExtractor cone_search → Gaia EDR3 features
-</code></pre></div>
-<p>The near+find two-hop pattern matches scope-ml's <code>get_lightcurves_via_coords</code> exactly.
-<code>find</code> uses the sliding window: IDs are chunked into slices of <code>limit_per_query</code> (1000),
-sent <code>n_workers</code> chunks at a time so Kowalski threads stay saturated.</p>
+<p><strong>Use <code>batch_throughput.py</code> for all MSI compute estimates.</strong>
+The single-source script is for local development only — single-source latency
+does not predict batch throughput because GPU utilization is near zero on one source.</p>
 <hr />
 <h2 id="canonical-benchmark-field">Canonical benchmark field<a class="headerlink" href="#canonical-benchmark-field" title="Permanent link">&para;</a></h2>
-<p>Always use the same sky coordinates so timing is comparable across runs and machines.
-The default field is a mid-latitude ZTF region with ~1000–1500 sources per quad:</p>
+<p>Always use the same sky coordinates so timing is comparable across runs and machines:</p>
 <table>
 <thead>
 <tr>
@@ -1923,101 +1966,132 @@ The default field is a mid-latitude ZTF region with ~1000–1500 sources per qua
 </tr>
 </tbody>
 </table>
-<p>Avoid the galactic plane for benchmarking — source density is extreme there and
-unrepresentative of production WDB science runs.</p>
 <hr />
-<h2 id="finding-the-right-n_workers">Finding the right n_workers<a class="headerlink" href="#finding-the-right-n_workers" title="Permanent link">&para;</a></h2>
+<h2 id="step-1-end-to-end-baseline">Step 1 — End-to-end baseline<a class="headerlink" href="#step-1-end-to-end-baseline" title="Permanent link">&para;</a></h2>
+<p>Get a single-run baseline with default config before tuning anything:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>benchmarks/batch_throughput.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--warmup
+</code></pre></div>
+<p>The output header shows exactly what configuration ran:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Region: RA=116.7  Dec=36.2  radius=1800 arcsec    Device: cuda    Batch: 1000
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Workers: 1 (LC) / 1 (Gaia)    limit_per_query: 1000
+</code></pre></div>
+<hr />
+<h2 id="step-2-find-the-n_workers-ceiling">Step 2 — Find the n_workers ceiling<a class="headerlink" href="#step-2-find-the-n_workers-ceiling" title="Permanent link">&para;</a></h2>
 <p><code>n_workers</code> controls how many Kowalski queries run in parallel per sliding-window
-iteration.  The right value depends on your MSI node's network allocation and
-Kowalski's server-side thread limits — you must find it empirically.</p>
-<p>Run the worker sweep below and watch the <strong>Find (LC fetch)</strong> throughput row.
-The value where throughput stops climbing is your ceiling.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Baseline — single-threaded</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python<span class="w"> </span>scripts/benchmark_batch.py<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Sweep upward</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>python<span class="w"> </span>scripts/benchmark_batch.py<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">4</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>python<span class="w"> </span>scripts/benchmark_batch.py<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">8</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>python<span class="w"> </span>scripts/benchmark_batch.py<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">16</span>
+iteration.  More workers reduces time waiting on network latency — up to the point
+where Kowalski server throttling or bandwidth becomes the bottleneck.</p>
+<p>Run the worker sweep to find the knee of the throughput curve:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>benchmarks/sweep_workers.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span>
 </code></pre></div>
-<p>The output header shows the active settings so you always know what you ran:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Region: RA=116.7  Dec=36.2  radius=1800 arcsec    Device: cuda    Batch: 1000
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Workers: 8 (LC) / 8 (Gaia)    limit_per_query: 1000
+<p>The script runs the find query once per worker count and prints:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>  n_workers    Iterations    Find time (s)    Throughput    Speedup
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ─────────────────────────────────────────────────────────────────
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>          1          1247          87.3s          14/s        1.0x
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>          4           312          24.3s          51/s        3.6x
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>          8           156          12.7s          98/s        6.9x   ← best
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>         16            78          12.1s         103/s        7.3x
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>         32            39          13.8s          90/s        6.3x   ← degraded
 </code></pre></div>
-<p>Once you find the optimal value, set it permanently in <code>config.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">sources</span><span class="p">:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">ztf</span><span class="p">:</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">n_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w">        </span><span class="c1"># tune this to your MSI node</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">limit_per_query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w">   </span><span class="c1"># do not change — MongoDB constraint</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nt">features</span><span class="p">:</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">catalog</span><span class="p">:</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">n_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w">        </span><span class="c1"># match ztf n_workers</span>
+<p>The recommended value is printed at the bottom.  Set it permanently in <code>config.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">sources</span><span class="p">:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">ztf</span><span class="p">:</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">n_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">limit_per_query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w">   </span><span class="c1"># do not change — MongoDB constraint</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">catalog</span><span class="p">:</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nt">n_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">limit_per_query is not a tuning knob</p>
-<p>Keep <code>limit_per_query</code> at 1000.  It caps the size of MongoDB <code>$in</code> filters to
-avoid slow server-side scans.  This matches scope-ml's default and should not
-be changed regardless of your node size.</p>
+<p>Keep <code>limit_per_query</code> at 1000.  It caps the size of MongoDB <code>$in</code> filters
+to keep individual queries fast.  Matches scope-ml's default.</p>
 </div>
 <hr />
-<h2 id="gpu-warmup">GPU warmup<a class="headerlink" href="#gpu-warmup" title="Permanent link">&para;</a></h2>
-<p>Period finding via periodfind/CUDA has a one-time JIT compile cost on first use.
-Pass <code>--warmup</code> to run one throwaway batch before timing starts:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>scripts/benchmark_batch.py<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">8</span><span class="w"> </span>--warmup
+<h2 id="step-3-find-the-gpu-batch-size-ceiling">Step 3 — Find the GPU batch size ceiling<a class="headerlink" href="#step-3-find-the-gpu-batch-size-ceiling" title="Permanent link">&para;</a></h2>
+<p><code>feature_batch_size</code> controls how many sources are sent to periodfind per GPU call.
+Larger batches improve GPU lane utilization but use more VRAM.  The ceiling is the
+largest batch that fits in your GPU's memory without OOM.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>benchmarks/sweep_batch_size.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>--device<span class="w"> </span>cuda
 </code></pre></div>
-<p>Always use <code>--warmup</code> when benchmarking GPU period finding — without it the first
-batch includes compile time, which inflates the period finding row.</p>
+<p>Output stops at OOM:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>  batch_size    Period time (s)    Throughput    vs batch=100
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  ──────────────────────────────────────────────────────────
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>         100             62.1s          17/s           1.0x
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>         500             16.9s          62/s           3.7x
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        1000             14.3s          74/s           4.4x  ← best
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        2000             14.1s          75/s           4.4x
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        4000          OOM — VRAM exceeded
+</code></pre></div>
+<p>Set the recommended value in <code>config.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">feature_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</code></pre></div>
 <hr />
-<h2 id="synthetic-fallback-local-dev-only">Synthetic fallback (local dev only)<a class="headerlink" href="#synthetic-fallback-local-dev-only" title="Permanent link">&para;</a></h2>
-<p>If you do not have a Kowalski token, you can run against synthetic light curves
-to test the feature extraction stages.  Kowalski fetch and Gaia xmatch are not
-timed in this mode.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>scripts/benchmark_batch.py<span class="w"> </span>--synthetic<span class="w"> </span>--n-sources<span class="w"> </span><span class="m">500</span><span class="w"> </span>--n-obs<span class="w"> </span><span class="m">300</span>
+<h2 id="step-4-understand-how-n_obs-drives-compute-time">Step 4 — Understand how n_obs drives compute time<a class="headerlink" href="#step-4-understand-how-n_obs-drives-compute-time" title="Permanent link">&para;</a></h2>
+<p>Period finding time scales with observations per light curve (n_obs).  This sweep
+groups real ZTF LCs by n_obs and times period finding per bucket — giving you the
+ms/source breakdown by LC length.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>python<span class="w"> </span>benchmarks/sweep_nobs.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span>--device<span class="w"> </span>cuda
+</code></pre></div>
+<p>Output includes a compute projection for your science scope:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  n_obs bucket    Sources    Period time (s)    ms / source    % of total
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  ──────────────────────────────────────────────────────────────────────
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>      50 – 100         87             0.41s            4.7         2.9%
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>     100 – 200        213             1.83s            8.6        12.8%
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>     200 – 500        418             5.12s           12.2        35.8%
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>     500 – 1000       287             5.63s           19.6        39.4%
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    1000 – 2000        47             1.29s           27.4         9.0%
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>  Compute projection (period finding only):
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>      100,000 sources →  ~0.4 GPU-hours
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    1,000,000 sources →  ~3.8 GPU-hours
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>   10,000,000 sources → ~37.8 GPU-hours
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Projection assumes your target fields have a similar n_obs distribution</p>
+<p>Run this sweep on a region representative of your actual science target.
+A dense galactic field with short LCs is much faster per source than a
+sparse high-latitude field with long baselines.</p>
+</div>
+<hr />
+<h2 id="step-5-final-compute-estimate">Step 5 — Final compute estimate<a class="headerlink" href="#step-5-final-compute-estimate" title="Permanent link">&para;</a></h2>
+<p>After Steps 1–4, compute total GPU-hours as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>GPU-hours = (total_sources × ms_per_source_from_sweep_nobs) / 3_600_000
+</code></pre></div>
+<p>Add the Kowalski fetch time from <code>batch_throughput.py</code> for total wall time.
+Kowalski stages consume wall time (node reserved) but minimal GPU-hours.</p>
+<hr />
+<h2 id="gpu-warmup">GPU warmup<a class="headerlink" href="#gpu-warmup" title="Permanent link">&para;</a></h2>
+<p>Pass <code>--warmup</code> to run one throwaway batch before timing starts.
+Always use this for GPU period finding benchmarks — without it the first
+batch includes CUDA JIT compile time, which inflates the timing.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>python<span class="w"> </span>benchmarks/batch_throughput.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span>--config<span class="w"> </span>config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>--ra<span class="w"> </span><span class="m">116</span>.7<span class="w"> </span>--dec<span class="w"> </span><span class="m">36</span>.2<span class="w"> </span>--radius-arcsec<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>--device<span class="w"> </span>cuda<span class="w"> </span>--n-workers<span class="w"> </span><span class="m">8</span><span class="w"> </span>--warmup
+</code></pre></div>
+<hr />
+<h2 id="local-dev-no-kowalski">Local dev (no Kowalski)<a class="headerlink" href="#local-dev-no-kowalski" title="Permanent link">&para;</a></h2>
+<p>Run <code>batch_throughput.py</code> with synthetic data to test feature extraction
+without a Kowalski connection.  Kowalski fetch and Gaia xmatch are not timed.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>python<span class="w"> </span>benchmarks/batch_throughput.py<span class="w"> </span>--synthetic<span class="w"> </span>--n-sources<span class="w"> </span><span class="m">500</span><span class="w"> </span>--n-obs<span class="w"> </span><span class="m">300</span>
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Synthetic mode produces meaningless throughput numbers for the Kowalski stages.
+<p>Synthetic mode produces meaningless throughput numbers for Kowalski stages.
 Use real-data mode on MSI for any numbers you intend to act on.</p>
 </div>
-<hr />
-<h2 id="example-output">Example output<a class="headerlink" href="#example-output" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Region: RA=116.7  Dec=36.2  radius=1800 arcsec    Device: cuda    Batch: 1000
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Workers: 8 (LC) / 8 (Gaia)    limit_per_query: 1000
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>────────────────────────────────────────────────────────────────────────────
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  Stage                    Sources    Total (s)    Per src (ms)    Throughput
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>────────────────────────────────────────────────────────────────────────────
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  Near (ID discovery)        1 247       1.203            0.97       1 036/s
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>  Find (LC fetch)            1 247       7.841            6.29         159/s
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>────────────────────────────────────────────────────────────────────────────
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>  Statistics                 1 052       0.043            0.04      24 465/s
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  Period finding             1 052      14.312           13.60          74/s
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  dm/dt histogram            1 052       0.219            0.21       4 804/s
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>  Gaia xmatch                1 052       2.088            1.98         504/s
-<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>────────────────────────────────────────────────────────────────────────────
-<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>  Total                      1 052      25.706           24.43          41/s
-<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>────────────────────────────────────────────────────────────────────────────
-</code></pre></div>
-<p>Period finding dominates at ~14s because it is GPU-bound.  The Kowalski stages
-(near + find + Gaia) together take ~11s and are network-bound — this is where
-<code>n_workers</code> has the most impact.</p>
 
 
 
