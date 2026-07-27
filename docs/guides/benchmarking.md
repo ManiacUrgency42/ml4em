@@ -196,17 +196,3 @@ python benchmarks/batch_throughput.py \
     --device cuda --n-workers 8 --warmup
 ```
 
----
-
-## Local dev (no Kowalski)
-
-Run `batch_throughput.py` with synthetic data to test feature extraction
-without a Kowalski connection.  Kowalski fetch and Gaia xmatch are not timed.
-
-```bash
-python benchmarks/batch_throughput.py --synthetic --n-sources 500 --n-obs 300
-```
-
-!!! warning
-    Synthetic mode produces meaningless throughput numbers for Kowalski stages.
-    Use real-data mode on MSI for any numbers you intend to act on.

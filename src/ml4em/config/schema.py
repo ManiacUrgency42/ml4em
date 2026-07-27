@@ -151,7 +151,7 @@ class PeriodConfig(BaseModel):
     MHF  Multi-Harmonic Fit
     """
 
-    algorithms      : list[str]    = ["CE", "AOV", "LS", "MHF"]
+    algorithms      : list[str]    = ["CE", "AOV", "LS", "MHF", "FPW"]
     min_period_days : float        = 0.01   # days
     max_period_days : float        = 10.0   # days
     top_n_periods   : int          = 10     # periods retained per algorithm before scoring (matches scope-ml)
