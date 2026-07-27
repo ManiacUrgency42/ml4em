@@ -19,6 +19,12 @@ The near + find two-hop pattern matches scope-ml's get_lightcurves_via_coords
 exactly.  The find query uses a sliding window: IDs are chunked into slices of
 limit_per_query (default 1000), sent n_workers chunks at a time.
 
+Output
+------
+All output is written to both stdout and a timestamped log file under
+logs/benchmarks/.  Each run produces a separate file so results are
+preserved across runs for comparison.
+
 Usage
 -----
     python benchmarks/batch_throughput.py \\
@@ -36,6 +42,14 @@ Example output
 --------------
     Region: RA=116.7  Dec=36.2  radius=1800 arcsec    Device: cuda    Batch: 1000
     Workers: 8 (LC) / 8 (Gaia)    limit_per_query: 1000
+
+    Light curve summary
+    ───────────────────────────────────────────────
+      Source IDs (near query)      1 247
+      Light curves returned        2 891   (g: 1031  r: 1247  i: 613)
+      Valid sources (≥ 50 obs)     1 052
+      Skipped sources                195   (< 50 obs or no clean data)
+      n_obs per source:  min=51  median=312  mean=341  max=1847
 
     ────────────────────────────────────────────────────────────────────────────
       Stage                    Sources    Total (s)    Per src (ms)    Throughput
@@ -56,22 +70,49 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 import time
 from collections import defaultdict
+from datetime import datetime
 
 import numpy as np
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s  %(levelname)-8s  %(message)s",
-    datefmt="%H:%M:%S",
-)
-log = logging.getLogger(__name__)
 
 _DEFAULT_BATCH_SIZE = 1_000
 _DEFAULT_DEVICE     = "cpu"
 _DEFAULT_RADIUS     = 1800.0   # arcsec — roughly a ZTF quad footprint
+_LOG_DIR            = "logs/benchmarks"
+
+
+# ---------------------------------------------------------------------------
+# Logging — writes to both stdout and a timestamped file
+# ---------------------------------------------------------------------------
+
+def _setup_logging(log_path: str) -> None:
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    fmt = logging.Formatter(
+        fmt="%(asctime)s  %(levelname)-8s  %(message)s",
+        datefmt="%H:%M:%S",
+    )
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+
+    # stdout handler
+    sh = logging.StreamHandler(sys.stdout)
+    sh.setFormatter(fmt)
+    root.addHandler(sh)
+
+    # file handler
+    fh = logging.FileHandler(log_path)
+    fh.setFormatter(fmt)
+    root.addHandler(fh)
+
+
+def _tee(line: str, log_path: str) -> None:
+    """Print a line to stdout and append it to the log file."""
+    print(line)
+    with open(log_path, "a") as f:
+        f.write(line + "\n")
 
 
 # ---------------------------------------------------------------------------
@@ -90,7 +131,7 @@ def _time_extractors(sources, cfg, device, batch_size, kowalski_client):
     valid = [s for s in sources if s]
     n = len(valid)
     if n == 0:
-        log.error("No valid sources after filtering.")
+        logging.getLogger(__name__).error("No valid sources after filtering.")
         sys.exit(1)
 
     timings: dict[str, float] = {}
@@ -147,6 +188,13 @@ def main():
     parser.add_argument("--n-workers",     type=int, default=None,
                         help="Parallel Kowalski threads (overrides config; sweep with sweep_workers.py)")
     args = parser.parse_args()
+
+    # ── Log file ─────────────────────────────────────────────────────────────
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_path  = os.path.join(_LOG_DIR, f"batch_throughput_{timestamp}.log")
+    _setup_logging(log_path)
+    log = logging.getLogger(__name__)
+    log.info("Log file: %s", log_path)
 
     # ── Config ───────────────────────────────────────────────────────────────
     from ml4em.config.loader import load_config
@@ -209,10 +257,30 @@ def main():
     t_find = time.perf_counter() - t0
     log.info("Find: %d light curves (%.3fs)", len(lcs), t_find)
 
+    # Group LCs by source_id
     groups: dict = defaultdict(list)
     for lc in lcs:
         groups[lc.source_id].append(lc)
     sources = [groups.get(sid, []) for sid in source_ids]
+
+    # ── LC summary stats ──────────────────────────────────────────────────────
+    band_counts: dict[str, int] = defaultdict(int)
+    for lc in lcs:
+        band_counts[lc.band] += 1
+
+    valid_sources = [s for s in sources if s]
+    n_valid = sum(
+        1 for s in valid_sources
+        if max(lc.n_obs for lc in s) >= cfg.features.min_observations
+    )
+    skipped = len(source_ids) - n_valid
+
+    # n_obs per source: use the primary band (most observations)
+    nobs_per_source = np.array([
+        max(lc.n_obs for lc in s)
+        for s in valid_sources
+        if max(lc.n_obs for lc in s) >= cfg.features.min_observations
+    ])
 
     # ── GPU warmup ───────────────────────────────────────────────────────────
     if args.warmup or args.device == "cuda":
@@ -226,7 +294,7 @@ def main():
         log.info("Warmup complete")
 
     # ── Feature extraction timing ─────────────────────────────────────────────
-    timings, period_results, n_valid = _time_extractors(
+    timings, period_results, n_timed = _time_extractors(
         sources, cfg, args.device, args.batch_size,
         kowalski_client=ztf.client,
     )
@@ -241,40 +309,66 @@ def main():
         else:
             algo_counts[algo] = algo_counts.get(algo, 0) + 1
 
-    # ── Summary ──────────────────────────────────────────────────────────────
-    t_total = sum(timings.values()) + t_near + t_find
-    n_ids   = len(source_ids)
-    skipped = n_ids - n_valid
-
+    # ── Output ───────────────────────────────────────────────────────────────
+    t_total     = sum(timings.values()) + t_near + t_find
+    n_ids       = len(source_ids)
     worker_info = (f"    Workers: {cfg.sources.ztf.n_workers} (LC) / "
                    f"{cfg.features.catalog.n_workers} (Gaia)"
                    f"    limit_per_query: {cfg.sources.ztf.limit_per_query}")
+    band_str    = "  ".join(f"{b}: {band_counts[b]}" for b in sorted(band_counts))
+    sep         = "─" * 76
+    sep_short   = "─" * 47
 
-    sep = "─" * 76
-    print(f"\n  Region: RA={args.ra}  Dec={args.dec}  radius={args.radius_arcsec:.0f} arcsec"
-          f"    Device: {args.device}    Batch: {args.batch_size}{worker_info}")
-    print(f"\n{sep}")
-    print(f"  {'Stage':<28}{'Sources':>9}{'Total (s)':>11}{'Per src (ms)':>14}{'Throughput':>12}")
-    print(sep)
-    print(f"  {'Near (ID discovery)':<28}{n_ids:>9}{t_near:>10.3f}s"
-          f"{t_near / n_ids * 1000:>12.2f}  {n_ids / t_near:>8.0f}/s")
-    print(f"  {'Find (LC fetch)':<28}{n_ids:>9}{t_find:>10.3f}s"
-          f"{t_find / n_ids * 1000:>12.2f}  {n_ids / t_find:>8.0f}/s")
-    print(sep)
+    def out(line: str = "") -> None:
+        _tee(line, log_path)
+
+    out()
+    out(f"  Region: RA={args.ra}  Dec={args.dec}  radius={args.radius_arcsec:.0f} arcsec"
+        f"    Device: {args.device}    Batch: {args.batch_size}{worker_info}")
+    out(f"  Algorithms: {', '.join(cfg.features.period.algorithms)}")
+    out(f"  Run: {timestamp}    Log: {log_path}")
+
+    # LC summary
+    out()
+    out("  Light curve summary")
+    out(f"  {sep_short}")
+    out(f"  {'Source IDs (near query)':<32}{n_ids:>8,}")
+    out(f"  {'Light curves returned':<32}{len(lcs):>8,}   ({band_str})")
+    out(f"  {'Valid sources (>= ' + str(cfg.features.min_observations) + ' obs)':<32}{n_valid:>8,}")
+    out(f"  {'Skipped sources':<32}{skipped:>8,}   (< {cfg.features.min_observations} obs or no clean data)")
+    if len(nobs_per_source) > 0:
+        out(f"  n_obs per source:  "
+            f"min={int(nobs_per_source.min())}  "
+            f"median={int(np.median(nobs_per_source))}  "
+            f"mean={int(nobs_per_source.mean())}  "
+            f"max={int(nobs_per_source.max())}")
+
+    # Timing table
+    out()
+    out(sep)
+    out(f"  {'Stage':<28}{'Sources':>9}{'Total (s)':>11}{'Per src (ms)':>14}{'Throughput':>12}")
+    out(sep)
+    out(f"  {'Near (ID discovery)':<28}{n_ids:>9}{t_near:>10.3f}s"
+        f"{t_near / n_ids * 1000:>12.2f}  {n_ids / t_near:>8.0f}/s")
+    out(f"  {'Find (LC fetch)':<28}{n_ids:>9}{t_find:>10.3f}s"
+        f"{t_find / n_ids * 1000:>12.2f}  {n_ids / t_find:>8.0f}/s")
+    out(sep)
     for stage, t in timings.items():
-        print(f"  {stage:<28}{n_valid:>9}{t:>10.3f}s"
-              f"{t / n_valid * 1000:>12.2f}  {n_valid / t:>8.0f}/s")
-    print(sep)
-    print(f"  {'Total':<28}{n_valid:>9}{t_total:>10.3f}s"
-          f"{t_total / n_valid * 1000:>12.2f}  {n_valid / t_total:>8.0f}/s")
-    print(sep)
-    print(f"\n  {skipped} sources skipped (< {cfg.features.min_observations} obs or no clean data)")
-    print(f"\n  Period algorithm breakdown ({n_valid} sources):")
+        out(f"  {stage:<28}{n_timed:>9}{t:>10.3f}s"
+            f"{t / n_timed * 1000:>12.2f}  {n_timed / t:>8.0f}/s")
+    out(sep)
+    out(f"  {'Total':<28}{n_timed:>9}{t_total:>10.3f}s"
+        f"{t_total / n_timed * 1000:>12.2f}  {n_timed / t_total:>8.0f}/s")
+    out(sep)
+
+    # Algorithm breakdown
+    out()
+    out(f"  Period algorithm breakdown ({n_timed} sources):")
     for algo, count in sorted(algo_counts.items(), key=lambda x: -x[1]):
-        print(f"    {algo:<6} {count:>6}  ({count / n_valid * 100:.1f}%)")
+        out(f"    {algo:<6} {count:>6}  ({count / n_timed * 100:.1f}%)")
     if nan_count:
-        print(f"    {'NaN':<6} {nan_count:>6}  ({nan_count / n_valid * 100:.1f}%)")
-    print()
+        out(f"    {'NaN':<6} {nan_count:>6}  ({nan_count / n_timed * 100:.1f}%)")
+    out()
 
 
 if __name__ == "__main__":
