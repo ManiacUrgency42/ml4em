@@ -86,27 +86,15 @@ class PeriodExtractor:
 
     def __init__(self, config: PeriodConfig) -> None:
         self._cfg = config
-        if config.samples_per_peak is None:
-            # Period-spaced grid, built once and reused across all batches.
-            self._static_periods: np.ndarray | None = np.linspace(
-                config.min_period_days,
-                config.max_period_days,
-                config.n_freq_grid,
-                dtype=np.float32,
-            )
-        else:
-            # Frequency-spaced grid, computed per-batch from actual baseline.
-            self._static_periods = None
         self._period_dts = np.zeros(1, dtype=np.float32)  # no chirp
         self._algos = self._build_algos()
 
     def _build_freq_grid(self, times: list[np.ndarray]) -> np.ndarray:
-        """Build a frequency-spaced period grid matching scope-ml's convention.
+        """Build the frequency-spaced period grid matching scope-ml's convention.
 
-        fmin = 2 / baseline   — scope-ml convention: require at least 2 full
-                                cycles in the data baseline.
+        fmin = 2 / baseline                          (require ≥ 2 full cycles)
         fmax = 1 / min_period_days
-        df   = 1 / (samples_per_peak * baseline)
+        df   = 1 / (samples_per_peak * baseline)     (samples_per_peak=10 default)
         """
         baseline = max(float(t.max() - t.min()) for t in times)
         if baseline <= 0:
@@ -306,11 +294,7 @@ class PeriodExtractor:
             return results
 
         # ── 2. Run period-finding algorithms ─────────────────────────────
-        periods = (
-            self._static_periods
-            if self._static_periods is not None
-            else self._build_freq_grid(times_pf)
-        )
+        periods = self._build_freq_grid(times_pf)
 
         all_peaks: dict[str, list[list[Any]]] = {}
         n_peaks = self._cfg.top_n_periods

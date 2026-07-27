@@ -1,48 +1,59 @@
 #!/usr/bin/env python3
 """
-Batch throughput benchmark: real ZTF light curves through the full pipeline.
+End-to-end batch throughput benchmark.
 
-Mirrors the production workflow exactly:
-  Round trip 1 (near)  — spatial index query to discover source IDs in a sky region
-  Round trip 2 (find)  — fetch full light curve data for those IDs
-  Feature extraction   — Statistics → Period finding → dm/dt (GPU batched)
-  Round trip 3 (Gaia)  — Kowalski cone_search against Gaia_EDR3
+Runs the full production pipeline on a real ZTF sky region and reports
+per-stage timing.  This is the primary benchmark for estimating MSI
+compute hours and for comparing performance across node configurations.
 
-This matches scope-ml's two-hop LC fetch pattern (get_lightcurves_via_coords)
-plus the external_xmatch Gaia step.
+Pipeline stages timed
+---------------------
+  Round trip 1  near query    Kowalski spatial index → source IDs in region
+  Round trip 2  find query    fetch_batch() sliding window → full light curves
+                Statistics    periodfind BasicStats extractor
+                Period        CE / AOV / LS / MHF (GPU batched via periodfind)
+                dm/dt         periodfind DmDt histogram
+  Round trip 3  Gaia xmatch  CatalogExtractor cone_search → Gaia EDR3 features
 
-Usage (MSI — real data)
+The near + find two-hop pattern matches scope-ml's get_lightcurves_via_coords
+exactly.  The find query uses a sliding window: IDs are chunked into slices of
+limit_per_query (default 1000), sent n_workers chunks at a time.
+
+Usage — MSI (real data)
 -----------------------
-    # Benchmark a ~quad-sized sky region centred on a known ZTF field:
-    python scripts/benchmark_batch.py \\
+    python benchmarks/batch_throughput.py \\
         --config config.yaml \\
         --ra 116.7 --dec 36.2 --radius-arcsec 1800 \\
-        --device cuda
+        --device cuda --n-workers 8
 
-    # Smaller region for a quick test:
-    python scripts/benchmark_batch.py \\
+    # GPU warmup run (recommended — avoids CUDA JIT in timing)
+    python benchmarks/batch_throughput.py \\
         --config config.yaml \\
-        --ra 116.7 --dec 36.2 --radius-arcsec 600
+        --ra 116.7 --dec 36.2 --radius-arcsec 1800 \\
+        --device cuda --n-workers 8 --warmup
 
-Fallback (no Kowalski — local dev only)
-----------------------------------------
-    python scripts/benchmark_batch.py --synthetic --n-sources 200 --n-obs 50
+Usage — local dev (synthetic, no Kowalski)
+------------------------------------------
+    python benchmarks/batch_throughput.py --synthetic --n-sources 200 --n-obs 300
 
-Output
-------
+Example output
+--------------
     Region: RA=116.7  Dec=36.2  radius=1800 arcsec    Device: cuda    Batch: 1000
-    ─────────────────────────────────────────────────────────────────────────────
-      Stage                 Sources    Total (s)    Per src (ms)    Throughput
-    ─────────────────────────────────────────────────────────────────────────────
-      Near (ID discovery)     1 247       1.203            0.97       1 036/s
-      Find (LC fetch)         1 247       7.841            6.29         159/s
-      Statistics              1 052       0.043            0.04      24 465/s
-      Period finding          1 052      14.312           13.60          74/s
-      dm/dt histogram         1 052       0.219            0.21       4 804/s
-      Gaia xmatch             1 052       2.088            1.98         504/s
-    ─────────────────────────────────────────────────────────────────────────────
-      Total                   1 052      25.706           24.43          41/s
-    ─────────────────────────────────────────────────────────────────────────────
+    Workers: 8 (LC) / 8 (Gaia)    limit_per_query: 1000
+
+    ────────────────────────────────────────────────────────────────────────────
+      Stage                    Sources    Total (s)    Per src (ms)    Throughput
+    ────────────────────────────────────────────────────────────────────────────
+      Near (ID discovery)        1 247       1.203            0.97       1 036/s
+      Find (LC fetch)            1 247       7.841            6.29         159/s
+    ────────────────────────────────────────────────────────────────────────────
+      Statistics                 1 052       0.043            0.04      24 465/s
+      Period finding             1 052      14.312           13.60          74/s
+      dm/dt histogram            1 052       0.219            0.21       4 804/s
+      Gaia xmatch                1 052       2.088            1.98         504/s
+    ────────────────────────────────────────────────────────────────────────────
+      Total                      1 052      25.706           24.43          41/s
+    ────────────────────────────────────────────────────────────────────────────
 """
 
 from __future__ import annotations
@@ -61,9 +72,9 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-_DEFAULT_BATCH_SIZE  = 1_000
-_DEFAULT_DEVICE      = "cpu"
-_DEFAULT_RADIUS      = 1800.0   # arcsec — roughly a ZTF quad footprint
+_DEFAULT_BATCH_SIZE = 1_000
+_DEFAULT_DEVICE     = "cpu"
+_DEFAULT_RADIUS     = 1800.0   # arcsec — roughly a ZTF quad footprint
 
 
 # ---------------------------------------------------------------------------
@@ -146,50 +157,41 @@ def _time_extractors(sources, cfg, device, batch_size, kowalski_client=None):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Batch throughput benchmark — real ZTF light curves, two-hop Kowalski fetch"
+        description="End-to-end batch throughput benchmark — real ZTF light curves"
     )
 
     # Real data (primary)
-    parser.add_argument("--config",        default="config.yaml",
-                        help="Path to config.yaml (default: config.yaml)")
-    parser.add_argument("--ra",            type=float, default=116.7,
-                        help="Region centre RA in degrees (default: 116.7)")
-    parser.add_argument("--dec",           type=float, default=36.2,
-                        help="Region centre Dec in degrees (default: 36.2)")
+    parser.add_argument("--config",        default="config.yaml")
+    parser.add_argument("--ra",            type=float, default=116.7)
+    parser.add_argument("--dec",           type=float, default=36.2)
     parser.add_argument("--radius-arcsec", type=float, default=_DEFAULT_RADIUS,
                         help=f"Search radius in arcsec (default: {_DEFAULT_RADIUS} ≈ ZTF quad)")
 
     # Synthetic fallback
-    parser.add_argument("--synthetic",     action="store_true",
-                        help="Use synthetic data instead of Kowalski (local dev only)")
-    parser.add_argument("--n-sources",     type=int, default=500,
-                        help="Synthetic mode: number of sources (default: 500)")
-    parser.add_argument("--n-obs",         type=int, default=300,
-                        help="Synthetic mode: observations per source (default: 300)")
-    parser.add_argument("--seed",          type=int, default=42)
+    parser.add_argument("--synthetic",  action="store_true",
+                        help="Use synthetic data (local dev only — Kowalski stages not timed)")
+    parser.add_argument("--n-sources",  type=int, default=500)
+    parser.add_argument("--n-obs",      type=int, default=300)
+    parser.add_argument("--seed",       type=int, default=42)
 
     # Common
-    parser.add_argument("--batch-size",    type=int, default=_DEFAULT_BATCH_SIZE,
+    parser.add_argument("--batch-size", type=int, default=_DEFAULT_BATCH_SIZE,
                         help=f"Sources per GPU batch (default: {_DEFAULT_BATCH_SIZE})")
-    parser.add_argument("--device",        default=_DEFAULT_DEVICE,
-                        choices=["cpu", "cuda", "auto"],
-                        help=f"periodfind device (default: {_DEFAULT_DEVICE})")
-    parser.add_argument("--algorithms",    default=None,
-                        help="Comma-separated algorithm list, e.g. CE,AOV,LS")
-    parser.add_argument("--warmup",        action="store_true",
-                        help="Run one throwaway batch before timing (GPU warmup)")
-    parser.add_argument("--n-workers",     type=int, default=None,
-                        help="Parallel Kowalski threads for LC fetch and Gaia xmatch "
-                             "(overrides config.yaml; on MSI try 8–16)")
+    parser.add_argument("--device",     default=_DEFAULT_DEVICE,
+                        choices=["cpu", "cuda", "auto"])
+    parser.add_argument("--algorithms", default=None,
+                        help="Comma-separated list, e.g. CE,AOV,LS")
+    parser.add_argument("--warmup",     action="store_true",
+                        help="Run one throwaway GPU batch before timing (recommended with --device cuda)")
+    parser.add_argument("--n-workers",  type=int, default=None,
+                        help="Parallel Kowalski threads (overrides config; sweep with sweep_workers.py)")
 
     args = parser.parse_args()
 
     # ── Config ───────────────────────────────────────────────────────────────
     if args.synthetic:
-        log.warning("Running in synthetic mode — Kowalski fetch and Gaia are NOT timed.")
-        log.warning("Use real-data mode on MSI for meaningful throughput numbers.")
-        from ml4em.config.schema import FeatureConfig
-        from ml4em.config.schema import PeriodConfig
+        log.warning("Synthetic mode — Kowalski fetch and Gaia are NOT timed.")
+        from ml4em.config.schema import FeatureConfig, PeriodConfig
         class _Cfg:
             class features:
                 period  = PeriodConfig()
@@ -222,14 +224,14 @@ def main():
 
     else:
         from ml4em.data.ztf import ZTFSource
+        from collections import defaultdict
         ztf = ZTFSource(cfg.sources.ztf, token)
         kowalski_client = ztf.client
 
-        log.info("Round trip 1 — near query: RA=%.4f Dec=%.4f radius=%.0f arcsec",
+        # Round trip 1: near query — spatial index, returns IDs only
+        log.info("Round trip 1 — near: RA=%.4f Dec=%.4f radius=%.0f arcsec",
                  args.ra, args.dec, args.radius_arcsec)
         t0 = time.perf_counter()
-
-        # near query (ID discovery)
         near_query = {
             "query_type": "near",
             "query": {
@@ -257,21 +259,19 @@ def main():
                             .get("query_coords", []))
                 source_ids.extend(str(doc["_id"]) for doc in hits)
 
-        log.info("Near query found %d source IDs (%.3fs)", len(source_ids), t_near)
-
+        log.info("Near query: %d source IDs (%.3fs)", len(source_ids), t_near)
         if not source_ids:
-            log.error("No sources found in region. Try a larger --radius-arcsec.")
+            log.error("No sources found. Try a larger --radius-arcsec.")
             sys.exit(1)
 
-        log.info("Round trip 2 — find query: fetching light curves for %d sources (n_workers=%d)",
+        # Round trip 2: find query — sliding window, full LC data
+        log.info("Round trip 2 — find: %d sources, n_workers=%d",
                  len(source_ids), cfg.sources.ztf.n_workers)
         t0 = time.perf_counter()
         lcs = ztf.fetch_batch(source_ids)
         t_find = time.perf_counter() - t0
-        log.info("Find query returned %d light curves (%.3fs)", len(lcs), t_find)
+        log.info("Find: %d light curves (%.3fs)", len(lcs), t_find)
 
-        # Group by source_id
-        from collections import defaultdict
         groups: dict = defaultdict(list)
         for lc in lcs:
             groups[lc.source_id].append(lc)
@@ -290,13 +290,13 @@ def main():
             PeriodExtractor(cfg.features.period).extract(warmup)
         log.info("Warmup complete")
 
-    # ── Per-extractor timing ─────────────────────────────────────────────────
+    # ── Feature extraction timing ─────────────────────────────────────────────
     timings, period_results, n_valid = _time_extractors(
         sources, cfg, args.device, args.batch_size,
         kowalski_client=kowalski_client,
     )
 
-    # ── Algorithm breakdown ──────────────────────────────────────────────────
+    # ── Algorithm breakdown ───────────────────────────────────────────────────
     algo_counts: dict[str, int] = {}
     nan_count = 0
     for r in period_results:
@@ -314,12 +314,11 @@ def main():
     sep = "─" * 76
 
     if not args.synthetic:
-        ztf_workers  = cfg.sources.ztf.n_workers
-        gaia_workers = cfg.features.catalog.n_workers
-        limit        = cfg.sources.ztf.limit_per_query
-        worker_info  = f"    Workers: {ztf_workers} (LC) / {gaia_workers} (Gaia)    limit_per_query: {limit}"
+        worker_info = (f"    Workers: {cfg.sources.ztf.n_workers} (LC) / "
+                       f"{cfg.features.catalog.n_workers} (Gaia)"
+                       f"    limit_per_query: {cfg.sources.ztf.limit_per_query}")
     else:
-        worker_info  = ""
+        worker_info = ""
 
     print(f"\n  Region: {region_label}    Device: {args.device}    Batch: {args.batch_size}{worker_info}")
     print(f"\n{sep}")
