@@ -41,6 +41,7 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=jin00404@umn.edu
 
+SIF=/scratch.global/$USER/ml4em_gpu.sif
 DATA_DIR=/scratch.global/$USER/ml4em_data
 # sbatch copies the submitted script to /var/spool on the compute node, so
 # BASH_SOURCE points there and not at the checkout.  SLURM_SUBMIT_DIR is the
@@ -49,7 +50,7 @@ DATA_DIR=/scratch.global/$USER/ml4em_data
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 
 module purge
-module load conda
+module load apptainer
 
 if [[ -f "${DATA_DIR}/.env" ]]; then
     set -a; source "${DATA_DIR}/.env"; set +a
@@ -57,6 +58,11 @@ fi
 
 # Both are prerequisites, and failing here names the missing one instead of
 # surfacing as a pydantic or Kowalski error several minutes in.
+if [[ ! -f "${SIF}" ]]; then
+    echo "ERROR: ${SIF} not found." >&2
+    echo "       Run: sbatch slurm/pull_image.sh" >&2
+    exit 1
+fi
 if [[ ! -f "${DATA_DIR}/config_msi.yaml" ]]; then
     echo "ERROR: ${DATA_DIR}/config_msi.yaml not found." >&2
     echo "       cp config.example.yaml ${DATA_DIR}/config_msi.yaml and edit storage.*" >&2
@@ -70,15 +76,26 @@ fi
 
 cd "${REPO_DIR}"
 
-conda run --no-capture-output -n ml4em-gpu \
-    python "${REPO_DIR}/benchmarks/scaling_cpu.py" \
-        --config "${DATA_DIR}/config_msi.yaml" \
+apptainer run \
+    --bind "${REPO_DIR}:/app/ml4em" \
+    --bind "${DATA_DIR}:/data" \
+    --env-file "${DATA_DIR}/.env" \
+    --env PYTHONPATH=/data/pyshim \
+    "${SIF}" \
+    python benchmarks/scaling_cpu.py \
+        --config /data/config_msi.yaml \
         --ra 116.7 --dec 36.2 --radius-arcsec 1800 \
         --core-counts 1 2 4 8 16 32 64 \
         --trials 3 \
         --max-sources 2000 \
         "$@"
 
-# Render the plot if matplotlib is present in the env.
-conda run --no-capture-output -n ml4em-gpu \
-    python "${REPO_DIR}/benchmarks/plot_scaling.py" || true
+# matplotlib ships in the image via the [plots] extra, so a failure here
+# is a real error rather than a missing dependency -- do not mask it.
+apptainer run \
+    --bind "${REPO_DIR}:/app/ml4em" \
+    --bind "${DATA_DIR}:/data" \
+    --env-file "${DATA_DIR}/.env" \
+    --env PYTHONPATH=/data/pyshim \
+    "${SIF}" \
+    python benchmarks/plot_scaling.py

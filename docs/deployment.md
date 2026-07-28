@@ -145,6 +145,8 @@ if [[ -z "${ML4EM_ZTF_TOKEN:-}" ]]; then ... exit 1; fi
 Both would otherwise surface minutes later as a pydantic validation error or a
 Kowalski authentication failure, neither of which names the actual missing file.
 
-The Python step runs under `conda run --no-capture-output`. Without that flag
-`conda run` buffers stdout and stderr until the process exits, so `tail -f` on
-the log file shows nothing at all while a multi-hour benchmark is running.
+The Python step runs under `apptainer run` against `ml4em_gpu.sif`, the same
+image and the same bind mounts the demo uses. Every job script — demo and
+benchmarks alike — goes through the container, so there is a single environment
+to keep working. `apptainer run` does not buffer, so `tail -f` on the log file
+shows progress while a multi-hour benchmark is still running.

@@ -73,8 +73,9 @@ sbatch --test-only benchmarks/slurm/scaling_gpu.sh
 ### Preconditions
 
 Every wrapper sources `/scratch.global/$USER/ml4em_data/.env` and then refuses to
-start unless both of the following hold:
+start unless all of the following hold:
 
+- `/scratch.global/$USER/ml4em_gpu.sif` exists (`sbatch slurm/pull_image.sh`)
 - `/scratch.global/$USER/ml4em_data/config_msi.yaml` exists
 - `ML4EM_ZTF_TOKEN` is set
 
@@ -83,9 +84,14 @@ appear several minutes in as a pydantic validation error or a Kowalski
 authentication failure that does not name the missing file. Run
 `python scripts/get_credentials.py` to populate the token.
 
+The benchmarks run inside the same Apptainer image as the demo, with the same
+`apptainer run --bind REPO:/app/ml4em --bind DATA:/data` invocation, so there is
+one environment to keep working rather than two. GPU jobs add `--nv`; the two
+CPU jobs (`scaling_cpu.sh`, `sweep_workers.sh`) omit it.
+
 The rest of the SLURM conventions these scripts follow — submitting from the
-repo root, the tracked `logs/` directory, `conda run --no-capture-output` — are
-described in [Deployment → SLURM conventions](../deployment.md#slurm-conventions).
+repo root, the tracked `logs/` directory — are described in
+[Deployment → SLURM conventions](../deployment.md#slurm-conventions).
 
 ---
 

@@ -2033,9 +2033,11 @@ doing any work:</p>
 </code></pre></div>
 <p>Both would otherwise surface minutes later as a pydantic validation error or a
 Kowalski authentication failure, neither of which names the actual missing file.</p>
-<p>The Python step runs under <code>conda run --no-capture-output</code>. Without that flag
-<code>conda run</code> buffers stdout and stderr until the process exits, so <code>tail -f</code> on
-the log file shows nothing at all while a multi-hour benchmark is running.</p>
+<p>The Python step runs under <code>apptainer run</code> against <code>ml4em_gpu.sif</code>, the same
+image and the same bind mounts the demo uses. Every job script — demo and
+benchmarks alike — goes through the container, so there is a single environment
+to keep working. <code>apptainer run</code> does not buffer, so <code>tail -f</code> on the log file
+shows progress while a multi-hour benchmark is still running.</p>
 
 
 

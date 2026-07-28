@@ -2081,8 +2081,9 @@ deliberately measures the CPU backend.</p>
 </code></pre></div>
 <h3 id="preconditions">Preconditions<a class="headerlink" href="#preconditions" title="Permanent link">&para;</a></h3>
 <p>Every wrapper sources <code>/scratch.global/$USER/ml4em_data/.env</code> and then refuses to
-start unless both of the following hold:</p>
+start unless all of the following hold:</p>
 <ul>
+<li><code>/scratch.global/$USER/ml4em_gpu.sif</code> exists (<code>sbatch slurm/pull_image.sh</code>)</li>
 <li><code>/scratch.global/$USER/ml4em_data/config_msi.yaml</code> exists</li>
 <li><code>ML4EM_ZTF_TOKEN</code> is set</li>
 </ul>
@@ -2090,9 +2091,13 @@ start unless both of the following hold:</p>
 appear several minutes in as a pydantic validation error or a Kowalski
 authentication failure that does not name the missing file. Run
 <code>python scripts/get_credentials.py</code> to populate the token.</p>
+<p>The benchmarks run inside the same Apptainer image as the demo, with the same
+<code>apptainer run --bind REPO:/app/ml4em --bind DATA:/data</code> invocation, so there is
+one environment to keep working rather than two. GPU jobs add <code>--nv</code>; the two
+CPU jobs (<code>scaling_cpu.sh</code>, <code>sweep_workers.sh</code>) omit it.</p>
 <p>The rest of the SLURM conventions these scripts follow — submitting from the
-repo root, the tracked <code>logs/</code> directory, <code>conda run --no-capture-output</code> — are
-described in <a href="../../deployment/#slurm-conventions">Deployment → SLURM conventions</a>.</p>
+repo root, the tracked <code>logs/</code> directory — are described in
+<a href="../../deployment/#slurm-conventions">Deployment → SLURM conventions</a>.</p>
 <hr />
 <h2 id="canonical-benchmark-field">Canonical benchmark field<a class="headerlink" href="#canonical-benchmark-field" title="Permanent link">&para;</a></h2>
 <p>Always use the same sky coordinates so timing is comparable across runs and machines:</p>

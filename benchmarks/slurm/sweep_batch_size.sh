@@ -36,6 +36,7 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=jin00404@umn.edu
 
+SIF=/scratch.global/$USER/ml4em_gpu.sif
 DATA_DIR=/scratch.global/$USER/ml4em_data
 # sbatch copies the submitted script to /var/spool on the compute node, so
 # BASH_SOURCE points there and not at the checkout.  SLURM_SUBMIT_DIR is the
@@ -44,8 +45,7 @@ DATA_DIR=/scratch.global/$USER/ml4em_data
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 
 module purge
-module load conda
-module load cuda/11.8.0
+module load apptainer
 
 if [[ -f "${DATA_DIR}/.env" ]]; then
     set -a; source "${DATA_DIR}/.env"; set +a
@@ -53,6 +53,11 @@ fi
 
 # Both are prerequisites, and failing here names the missing one instead of
 # surfacing as a pydantic or Kowalski error several minutes in.
+if [[ ! -f "${SIF}" ]]; then
+    echo "ERROR: ${SIF} not found." >&2
+    echo "       Run: sbatch slurm/pull_image.sh" >&2
+    exit 1
+fi
 if [[ ! -f "${DATA_DIR}/config_msi.yaml" ]]; then
     echo "ERROR: ${DATA_DIR}/config_msi.yaml not found." >&2
     echo "       cp config.example.yaml ${DATA_DIR}/config_msi.yaml and edit storage.*" >&2
@@ -64,9 +69,14 @@ if [[ -z "${ML4EM_ZTF_TOKEN:-}" ]]; then
     exit 1
 fi
 
-conda run --no-capture-output -n ml4em-gpu \
-    python "${REPO_DIR}/benchmarks/sweep_batch_size.py" \
-        --config "${DATA_DIR}/config_msi.yaml" \
+apptainer run --nv \
+    --bind "${REPO_DIR}:/app/ml4em" \
+    --bind "${DATA_DIR}:/data" \
+    --env-file "${DATA_DIR}/.env" \
+    --env PYTHONPATH=/data/pyshim \
+    "${SIF}" \
+    python benchmarks/sweep_batch_size.py \
+        --config /data/config_msi.yaml \
         --ra 116.7 --dec 36.2 --radius-arcsec 1800 \
         --device cuda \
         "$@"
