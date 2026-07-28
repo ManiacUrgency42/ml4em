@@ -158,12 +158,23 @@ COPY external/periodfind/setup.py      /build/periodfind/setup.py
 COPY external/periodfind/pyproject.toml /build/periodfind/pyproject.toml
 RUN python3.11 -m pip install --no-cache-dir /build/periodfind
 
-# ── Install ml4em with training extras (editable) ────────────────────────────
-# [training] adds torch, pandas, pyarrow — everything needed to train the
-# logistic model and persist/reload feature vectors.
+# The CPU image is FROM python:3.11-bookworm, which provides `python`.  This
+# base only provides `python3.11`, and the distro `python3` is 3.10 without
+# ml4em installed.  Without these links, `apptainer exec ... python foo.py`
+# either fails outright or silently runs the wrong interpreter.
+# Kept below the periodfind builds so it does not invalidate their layer cache.
+RUN ln -sf /usr/bin/python3.11 /usr/local/bin/python \
+    && ln -sf /usr/bin/python3.11 /usr/local/bin/python3
+
+# ── Install ml4em with the extras this image actually needs (editable) ───────
+# [ztf]      penquins — every pipeline entry point fetches from Kowalski, so
+#            without it the image raises ImportError before doing any work.
+# [training] torch, pandas, pyarrow — train the logistic model and
+#            persist/reload feature vectors.
+# [plots]    matplotlib — benchmarks/plot_scaling.py.
 # The torch wheel from PyPI is CPU-only; periodfind uses CUDA directly via
 # its own GPU kernels — torch does not need CUDA bindings for this demo model.
 COPY . /app/ml4em
-RUN python3.11 -m pip install --no-cache-dir -e "/app/ml4em[training]"
+RUN python3.11 -m pip install --no-cache-dir -e "/app/ml4em[ztf,training,plots]"
 
 WORKDIR /app/ml4em

@@ -13,6 +13,13 @@
 # xattr warnings in the .err log are harmless. MSI's scratch filesystem does
 # not support extended attributes; Apptainer warns once and continues.
 #
+# --mem is 64G, which looks excessive for a 6 GB download.  The squashfs step
+# is the reason: mksquashfs sizes its buffers from the *physical* RAM it
+# detects, and inside a SLURM cgroup that is the whole node (hundreds of GB),
+# not the job's limit.  It then allocates far past --mem and the job is
+# OOM-killed partway through conversion.  Raising the limit is the reliable
+# fix; the memory is only touched during the squashfs step.
+#
 # Output: /scratch.global/$USER/ml4em_gpu.sif
 #
 # Usage:
@@ -24,8 +31,9 @@
 #SBATCH --error=logs/pull_ml4em_%j.err
 #SBATCH -p msismall
 #SBATCH --nodes 1
-#SBATCH --ntasks-per-node 8
-#SBATCH --mem 16G
+#SBATCH --ntasks-per-node 1
+#SBATCH --cpus-per-task 8
+#SBATCH --mem 64G
 #SBATCH --time=02:00:00
 #SBATCH -A cough052
 #SBATCH --mail-type=END,FAIL
