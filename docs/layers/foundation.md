@@ -55,7 +55,6 @@ Default bin edges for `DmdtExtractor`. Override via `features.dmdt` in `config.y
 | `ZTF_SIDEREAL_DAY` | 0.99727 days | Sidereal day length |
 | `ZTF_MIN_CADENCE_DAYS` | 30/1440 | Intra-night duplicate threshold (30 min) |
 | `ZTF_DR16_MAX_HJD` | 2,459,951.5 | Maximum HJD in ZTF Data Release 16 |
-| `RUBIN_BANDS` | `("u", "g", "r", "i", "z", "y")` | Rubin photometric bands |
 | `XMATCH_RADIUS_ARCSEC` | 2.0 | Gaia cross-match search radius |
 | `GAIA_RUWE_CLEAN` | 1.4 | RUWE threshold for a clean astrometric solution |
 
@@ -70,7 +69,6 @@ Each section of `PipelineConfig` maps directly to a layer:
 | Config section | Controls |
 |---------------|---------|
 | `sources.ztf` | `ZTFSource` — connection + data quality |
-| `sources.rubin` | `RubinSource` — TAP endpoint + table names |
 | `features` | `FeaturePipeline` and all extractors |
 | `features.period` | `PeriodExtractor` — algorithm selection, period grid |
 | `features.dmdt` | `DmdtExtractor` — bin parameters |
@@ -127,11 +125,10 @@ Tokens are never stored in `config.yaml`. Set them as environment variables or i
 ```bash
 # .env  (never commit this file)
 ML4EM_ZTF_TOKEN=your_kowalski_token
-ML4EM_RUBIN_TOKEN=your_rsp_token
 ```
 
 ```python
-from ml4em.config import get_ztf_token, get_rubin_token
+from ml4em.config import get_ztf_token
 
 token = get_ztf_token()    # reads ML4EM_ZTF_TOKEN from env or .env
 ```

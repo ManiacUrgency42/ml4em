@@ -121,5 +121,5 @@ magnitudes. Convert before building `LightCurve`:
 mag = -2.5 * np.log10(flux_njy / 3631e9)   # AB magnitude
 ```
 
-**HJD vs MJD:** Both are fine as long as you're consistent. ZTF uses HJD, Rubin uses
-MJD. The feature extractors treat `time` as just a float array of days.
+**HJD vs MJD:** Both are fine as long as you're consistent. ZTF uses HJD; other surveys
+publish MJD. The feature extractors treat `time` as just a float array of days.

@@ -9,7 +9,7 @@ Submodules
 StatisticsExtractor  22 scalar light curve variability statistics
 PeriodExtractor      Best period + 14 Fourier harmonic coefficients
 DmdtExtractor        26×26 Δmag/Δt pairwise histogram (image feature)
-CatalogExtractor     4 Gaia EDR3 astrometric/photometric features (stub)
+CatalogExtractor     7 Gaia EDR3 astrometric/photometric features (stub)
 
 Pipeline
 --------
@@ -23,8 +23,11 @@ Usage
 
     cfg = load_config()
     pipeline = FeaturePipeline.default(cfg.features)
-    feature_vector = pipeline.run(lcs)           # list[LightCurve] → FeatureVector
     feature_vectors = pipeline.run_batch(groups) # list[list[LightCurve]] → list[FeatureVector]
+
+A single source is a batch of one:
+
+    feature_vector = pipeline.run_batch([lcs])[0]
 """
 
 from .base import FeatureExtractor

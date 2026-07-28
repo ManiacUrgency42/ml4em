@@ -30,6 +30,7 @@ import numpy as np
 
 from ml4em.config.schema import DmdtConfig
 from ml4em.constants import dmdt_edges
+from ml4em.features.base import to_float32_time
 from ml4em.types import LightCurve
 
 
@@ -74,7 +75,10 @@ class DmdtExtractor:
         -------
         list[dict[str, Any]]
             One dict per source with key "dmdt" → ndarray of shape
-            (N_DM_BINS, N_DT_BINS).  Empty dict for any source that fails.
+            (N_DM_BINS, N_DT_BINS).  Empty dict for a source that is too
+            short.  If the kernel itself raises, every source in the call
+            gets an empty dict — the call is batched and there is no way to
+            attribute the failure to one entry.
         """
         if not sources:
             return []
@@ -89,7 +93,7 @@ class DmdtExtractor:
             primary = max(lcs, key=lambda lc: lc.n_obs)
             if primary.n_obs < 2:
                 continue
-            times.append(primary.time.astype(np.float32))
+            times.append(to_float32_time(primary.time))
             mags.append(primary.mag.astype(np.float32))
             valid_idx.append(i)
 

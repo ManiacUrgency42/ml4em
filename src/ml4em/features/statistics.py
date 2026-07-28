@@ -25,6 +25,7 @@ from typing import Any
 
 import numpy as np
 
+from ml4em.features.base import to_float32_time
 from ml4em.types import LightCurve
 
 # Column order returned by periodfind.BasicStats().calc() — matches
@@ -65,6 +66,14 @@ _STAT_NAME_MAP: dict[str, str] = {
     "SW"                : "shapiro_wilk",
 }
 
+# Column holding "N".  Used to spot an all-NaN row before int() sees it.
+_N_OBS_COL: int = _PF_STAT_NAMES.index("N")
+
+# periodfind's Rust kernel returns an all-NaN row for fewer than four points
+# (rust/src/basicstats.rs).  Matching the guard here keeps the NaN out of the
+# int-typed n_obs field rather than discovering it downstream.
+_MIN_OBS_FOR_STATS: int = 4
+
 
 class StatisticsExtractor:
     """Compute 22 scalar light curve statistics via periodfind.BasicStats."""
@@ -84,7 +93,10 @@ class StatisticsExtractor:
         -------
         list[dict[str, Any]]
             One dict per source with FeatureVector field names as keys.
-            Empty dict for any source that fails.
+            Empty dict for a source that is too short, or whose statistics
+            come back non-finite.  If the kernel itself raises, every source
+            in the call gets an empty dict — the call is batched and there is
+            no way to attribute the failure to one entry.
         """
         if not sources:
             return []
@@ -97,9 +109,12 @@ class StatisticsExtractor:
             if not lcs:
                 continue
             primary = max(lcs, key=lambda lc: lc.n_obs)
-            if primary.n_obs < 2:
+            # periodfind's BasicStats returns an all-NaN row below four
+            # points (rust/src/basicstats.rs).  Admitting a shorter curve
+            # would put a NaN into n_obs, which is an int field.
+            if primary.n_obs < _MIN_OBS_FOR_STATS:
                 continue
-            times.append(primary.time.astype(np.float32))
+            times.append(to_float32_time(primary.time))
             mags.append(primary.mag.astype(np.float32))
             errs.append(primary.mag_err.astype(np.float32))
             valid_idx.append(i)
@@ -116,6 +131,12 @@ class StatisticsExtractor:
 
         for batch_pos, src_idx in enumerate(valid_idx):
             row = raw[batch_pos]
+            # A row can still come back all-NaN (non-finite input, for
+            # instance).  n_obs is an int field, so int(nan) would raise and
+            # take the whole chunk's statistics down with it; an empty dict
+            # is the documented signal that this one source has no stats.
+            if not np.isfinite(row[_N_OBS_COL]):
+                continue
             out: dict[str, Any] = {}
             for col_idx, pf_name in enumerate(_PF_STAT_NAMES):
                 fv_name = _STAT_NAME_MAP.get(pf_name)

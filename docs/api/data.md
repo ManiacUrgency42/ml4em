@@ -16,13 +16,6 @@ Light curve data sources.
       show_root_heading: false
       show_source: true
 
-::: ml4em.data.rubin
-    options:
-      members:
-        - RubinSource
-      show_root_heading: false
-      show_source: true
-
 ::: ml4em.data.simulation
     options:
       members:

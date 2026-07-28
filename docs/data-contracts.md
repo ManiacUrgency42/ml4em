@@ -18,7 +18,7 @@ class LightCurve:
     mag       : np.ndarray   # shape (N,)
     mag_err   : np.ndarray   # shape (N,)
     band      : Band         # "u"|"g"|"r"|"i"|"z"|"y"
-    survey    : Survey       # "ztf"|"rubin"|"simulated"
+    survey    : Survey       # "ztf"|"simulated"
     ra        : float
     dec       : float
 ```
@@ -30,7 +30,7 @@ class LightCurve:
 | `mag` | `ndarray (N,)` | Apparent magnitude — **smaller = brighter** |
 | `mag_err` | `ndarray (N,)` | 1-sigma uncertainty in magnitude |
 | `band` | `Band` | Photometric filter: `u g r i z y` |
-| `survey` | `Survey` | `"ztf"` \| `"rubin"` \| `"simulated"` |
+| `survey` | `Survey` | `"ztf"` \| `"simulated"` |
 | `ra` | `float` | Right ascension, decimal degrees (J2000) |
 | `dec` | `float` | Declination, decimal degrees (J2000) |
 

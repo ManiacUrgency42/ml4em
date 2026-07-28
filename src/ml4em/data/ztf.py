@@ -25,10 +25,14 @@ directly via a Kowalski cone search.
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from ml4em.config.schema import ZTFConfig
 from ml4em.types import LightCurve
+
+log = logging.getLogger(__name__)
 
 
 # ZTF filter integer → SDSS-like band name
@@ -149,6 +153,12 @@ class ZTFSource:
         for _instance, resp_list in responses.items():
             for resp in resp_list:
                 if resp.get("status") != "success":
+                    # Skipping silently would make a failed query
+                    # indistinguishable from an empty region.
+                    log.warning(
+                        "[ztf] find query failed (status=%s): %s",
+                        resp.get("status"), resp.get("message", "no message"),
+                    )
                     continue
                 for doc in resp.get("data", []):
                     lc = self._doc_to_lightcurve(doc)
@@ -172,8 +182,23 @@ class ZTFSource:
         ra  = float(doc.get("ra", 0.0))
         dec = float(doc.get("dec", 0.0))
 
-        # Discard flagged epochs (catflags != 0 → problematic photometry)
-        clean = [pt for pt in doc.get("data", []) if pt.get("catflags", 1) == 0]
+        # Discard flagged epochs (catflags != 0 → problematic photometry).
+        #
+        # programid is filtered here, per epoch, and not only in the query.
+        # The Mongo filter on "data.programid" selects *documents* containing
+        # at least one matching epoch — it does not remove the non-matching
+        # epochs from the returned array.  Relying on it alone would silently
+        # return partnership and Caltech data to a run configured for public
+        # data only.
+        # An epoch with no programid field passes: some collections omit it,
+        # and dropping those epochs would silently return empty light curves
+        # rather than an error.
+        allowed_programs = set(self._cfg.program_ids)
+        clean = [
+            pt for pt in doc.get("data", [])
+            if pt.get("catflags", 1) == 0
+            and pt.get("programid", None) in (allowed_programs | {None})
+        ]
         if not clean:
             return None
 
@@ -270,6 +295,10 @@ class ZTFSource:
         for _instance, resp_list in responses.items():
             for resp in resp_list:
                 if resp.get("status") != "success":
+                    log.warning(
+                        "[ztf] cone_search query failed (status=%s): %s",
+                        resp.get("status"), resp.get("message", "no message"),
+                    )
                     continue
                 data = resp.get("data", {})
                 catalog_data = data.get(self._cfg.collection_sources, {})
@@ -312,6 +341,15 @@ class ZTFSource:
         list[str]
             ZTF integer source IDs as strings.  Empty list if none found.
         """
+        # Reject sparsely-sampled sources on the server.  These would be
+        # dropped by FeatureConfig.min_observations anyway, and in a crowded
+        # field they are the majority of hits — filtering here rather than
+        # after the fetch avoids transferring light curves that are discarded
+        # on arrival.
+        near_filter: dict = {}
+        if self._cfg.min_nobs > 0:
+            near_filter["nobs"] = {"$gte": self._cfg.min_nobs}
+
         near_query = {
             "query_type": "near",
             "query": {
@@ -320,7 +358,7 @@ class ZTFSource:
                 "radec"          : {"query_coords": [ra, dec]},
                 "catalogs"       : {
                     self._cfg.collection_sources: {
-                        "filter"    : {},
+                        "filter"    : near_filter,
                         "projection": {"_id": 1},
                     }
                 },
@@ -335,6 +373,10 @@ class ZTFSource:
         for _instance, resp_list in responses.items():
             for resp in resp_list:
                 if resp.get("status") != "success":
+                    log.warning(
+                        "[ztf] near query failed (status=%s): %s",
+                        resp.get("status"), resp.get("message", "no message"),
+                    )
                     continue
                 hits = (
                     resp.get("data", {})
@@ -342,6 +384,16 @@ class ZTFSource:
                     .get("query_coords", [])
                 )
                 source_ids.extend(str(doc["_id"]) for doc in hits)
+
+        # Kowalski truncates at `limit` without saying so, so a full result set
+        # and a truncated one are the same value.  Hitting the limit exactly is
+        # the only available signal that part of the region was dropped.
+        if len(source_ids) >= limit:
+            log.warning(
+                "[ztf] near query returned %d ids, at the limit of %d — the "
+                "region is probably truncated; raise `limit` or split it",
+                len(source_ids), limit,
+            )
         return source_ids
 
     def fetch_by_region(

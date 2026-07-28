@@ -68,10 +68,22 @@ SCALAR_FIELDS: list[str] = [
     "f1_relamp2", "f1_relphi2",
     "f1_relamp3", "f1_relphi3",
     "f1_relamp4", "f1_relphi4",
-    "gaia_parallax", "gaia_parallax_error", "gaia_bp_rp", "gaia_ruwe",
+    "gaia_parallax", "gaia_parallax_error",
+    "gaia_g_mean_mag", "gaia_bp_mean_mag", "gaia_rp_mean_mag", "gaia_bp_rp",
+    "gaia_astrometric_excess_noise",
 ]
 
-N_SCALAR_FEATURES: int = len(SCALAR_FIELDS)   # 42
+N_SCALAR_FEATURES: int = len(SCALAR_FIELDS)   # 45
+
+# A name in SCALAR_FIELDS that FeatureVector does not declare is invisible at
+# runtime: features_to_array() falls back to np.nan and every model trains on a
+# dead column instead of the intended measurement.  Checked once at import so a
+# typo fails loudly rather than silently degrading a model.
+_UNKNOWN_FIELDS = set(SCALAR_FIELDS) - {f.name for f in dataclasses.fields(FeatureVector)}
+if _UNKNOWN_FIELDS:
+    raise RuntimeError(
+        f"SCALAR_FIELDS names not declared on FeatureVector: {sorted(_UNKNOWN_FIELDS)}"
+    )
 
 
 def features_to_array(features: list[FeatureVector]) -> np.ndarray:
@@ -89,10 +101,15 @@ def features_to_array(features: list[FeatureVector]) -> np.ndarray:
         that was not computed.  Imputation (if needed) is the model's
         responsibility.
     """
-    rows = [
-        [float(getattr(fv, f, np.nan)) for f in SCALAR_FIELDS]
-        for fv in features
-    ]
+    # The Gaia fields are Optional[float] and are None — not absent — whenever
+    # a source has no catalogue counterpart, so getattr's default never fires
+    # for them and float(None) would raise.  Unmatched is missing data, which
+    # is what NaN means here.
+    def _val(fv: FeatureVector, name: str) -> float:
+        v = getattr(fv, name, None)
+        return np.nan if v is None else float(v)
+
+    rows = [[_val(fv, f) for f in SCALAR_FIELDS] for fv in features]
     return np.array(rows, dtype=np.float32)
 
 

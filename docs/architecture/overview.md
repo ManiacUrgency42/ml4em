@@ -9,15 +9,19 @@ well-defined Protocol interface, and strict dependency rules.
 flowchart TD
     F["<b>FOUNDATION</b><br/>──────────────────────────<br/><b>Data contracts</b><br/>LightCurve · FeatureVector<br/>LabeledSample · Candidate<br/>──────────────────────────<br/><b>Survey constants</b> · <b>Pipeline config</b>"]
 
-    D["<b>DATA</b><br/>──────────────────────────<br/><b>Protocol:</b> LightCurveSource<br/>──────────────────────────<br/>ZTFSource · RubinSource"]
+    D["<b>DATA</b><br/>──────────────────────────<br/><b>Protocol:</b> LightCurveSource<br/>──────────────────────────<br/>ZTFSource"]
 
     FE["<b>FEATURES</b><br/>──────────────────────────<br/><b>Protocol:</b> FeatureExtractor<br/>──────────────────────────<br/>StatisticsExtractor · PeriodExtractor<br/>DmdtExtractor · CatalogExtractor<br/>FeaturePipeline"]
 
-    M["<b>MODELS</b><br/>──────────────────────────<br/><b>Protocol:</b> MLModel<br/>──────────────────────────<br/>XGBoostClassifier · SCALAR_FIELDS"]
+    M["<b>MODELS</b><br/>──────────────────────────<br/><b>Protocol:</b> MLModel<br/>──────────────────────────<br/>predict_proba() · save()<br/>SCALAR_FIELDS"]
 
-    T["<b>TRAINING</b><br/>──────────────────────────<br/><b>Protocol:</b> Trainer<br/>──────────────────────────<br/>FeatureDataset · StandardTrainer"]
+    T["<b>TRAINING</b><br/>──────────────────────────<br/><b>Protocol:</b> Trainer<br/>──────────────────────────<br/>FeatureDataset<br/>StandardTrainer"]
 
     I["<b>INFERENCE</b><br/>──────────────────────────<br/><b>Protocol:</b> Predictor<br/>──────────────────────────<br/>load_model · StandardPredictor<br/>probabilities_to_candidates"]
+
+    subgraph EXT ["external submodule"]
+        PF["<b>periodfind</b><br/>──────────<br/>CPU · Rust / PyO3<br/>GPU · CUDA / Cython"]
+    end
 
     F --> D
     D -->|"list[LightCurve]"| FE
@@ -25,6 +29,18 @@ flowchart TD
     FE -->|"list[FeatureVector]"| M
     M -->|"MLModel"| I
     T -. "saved model" .-> I
+    F ~~~ PF
+    FE -.- PF
+
+    style EXT stroke-dasharray:5 5,fill:transparent,stroke:#999,color:#999
+
+    click F href "../../layers/foundation/"
+    click D href "../../layers/data/"
+    click FE href "../../layers/features/"
+    click M href "../../layers/models/"
+    click T href "../../layers/training/"
+    click I href "../../layers/inference/"
+    click PF href "../periodfind/"
 ```
 
 **Dependency rule:** each layer imports only from layers above it. Training and
@@ -78,9 +94,9 @@ Every layer boundary is a Protocol. Here is the complete list:
 
 | Protocol | Defined in | Method signatures | Concrete implementations |
 |----------|-----------|------------------|--------------------------|
-| `LightCurveSource` | `data/base.py` | `fetch_batch()` | `ZTFSource`, `RubinSource` |
+| `LightCurveSource` | `data/base.py` | `fetch_batch()` | `ZTFSource` |
 | `FeatureExtractor` | `features/base.py` | `extract()` | `StatisticsExtractor`, `PeriodExtractor`, `DmdtExtractor`, `CatalogExtractor` |
-| `MLModel` | `models/base.py` | `predict_proba()`, `save()` | `XGBoostClassifier` |
+| `MLModel` | `models/base.py` | `predict_proba()`, `save()` | *(pluggable — any conforming model)* |
 | `Trainer` | `training/base.py` | `fit()`, `save()` | `StandardTrainer` |
 | `Predictor` | `inference/base.py` | `predict()` | `StandardPredictor` |
 

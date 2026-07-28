@@ -17,7 +17,7 @@ sigmoid to obtain P(positive) ∈ [0, 1].
 
 Why this is a useful demo
 --------------------------
-- The weight vector (42 numbers) is directly interpretable: large |w_i|
+- The weight vector (45 numbers) is directly interpretable: large |w_i|
   means feature i is driving the prediction.  Print or plot them after
   training to see which features the model finds informative.
 - Any subsequent model (DNN, XGBoost) should beat this accuracy — it
@@ -129,7 +129,7 @@ class LogisticExampleClassifier:
     """Logistic regression classifier — PyTorch pipeline demo.
 
     Wraps a single nn.Linear layer to satisfy the MLModel Protocol.
-    Operates on the 42 scalar SCALAR_FIELDS from each FeatureVector;
+    Operates on the 45 scalar SCALAR_FIELDS from each FeatureVector;
     the dm/dt image is not used.
 
     NaN values (sources below min_observations, or features that failed

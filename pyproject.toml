@@ -26,7 +26,6 @@ dependencies = [
 [project.optional-dependencies]
 # Data sources
 ztf   = ["penquins>=2.4.0"]
-rubin = ["pyvo>=1.5", "pyarrow>=12.0"]
 
 # Gaia catalog cross-match (catalog.py only — not needed for core features)
 catalog = ["astropy>=5.2"]
@@ -35,10 +34,13 @@ catalog = ["astropy>=5.2"]
 training  = ["torch>=2.0", "pyarrow>=12.0", "pandas>=2.0"]
 inference = ["torch>=2.0"]
 
+# Benchmark plotting (benchmarks/plot_scaling.py only)
+plots = ["matplotlib>=3.7"]
+
 # Development
 dev = ["pytest>=7.4", "pytest-cov>=4.0", "ruff>=0.4"]
 
-all = ["ml4em[ztf,rubin,catalog,training,inference,dev]"]
+all = ["ml4em[ztf,catalog,training,inference,plots,dev]"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

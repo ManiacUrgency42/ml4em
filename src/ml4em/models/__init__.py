@@ -14,9 +14,9 @@ LogisticExampleClassifier   Logistic regression on scalar features (demo)
 
 Shared utilities
 ----------------
-SCALAR_FIELDS       Ordered list of scalar FeatureVector field names (42)
+SCALAR_FIELDS       Ordered list of scalar FeatureVector field names (45)
 N_SCALAR_FEATURES   len(SCALAR_FIELDS)
-features_to_array   Extract SCALAR_FIELDS → np.ndarray (N, 42)
+features_to_array   Extract SCALAR_FIELDS → np.ndarray (N, 45)
 
 Adding a new model
 ------------------

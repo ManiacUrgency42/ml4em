@@ -10,7 +10,6 @@ Fetches raw photometric observations from survey databases and returns them as `
 src/ml4em/data/
   base.py         LightCurveSource Protocol
   ztf.py          ZTFSource          [implemented]
-  rubin.py        RubinSource        [stub]
   simulation.py   SimulatedSource    [stub]
 ```
 
@@ -18,7 +17,6 @@ src/ml4em/data/
 
 - [LightCurveSource Protocol](#lightcurvesource)
 - [ZTFSource](#ztfsource)
-- [RubinSource (stub)](#rubinsource)
 - [SimulatedSource (stub)](#simulatedsource)
 
 ---
@@ -92,20 +90,6 @@ ZTF stores filter codes as integers. `ZTFSource` converts them to the string ban
 | 1 | `g` |
 | 2 | `r` |
 | 3 | `i` |
-
----
-
-## `RubinSource` *(stub)* { #rubinsource }
-
-Will query Rubin DP1 via the TAP protocol using `pyvo`.
-
-**Consumes:** Rubin `objectId` strings
-
-**Emits:** `list[LightCurve]` — up to 6 per source (bands: u, g, r, i, z, y)
-
-Planned query joins `dp1.Object`, `dp1.ForcedSource`, and `dp1.Visit` on `objectId`, converting `psfFlux` (nanojanskies) to AB magnitudes.
-
-> **Status:** raises `NotImplementedError` — pending Rubin DP1 schema confirmation.
 
 ---
 

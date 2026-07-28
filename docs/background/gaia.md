@@ -20,8 +20,8 @@ The data release used by ml4em is **Gaia EDR3** (Early Data Release 3, published
 
 ## Catalog cross-match
 
-To get Gaia information for a source in our light curve data (ZTF or Rubin), we look
-up the Gaia source at the same sky position. This is called a **catalog cross-match**.
+To get Gaia information for a source in our light curve data, we look up the Gaia
+source at the same sky position. This is called a **catalog cross-match**.
 
 The procedure:
 1. Take the source's (ra, dec) from `LightCurve`
@@ -33,7 +33,7 @@ The procedure:
 1 arcsecond = 1/3600 of a degree. 2 arcseconds is roughly the angular diameter of a
 1 mm ball seen from 100 meters away. This search radius is small enough to be
 unambiguous for most isolated stars, while large enough to account for small position
-offsets between the Gaia catalog and the ZTF/Rubin positions.
+offsets between the Gaia catalog and the ZTF positions.
 
 !!! note "Status"
     `CatalogExtractor` is currently a stub. These 4 fields are all `NaN` until it is
@@ -59,7 +59,7 @@ parallax of 10 mas.
 
 **Why it matters for WDB detection:** White dwarfs are stellar remnants — the collapsed
 cores of dead stars. They are intrinsically faint objects. For us to detect them
-photometrically (bright enough to be in ZTF or Rubin), they must be relatively nearby.
+photometrically (bright enough to be in ZTF), they must be relatively nearby.
 Nearby stars have large parallaxes. A large `gaia_parallax` is therefore a prior
 indicator of a white dwarf candidate.
 

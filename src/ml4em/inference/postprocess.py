@@ -13,7 +13,6 @@ to a Candidate by:
   2. Copying identity fields (source_id, ra, dec, survey) from FeatureVector.
   3. Copying period and period_algorithm from FeatureVector (nan / "" if
      the period extractor did not run or failed).
-  4. Attaching any extra metadata passed by the caller.
 
 The result type (Candidate) is generic — this module does not assume any
 science case.  The caller decides what FeatureVectors mean and what

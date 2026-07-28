@@ -8,7 +8,6 @@ Sections
 --------
 dm/dt histogram parameters — fixed binning (changing invalidates saved features)
 ZTF survey parameters
-Rubin survey parameters
 Cross-match parameters
 """
 
@@ -73,18 +72,24 @@ ZTF_SIDEREAL_DAY : float = 0.997_269_57   # days
 # ZTF sometimes takes back-to-back exposures separated by ~10–20 min.
 # Observations closer together than this are dropped before feature
 # extraction to avoid biasing period-finding toward very short periods.
-ZTF_MIN_CADENCE_DAYS : float = 30.0 / 1440.0   # 30 minutes in days
+#
+# 5 minutes matches the value used in the reference WDB production run
+# (--min-cadence-minutes 5.0).  scope-ml's *library* default is 30 minutes,
+# but 30 min would discard every pair of epochs closer together than half
+# an hour — which is exactly the regime short-period WDBs live in, and is
+# incompatible with searching down to min_period_days = 0.01 d (14.4 min).
+ZTF_MIN_CADENCE_DAYS : float = 5.0 / 1440.0   # 5 minutes in days
 
 # Maximum HJD for ZTF DR16.  Set when restricting to a specific data release.
 ZTF_DR16_MAX_HJD : float = 2_459_951.5
 
+# Sidereal frequency in cycles per solar day (1 / 0.99727 sidereal days).
+# ZTF observes from the ground, so the observing window repeats on the
+# sidereal day.  A true frequency f and any alias f ± n·f_sidereal are
+# indistinguishable in the periodogram.  Used to group aliases into
+# families during consensus scoring.
+SIDEREAL_FREQ_PER_DAY : float = 24.0 / 23.9345   # ≈ 1.00274 cycles/day
 
-# ---------------------------------------------------------------------------
-# Rubin survey parameters
-# ---------------------------------------------------------------------------
-
-RUBIN_BANDS    : tuple[str, ...]    = ("u", "g", "r", "i", "z", "y")
-RUBIN_BAND_MAP : dict[str, int]     = {"u": 0, "g": 1, "r": 2, "i": 3, "z": 4, "y": 5}
 
 
 # ---------------------------------------------------------------------------

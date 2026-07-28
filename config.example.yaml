@@ -2,8 +2,7 @@
 # Copy to config.yaml and edit. Only include keys that differ from defaults.
 #
 # NEVER put tokens here. Use environment variables or a .env file:
-#   WDB_ZTF_TOKEN=your_kowalski_token
-#   WDB_RUBIN_TOKEN=your_rubin_rsp_token
+#   ML4EM_ZTF_TOKEN=your_kowalski_token
 
 sources:
   ztf:
@@ -14,12 +13,6 @@ sources:
     max_timestamp_hjd: 2459951.5   # end of ZTF DR16; null = all data
     bands: [g, r, i]
     min_cadence_days: 0.020833     # 30 minutes
-
-  rubin:
-    tap_url: https://data.lsst.cloud/api/tap
-    timeout: 300
-    bands: [u, g, r, i, z, y]
-    # data_path: /path/to/local/cache   # optional, for HPC / offline
 
 features:
   min_observations: 50

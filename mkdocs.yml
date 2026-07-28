@@ -98,7 +98,7 @@ nav:
     - background/index.md
     - Astrophysics:
       - Light Curves: background/light-curves.md
-      - Surveys (ZTF & Rubin): background/surveys.md
+      - Surveys (ZTF): background/surveys.md
       - Period Finding: background/period-finding.md
       - Variability Statistics: background/variability-statistics.md
       - The dm/dt Histogram: background/dmdt.md

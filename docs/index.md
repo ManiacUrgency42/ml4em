@@ -65,7 +65,6 @@ If you are running on a single light curve to explore a result, use the benchmar
 |--------|------|--------|
 | Foundation | `types.py` `constants.py` `config/` | Complete |
 | Data | `data/ztf.py` | Complete |
-| Data | `data/rubin.py` | Stub — TAP query pending |
 | Data | `data/simulation.py` | Stub — Lcurve integration pending |
 | Features | `features/statistics.py` | Complete — periodfind BasicStats backend |
 | Features | `features/period.py` | Complete — CE/AOV/LS/MHF via periodfind |

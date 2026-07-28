@@ -36,11 +36,11 @@ What the data is, where it comes from, and what the features mean.
 
     [Light Curves →](light-curves.md)
 
--   **Surveys (ZTF & Rubin)**
+-   **Surveys (ZTF)**
 
     ---
 
-    What ZTF and Rubin are; Kowalski; TAP; source IDs; table schemas.
+    What ZTF is; Kowalski; source IDs; quality flags; data releases.
 
     [Surveys →](surveys.md)
 

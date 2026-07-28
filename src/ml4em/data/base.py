@@ -3,7 +3,7 @@ Protocol defining the data source interface.
 
 Any object that implements fetch_batch() is a valid LightCurveSource —
 no base class required.  This enables plug-and-play swapping between ZTF,
-Rubin, simulated, and future data sources without touching the feature or
+simulated, and future data sources without touching the feature or
 training layers.
 
 Usage
@@ -36,9 +36,10 @@ class LightCurveSource(Protocol):
     is automatically a LightCurveSource.
 
     Each source returns LightCurve objects — one per band per sky position.
-    For ZTF, each source _id encodes a single band.  For Rubin, one
-    objectId may have data in up to six bands.  For a single source, pass
-    a one-element list: fetch_batch([source_id]).
+    For ZTF, each source _id encodes a single band, so a multi-band source
+    is several ids; a survey that keys on one object across all its filters
+    would return several LightCurves for one id instead.  For a single
+    source, pass a one-element list: fetch_batch([source_id]).
     """
 
     def fetch_batch(self, source_ids: list[str]) -> list[LightCurve]:

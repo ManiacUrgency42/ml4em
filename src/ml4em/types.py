@@ -25,9 +25,13 @@ import numpy as np
 # Aliases used across layers
 # ---------------------------------------------------------------------------
 
-Survey     = Literal["ztf", "rubin", "simulated"]
+Survey     = Literal["ztf", "simulated"]
 Band       = Literal["u", "g", "r", "i", "z", "y"]
 Confidence = Literal["high", "medium", "low"]
+
+# Time scales a LightCurve may be expressed in.  'relative' means days since
+# an unspecified epoch, which is what simulated light curves usually produce.
+_TIME_SYSTEMS = frozenset({"hjd", "mjd", "bjd", "jd", "relative"})
 
 
 # ---------------------------------------------------------------------------
@@ -38,20 +42,19 @@ Confidence = Literal["high", "medium", "low"]
 class LightCurve:
     """Single-band photometric time series for one source.
 
-    Produced by every data source (ZTF, Rubin, simulated Lcurve).
+    Produced by every data source (ZTF, simulated Lcurve).
     All feature extractors consume this type — no raw tuples or dicts.
 
     Fields
     ------
     source_id : str
-        Unique identifier within the survey (ZTF source ID, Rubin objectId,
+        Unique identifier within the survey (ZTF source ID,
         or simulation label).
-    time : ndarray, shape (N,)
-        Observation times in Heliocentric Julian Date (HJD) for ZTF,
-        or the native time system of the originating survey.
-    mag : ndarray, shape (N,)
+    time : ndarray, shape (N,), float64
+        Observation times, in days, in the system named by `time_system`.
+    mag : ndarray, shape (N,), float64
         Apparent magnitude at each epoch.
-    mag_err : ndarray, shape (N,)
+    mag_err : ndarray, shape (N,), float64
         1-sigma magnitude uncertainty at each epoch.
     band : Band
         Photometric filter ('g', 'r', 'i', etc.).
@@ -61,6 +64,30 @@ class LightCurve:
         Right ascension in decimal degrees (J2000).
     dec : float
         Declination in decimal degrees (J2000).
+    time_system : str
+        Which time scale `time` is expressed in — 'hjd', 'mjd', 'bjd', 'jd',
+        or 'relative'.  ZTF publishes HJD (~2.46e6), but simulated light
+        curves and any future source may not.  Nothing downstream can
+        distinguish the systems from the values alone, and every feature
+        here depends only on time *differences*, so an unlabelled mix would
+        produce plausible-looking nonsense rather than an error.  Recording
+        the system makes a merge checkable instead of silent.
+
+    Guarantees
+    ----------
+    Enforced by __post_init__, so every consumer may rely on them:
+
+    - `time`, `mag` and `mag_err` are float64 and 1-D with identical length.
+      Extractors downcast to float32 for periodfind, but only after
+      zero-offsetting; a float32 array arriving here would already have lost
+      the sub-day timing that downcast is careful to preserve.
+    - `time` is sorted ascending, with `mag` and `mag_err` permuted to match.
+      Consecutive-difference statistics (von Neumann ratio, Stetson J and K)
+      and the dm/dt histogram all read neighbouring elements and are silently
+      wrong on unsorted input rather than failing.
+
+    Non-finite values are *not* removed — that is a survey loader's decision,
+    and dropping epochs here would hide it from the caller.
     """
 
     source_id : str
@@ -71,6 +98,7 @@ class LightCurve:
     survey    : Survey
     ra        : float
     dec       : float
+    time_system : str = "hjd"
 
     def __post_init__(self) -> None:
         if not (self.time.shape == self.mag.shape == self.mag_err.shape):
@@ -82,6 +110,38 @@ class LightCurve:
             raise ValueError(
                 f"Arrays must be 1-D, got shape {self.time.shape}."
             )
+        if self.time_system not in _TIME_SYSTEMS:
+            raise ValueError(
+                f"Unknown time_system {self.time_system!r}. "
+                f"Valid: {sorted(_TIME_SYSTEMS)}."
+            )
+
+        # Upcasting a float32 time array here would satisfy the float64
+        # guarantee while carrying damage that is already done: at HJD
+        # ~2.46e6 one float32 ULP is 0.25 days, so every separation under six
+        # hours has already collapsed to zero and no later step can tell.
+        # Reject it at the boundary instead, where the loader that produced
+        # it is still identifiable.
+        t_in = np.asarray(self.time)
+        if t_in.dtype == np.float32:
+            raise ValueError(
+                f"time for source {self.source_id!r} arrived as float32. "
+                "Absolute epochs need float64: one float32 ULP at HJD ~2.46e6 "
+                "is 0.25 days, so sub-day sampling is already lost. Build the "
+                "array in float64 in the loader."
+            )
+
+        self.time    = np.asarray(self.time,    dtype=np.float64)
+        self.mag     = np.asarray(self.mag,     dtype=np.float64)
+        self.mag_err = np.asarray(self.mag_err, dtype=np.float64)
+
+        # Sort once here rather than trusting every loader and every
+        # extractor to agree about it.
+        if self.time.size > 1 and not np.all(np.diff(self.time) >= 0):
+            order        = np.argsort(self.time, kind="stable")
+            self.time    = self.time[order]
+            self.mag     = self.mag[order]
+            self.mag_err = self.mag_err[order]
 
     @property
     def n_obs(self) -> int:
@@ -102,10 +162,19 @@ class FeatureVector:
     Feature groups
     --------------
     1. Light curve statistics  — 22 scalar features
-    2. Period detection        —  3 features (value, significance, algorithm)
+    2. Period detection        — the adopted period plus its significance,
+                                 the algorithm that found it, the full
+                                 per-algorithm top-N candidates, and the
+                                 cross-algorithm agreement counts
     3. Fourier decomposition   — 14 scalar features at the detected period
     4. dm/dt histogram         — (N_DM_BINS, N_DT_BINS) image; None if not computed
-    5. Gaia cross-match        —  4 features; None if no counterpart found
+    5. Gaia cross-match        —  7 features; None if no counterpart found
+
+    Group sizes other than the fixed 22 / 14 are deliberately not stated as
+    counts here: they change whenever an algorithm or a catalogue column is
+    added, and a stale count in a docstring is worse than no count.  The
+    authoritative list is dataclasses.fields(FeatureVector), and the scalar
+    subset a model consumes is ml4em.models.base.SCALAR_FIELDS.
 
     All float fields default to np.nan so that partial feature extraction is
     explicit rather than absent. The feature layer sets each field it computes;
@@ -114,6 +183,12 @@ class FeatureVector:
 
     source_id : str
     survey    : Survey
+
+    # Photometric band these features were computed from.  One FeatureVector is
+    # emitted per (source, band): a source observed in g and r yields two rows
+    # with the same source_id.  Independent per-band periods are themselves a
+    # signal — a real variable repeats across bands, an artefact usually does not.
+    band : str = ""
 
     # Sky position — copied from the primary LightCurve by the feature pipeline.
     # Required by the inference layer to populate Candidate.ra / .dec.
@@ -151,6 +226,36 @@ class FeatureVector:
     period_significance : float = np.nan   # algorithm-specific confidence score
     period_algorithm    : str   = ""       # algorithm that found this period
 
+    # Top-N candidate peaks per algorithm, ranked best-first.
+    # Keys are algorithm names ('CE', 'AOV', ...); values are lists of length
+    # PeriodConfig.top_n_periods.  Kept as dicts here because the number of
+    # algorithms is a config choice; the training layer flattens them into
+    # period_{i}_{ALGO} / significance_{i}_{ALGO} parquet columns.
+    period_top       : dict[str, list[float]] = field(default_factory=dict, repr=False)
+    significance_top : dict[str, list[float]] = field(default_factory=dict, repr=False)
+
+    # Cross-algorithm agreement.  Two peaks "agree" when they match within
+    # tolerance at a 1:1, 1:2, 2:1, 1:3 or 3:1 harmonic ratio.
+    period_n_agree_pairs  : int   = 0        # agreeing (algorithm, algorithm) pairs
+    period_n_total_pairs  : int   = 0        # pairs compared
+    period_agree_score    : float = np.nan   # n_agree_pairs / n_total_pairs
+    period_agree_strict   : float = np.nan   # same, counting only exact 1:1 matches
+    period_agree_weighted : float = np.nan   # agreement weighted by peak rank
+    period_best_agree     : float = np.nan   # period from the best agreeing pair, days
+    period_best_consensus : float = np.nan   # period agreed on by the most algorithms, days
+
+    # Sidereal alias families.  All top-N peaks from all algorithms are nodes;
+    # peaks linked by a sidereal-day alias relation are merged into families.
+    # The family spanning the most distinct algorithms wins — this survives the
+    # case where every algorithm found the same star but landed on a different
+    # alias of its period.
+    period_family_n_algos    : int   = 0        # distinct algorithms in the winning family
+    period_family_rank_score : float = np.nan   # rank-weighted strength of that family
+    period_family_n_members  : int   = 0        # peaks in the winning family
+    period_family_n_total    : int   = 0        # families found
+    period_family_best       : float = np.nan   # representative period of the family, days
+    period_family_algorithm  : str   = ""       # algorithm contributing that representative
+
     # ── 3. Fourier decomposition at `period` ─────────────────────────────────
     # Fit: mag(t) = f1_a·cos(2πt/P) + f1_b·sin(2πt/P) + higher harmonics + offset
     f1_power    : float = np.nan   # fractional chi2 reduction from the fit
@@ -179,8 +284,19 @@ class FeatureVector:
     # Used to confirm WD nature: blue BP-RP + high parallax + clean astrometry.
     # Field names and choice of astrometric quality indicator match scope-ml's
     # external_xmatch.py projection (Gaia_EDR3 catalog on Kowalski).
+    #
+    # The raw G/BP/RP magnitudes are kept alongside the derived colour.  They
+    # cost nothing extra (the cross-match already returns them) and a colour
+    # alone is not recoverable back into them, so dropping them would decide
+    # on the model's behalf that apparent brightness is irrelevant.  G with
+    # parallax gives absolute magnitude, which is what places a source on the
+    # HR diagram — the standard way to separate white dwarfs from main
+    # sequence stars of the same colour.
     gaia_parallax                  : Optional[float] = None  # mas
     gaia_parallax_error            : Optional[float] = None  # mas
+    gaia_g_mean_mag                : Optional[float] = None  # G  apparent mag
+    gaia_bp_mean_mag               : Optional[float] = None  # BP apparent mag
+    gaia_rp_mean_mag               : Optional[float] = None  # RP apparent mag
     gaia_bp_rp                     : Optional[float] = None  # BP − RP colour, mag
     gaia_astrometric_excess_noise  : Optional[float] = None  # astrometric residual noise; lower = cleaner single-source fit
 
@@ -202,9 +318,9 @@ class LabeledSample:
     feature : FeatureVector
         Fully extracted feature set for this source.
     label : int
-        Ground-truth class.
-        1 = positive (WDB candidate confirmed by Gaia WD catalog).
-        0 = negative (background / non-WDB source).
+        Ground-truth class index, assigned upstream.  Binary use is the
+        common case (0 = negative, 1 = positive), but any non-negative
+        index is valid so a multi-class head can consume the same store.
     """
 
     feature : FeatureVector

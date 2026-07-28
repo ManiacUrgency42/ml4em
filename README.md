@@ -3,7 +3,7 @@
 Machine learning for electromagnetic light curve analysis.
 
 A modular, science-case-agnostic ML pipeline library for classifying variable
-astronomical sources from photometric time-series data (ZTF, Rubin/LSST, simulated).
+astronomical sources from photometric time-series data (ZTF, simulated).
 You supply training labels and a model; the library handles data fetching, feature
 extraction, training, and inference.
 

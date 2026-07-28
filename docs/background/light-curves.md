@@ -84,8 +84,6 @@ This means the first observation was taken 59,000 days after the reference date 
 roughly the year 2020. For most coding purposes, MJD is just a float timestamp with
 "days" as the unit.
 
-Rubin uses MJD (`expMidptMJD` in `dp1.Visit`).
-
 ### HJD — Heliocentric Julian Date
 
 HJD is MJD corrected for Earth's position in its orbit around the Sun. As Earth moves
@@ -93,11 +91,12 @@ from one side of its orbit to the other (January to July), the light travel time
 distant star changes by up to ±8 minutes. HJD removes that offset so that observations
 from different times of year are comparable.
 
-ZTF data arrives in HJD.
+ZTF data arrives in HJD. Simulated light curves and any future source may use MJD
+instead.
 
 !!! note
-    In ml4em, both MJD and HJD are stored in `LightCurve.time` — the conversion is
-    handled transparently in the data layer (`ZTFSource`, `RubinSource`). The feature
+    In ml4em, both MJD and HJD are stored in `LightCurve.time` — which system a given
+    light curve uses is recorded by the data source that built it. The feature
     extractors don't know which system was used; they only see the numeric timestamps.
 
 ---
@@ -110,14 +109,16 @@ brightness only in green light.
 
 Standard band letters (from ultraviolet to near-infrared):
 
-| Band | Wavelength center | Color | Used by |
-|------|------------------|-------|---------|
-| `u`  | ~355 nm | Ultraviolet | Rubin |
-| `g`  | ~475 nm | Green | ZTF, Rubin |
-| `r`  | ~622 nm | Red | ZTF, Rubin |
-| `i`  | ~763 nm | Near-infrared | ZTF, Rubin |
-| `z`  | ~905 nm | Near-infrared | Rubin |
-| `y`  | ~990 nm | Near-infrared | Rubin |
+| Band | Wavelength center | Color |
+|------|------------------|-------|
+| `u`  | ~355 nm | Ultraviolet |
+| `g`  | ~475 nm | Green |
+| `r`  | ~622 nm | Red |
+| `i`  | ~763 nm | Near-infrared |
+| `z`  | ~905 nm | Near-infrared |
+| `y`  | ~990 nm | Near-infrared |
+
+ZTF observes in `g`, `r`, and `i`.
 
 **In ml4em:** each band is a separate `LightCurve` object. One star observed in ZTF
 g, r, and i produces **three** `LightCurve` objects. `LightCurve.band` records which
@@ -166,7 +167,7 @@ class LightCurve:
     mag       : np.ndarray     # Apparent magnitude, shape (N,)
     mag_err   : np.ndarray     # 1-sigma uncertainty, shape (N,)
     band      : Band           # "u" | "g" | "r" | "i" | "z" | "y"
-    survey    : Survey         # "ztf" | "rubin" | "simulated"
+    survey    : Survey         # "ztf" | "simulated"
     ra        : float          # Right ascension, decimal degrees (J2000)
     dec       : float          # Declination, decimal degrees (J2000)
 ```

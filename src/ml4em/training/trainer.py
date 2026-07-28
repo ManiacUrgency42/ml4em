@@ -5,24 +5,23 @@ The trainer is model-agnostic.  It accepts any object satisfying the
 MLModel Protocol and drives the training loop using TrainingConfig for
 loop hyperparameters (lr, batch_size, max_epochs, patience).
 
-Architecture-specific decisions (hidden_dims, dropout, n_estimators)
-live in the model's own config (DNNConfig, XGBoostConfig), not here.
+Architecture-specific decisions (hidden_dims, dropout, n_estimators) live in
+the model's own config, not here.
 
 Usage
 -----
-    from ml4em.models import DNNClassifier, DNNConfig
     from ml4em.training import FeatureDataset, StandardTrainer
     from ml4em.config import load_config
 
     cfg = load_config("config.yaml")
-    model = DNNClassifier(n_scalars=43, config=DNNConfig())
+    model = MyModel(...)          # any object satisfying ml4em.models.MLModel
     dataset = FeatureDataset.from_storage(cfg.storage, "labels.csv")
     train, val, _ = dataset.split(cfg.training.val_fraction,
                                   cfg.training.test_fraction,
                                   cfg.training.seed)
 
     trainer = StandardTrainer(model, cfg.training)
-    trainer.fit(train, val)
+    trainer.fit(train)
     trainer.save("models/run_v1/")
 
 Status

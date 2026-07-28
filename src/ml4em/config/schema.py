@@ -10,7 +10,7 @@ extraction, and vice versa.
 
 Layer → Config section mapping
 -------------------------------
-Data layer        →  PipelineConfig.sources.ztf / PipelineConfig.sources.rubin
+Data layer        →  PipelineConfig.sources.ztf
 Feature layer     →  PipelineConfig.features
 Training layer    →  PipelineConfig.training
 Inference layer   →  PipelineConfig.inference
@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import ClassVar, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from ml4em.constants import (
     DMDT_DM_MAX,
@@ -33,10 +33,8 @@ from ml4em.constants import (
     DMDT_DT_MIN,
     N_DM_BINS,
     N_DT_BINS,
-    RUBIN_BANDS,
     XMATCH_RADIUS_ARCSEC,
     ZTF_BANDS,
-    ZTF_DR16_MAX_HJD,
     ZTF_MIN_CADENCE_DAYS,
 )
 
@@ -49,8 +47,12 @@ class ZTFConfig(BaseModel):
     """Connection and data-selection settings for ZTF via Kowalski.
 
     The API token is NOT stored here.
-    Load it via ml4em.config.get_ztf_token() → reads WDB_ZTF_TOKEN from env.
+    Load it via ml4em.config.get_ztf_token() → reads ML4EM_ZTF_TOKEN from env.
     """
+
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
 
     host     : str = "melman.caltech.edu"
     port     : int = 443
@@ -62,8 +64,15 @@ class ZTFConfig(BaseModel):
     collection_sources : str = "ZTF_sources_84525009"
 
     # Restrict to observations before this HJD (end of a specific data release).
-    # None → use all available data.
-    max_timestamp_hjd : Optional[float] = ZTF_DR16_MAX_HJD
+    # None → use every epoch in collection_sources.
+    #
+    # Default is None rather than ZTF_DR16_MAX_HJD.  collection_sources points
+    # at a DR20 collection, so pairing it with the DR16 cutoff would give DR20
+    # sky coverage with DR16 time coverage — roughly two years of epochs
+    # silently discarded, shortening every baseline and coarsening the
+    # frequency grid.  Set this explicitly (to ZTF_DR16_MAX_HJD) only when
+    # deliberately reproducing a DR16-era result.
+    max_timestamp_hjd : Optional[float] = None
 
     # Bands to fetch. Each band produces one LightCurve per source.
     bands : list[str] = list(ZTF_BANDS)
@@ -71,6 +80,15 @@ class ZTFConfig(BaseModel):
     # Drop observations closer together than this before feature extraction.
     # Removes intra-night duplicates that bias period-finding.
     min_cadence_days : float = ZTF_MIN_CADENCE_DAYS
+
+    # Server-side minimum epoch count for source discovery (near_ids()).
+    # Kowalski indexes an `nobs` field per source, so filtering here rejects
+    # sparsely-sampled sources before any light curve data crosses the network.
+    # Without it a region query returns every source in the footprint and the
+    # pipeline pays the full transfer cost for rows it will immediately discard
+    # against FeatureConfig.min_observations.  Matches scope-ml's `minobs`
+    # filter in get_quad_ids.py.  Set to 0 to disable.
+    min_nobs : int = 50
 
     # Number of parallel Kowalski threads for batch light curve fetching.
     # scope-ml equivalent: Ncore in get_lightcurves_via_ids().
@@ -95,39 +113,10 @@ class ZTFConfig(BaseModel):
         return v
 
 
-class RubinConfig(BaseModel):
-    """Connection and table settings for Rubin DP1 via TAP.
-
-    The API token is NOT stored here.
-    Load it via ml4em.config.get_rubin_token() → reads WDB_RUBIN_TOKEN from env.
-    """
-
-    tap_url : str = "https://data.lsst.cloud/api/tap"
-    timeout : int = 300
-
-    table_object        : str = "dp1.Object"
-    table_forced_source : str = "dp1.ForcedSource"
-    table_visit         : str = "dp1.Visit"
-
-    bands    : list[str]      = list(RUBIN_BANDS)
-    band_map : dict[str, int] = {"u": 0, "g": 1, "r": 2, "i": 3, "z": 4, "y": 5}
-
-    # Optional path to local parquet cache (offline / HPC use).
-    data_path : Optional[str] = None
-
-    @field_validator("bands")
-    @classmethod
-    def _valid_bands(cls, v: list[str]) -> list[str]:
-        bad = set(v) - set(RUBIN_BANDS)
-        if bad:
-            raise ValueError(f"Unknown Rubin bands: {bad}. Valid: {set(RUBIN_BANDS)}")
-        return v
-
 
 class SourcesConfig(BaseModel):
     """All data source configurations, grouped."""
     ztf   : ZTFConfig   = Field(default_factory=ZTFConfig)
-    rubin : RubinConfig = Field(default_factory=RubinConfig)
 
 
 # ---------------------------------------------------------------------------
@@ -151,6 +140,10 @@ class PeriodConfig(BaseModel):
     MHF  Multi-Harmonic Fit
     """
 
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
+
     algorithms      : list[str]    = ["CE", "AOV", "LS", "MHF", "FPW"]
     min_period_days : float        = 0.01   # days
     max_period_days : float        = 10.0   # days
@@ -160,6 +153,14 @@ class PeriodConfig(BaseModel):
     # Frequency-spaced grid step: df = 1 / (samples_per_peak * baseline).
     # Matches scope-ml's default of 10. Higher values = finer grid = slower.
     samples_per_peak : float = 10.0
+
+    # Peak extraction granularity.  A real peak occupies many adjacent grid
+    # points, so naively taking the top_n_periods best bins returns
+    # top_n_periods samples of the *same* peak.  The periodogram is instead
+    # split into (n_chunks_multiplier * top_n_periods) contiguous chunks, the
+    # best point in each chunk is taken, and those winners are ranked.
+    # Matches scope-ml's extract_top_n_periods default of 3.
+    n_chunks_multiplier : int = 3
 
     _KNOWN: ClassVar[frozenset] = frozenset({"CE", "AOV", "LS", "FPW", "BLS", "MHF"})
 
@@ -180,6 +181,18 @@ class PeriodConfig(BaseModel):
             raise ValueError(f"Period bound must be positive, got {v}")
         return v
 
+    @model_validator(mode="after")
+    def _ordered_period_bounds(self):
+        # An inverted range yields f_min > f_max and therefore an empty
+        # frequency grid, which surfaces far downstream as "no periods found"
+        # rather than as a config error.
+        if self.min_period_days >= self.max_period_days:
+            raise ValueError(
+                f"min_period_days ({self.min_period_days}) must be < "
+                f"max_period_days ({self.max_period_days})"
+            )
+        return self
+
 
 class DmdtConfig(BaseModel):
     """dm/dt histogram parameters.
@@ -188,6 +201,10 @@ class DmdtConfig(BaseModel):
     These parameters must stay fixed within a project — changing them
     invalidates previously computed histograms and requires retraining.
     """
+
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
 
     n_dt_bins : int   = N_DT_BINS     # number of time-difference bins
     n_dm_bins : int   = N_DM_BINS     # number of magnitude-difference bins
@@ -203,6 +220,24 @@ class DmdtConfig(BaseModel):
             raise ValueError(f"Bin count must be ≥ 1, got {v}")
         return v
 
+    @model_validator(mode="after")
+    def _ordered_edges(self):
+        # The Δt axis is built with np.logspace(log10(dt_min), log10(dt_max)),
+        # so a non-positive dt_min gives -inf/nan edges and an inverted range
+        # gives descending edges.  Either way the histogram is silently
+        # meaningless, so both are rejected here.
+        if self.dt_min <= 0:
+            raise ValueError(f"dt_min must be positive (log axis), got {self.dt_min}")
+        if self.dt_min >= self.dt_max:
+            raise ValueError(
+                f"dt_min ({self.dt_min}) must be < dt_max ({self.dt_max})"
+            )
+        if self.dm_min >= self.dm_max:
+            raise ValueError(
+                f"dm_min ({self.dm_min}) must be < dm_max ({self.dm_max})"
+            )
+        return self
+
 
 class CatalogConfig(BaseModel):
     """Gaia cross-match settings for the feature layer.
@@ -211,6 +246,10 @@ class CatalogConfig(BaseModel):
     The CatalogExtractor queries Gaia EDR3 for each source's (ra, dec) and
     appends parallax / colour / astrometric_excess_noise to the FeatureVector.
     """
+
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
 
     xmatch_radius_arcsec : float = XMATCH_RADIUS_ARCSEC
     include_gaia         : bool  = True
@@ -224,6 +263,13 @@ class CatalogConfig(BaseModel):
 
 class FeatureConfig(BaseModel):
     """All feature extraction settings, grouped."""
+
+    # Overriding a field after load — cfg.features.device = "cuda" — is the
+    # normal way scripts and benchmarks reconfigure a run.  Without this,
+    # pydantic skips field validators on assignment, so the device alias
+    # normalisation below would apply to YAML but not to that assignment, and
+    # the unnormalised value would reach periodfind.set_device() and raise.
+    model_config = {"validate_assignment": True}
 
     period  : PeriodConfig  = Field(default_factory=PeriodConfig)
     dmdt    : DmdtConfig    = Field(default_factory=DmdtConfig)
@@ -239,11 +285,37 @@ class FeatureConfig(BaseModel):
 
     # periodfind device selection.
     # 'auto' tries GPU (nvidia-smi check), falls back to CPU if unavailable.
+    #
+    # periodfind.set_device() itself accepts only the literals 'cpu' and 'gpu'.
+    # 'auto' is an ml4em-level value resolved by the pipeline before the call;
+    # 'cuda' is accepted as a convenience alias and normalised to 'gpu' here so
+    # a plausible config value cannot reach set_device() and raise.
     device : str = "auto"
+
+    @field_validator("device")
+    @classmethod
+    def _valid_device(cls, v: str) -> str:
+        norm = {"auto": "auto", "cpu": "cpu", "gpu": "gpu", "cuda": "gpu"}
+        key = v.strip().lower()
+        if key not in norm:
+            raise ValueError(
+                f"Unknown device {v!r}. Valid: 'auto', 'cpu', 'gpu' (alias 'cuda')."
+            )
+        return norm[key]
 
     # Number of sources processed per periodfind call.
     # Controls GPU memory usage — lower this if you hit OOM on large light curves.
     feature_batch_size : int = 1000
+
+    @field_validator("feature_batch_size")
+    @classmethod
+    def _positive_batch(cls, v: int) -> int:
+        # Chunking uses range(0, n, batch_size): zero raises mid-run, and a
+        # negative value produces no chunks at all, so the pipeline returns
+        # nothing without reporting an error.
+        if v < 1:
+            raise ValueError(f"feature_batch_size must be ≥ 1, got {v}")
+        return v
 
     # Directory for batch checkpoint files.
     # When set, the pipeline saves a checkpoint after every feature_batch_size
@@ -287,6 +359,10 @@ class StorageConfig(BaseModel):
                       writes to predictions_dir
     """
 
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
+
     # Input files — must exist before running the pipeline.
     # Place them in ml4em/data/ locally (gitignored).
     # Override in config.yaml on MSI with absolute scratch paths.
@@ -294,7 +370,7 @@ class StorageConfig(BaseModel):
     labels_path  : str = "data/labels.csv"         # source_id,label — produced by prepare_labels.py
 
     # Output directories — created automatically by each layer
-    features_dir    : str = "features"     # parquet files, one per ZTF quad / Rubin tract
+    features_dir    : str = "features"     # parquet files, one per ZTF quadrant
     models_dir      : str = "models"       # trained model weights + feature scaler stats
     predictions_dir : str = "predictions"  # per-source WDB probability scores
 
@@ -310,6 +386,10 @@ class TrainingConfig(BaseModel):
     trains, and writes weights to StorageConfig.models_dir.
     These settings have no effect on feature extraction or inference.
     """
+
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
 
     batch_size    : int   = 64
     learning_rate : float = 3e-4
@@ -339,6 +419,10 @@ class InferenceConfig(BaseModel):
     loads the model from model_path, and writes results to
     StorageConfig.predictions_dir.
     """
+
+    # Without this, assigning an invalid value after construction sticks
+    # silently and only fails much later, inside whatever consumes it.
+    model_config = {"validate_assignment": True}
 
     # Path to the trained model weights file.
     # None means "use the latest model found in StorageConfig.models_dir".

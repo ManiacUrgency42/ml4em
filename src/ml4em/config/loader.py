@@ -11,7 +11,6 @@ Rules
    Place a .env file in the project root (gitignored):
 
        ML4EM_ZTF_TOKEN=your_kowalski_token
-       ML4EM_RUBIN_TOKEN=your_rubin_rsp_token
 
    load_config() loads this file automatically before reading config.yaml.
 
@@ -136,22 +135,3 @@ def get_ztf_token() -> str:
         )
     return token
 
-
-def get_rubin_token() -> str:
-    """Return the RSP API token for Rubin DP1 TAP access.
-
-    Reads ``ML4EM_RUBIN_TOKEN`` from the environment.
-
-    Raises
-    ------
-    EnvironmentError
-        If ``ML4EM_RUBIN_TOKEN`` is not set or is empty.
-    """
-    token = os.environ.get("ML4EM_RUBIN_TOKEN", "").strip()
-    if not token:
-        raise EnvironmentError(
-            "ML4EM_RUBIN_TOKEN is not set.\n"
-            "Add it to your .env file:\n"
-            "    ML4EM_RUBIN_TOKEN=your_rubin_rsp_token"
-        )
-    return token

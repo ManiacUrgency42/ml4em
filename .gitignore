@@ -29,3 +29,9 @@ env/
 
 # OS
 .DS_Store
+
+# SLURM job logs.  The directory itself is tracked via logs/.gitkeep because
+# sbatch opens --output before the job body runs, so a missing logs/ kills the
+# job with no log explaining why.
+logs/*
+!logs/.gitkeep

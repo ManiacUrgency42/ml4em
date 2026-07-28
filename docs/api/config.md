@@ -8,7 +8,6 @@ Pydantic configuration models and YAML loader.
         - PipelineConfig
         - SourcesConfig
         - ZTFConfig
-        - RubinConfig
         - FeatureConfig
         - PeriodConfig
         - DmdtConfig
@@ -25,6 +24,5 @@ Pydantic configuration models and YAML loader.
         - load_config
         - load_default_config
         - get_ztf_token
-        - get_rubin_token
       show_root_heading: false
       show_source: true

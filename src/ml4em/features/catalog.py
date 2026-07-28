@@ -43,6 +43,7 @@ _GAIA_PROJECTION = {
     "_id"                       : 1,
     "parallax"                  : 1,
     "parallax_error"            : 1,
+    "phot_g_mean_mag"           : 1,
     "phot_bp_mean_mag"          : 1,
     "phot_rp_mean_mag"          : 1,
     "astrometric_excess_noise"  : 1,
@@ -51,7 +52,7 @@ _GAIA_PROJECTION = {
 
 
 class CatalogExtractor:
-    """Cross-match sources against Gaia EDR3 to add 4 astrometric features.
+    """Cross-match sources against Gaia EDR3 to add 7 astrometric features.
 
     Parameters
     ----------
@@ -109,7 +110,7 @@ class CatalogExtractor:
         return best
 
     def _parse_gaia_doc(self, doc: dict) -> dict[str, Any]:
-        """Extract the 4 Gaia features from a matched Gaia EDR3 document.
+        """Extract the 7 Gaia features from a matched Gaia EDR3 document.
 
         bp_rp = phot_bp_mean_mag - phot_rp_mean_mag  (not a direct field).
         Matches scope-ml's feature naming convention.
@@ -125,6 +126,9 @@ class CatalogExtractor:
         return {
             "gaia_parallax"                  : _f("parallax"),
             "gaia_parallax_error"            : _f("parallax_error"),
+            "gaia_g_mean_mag"                : _f("phot_g_mean_mag"),
+            "gaia_bp_mean_mag"               : _f("phot_bp_mean_mag"),
+            "gaia_rp_mean_mag"               : _f("phot_rp_mean_mag"),
             "gaia_bp_rp"                     : bp_rp,
             "gaia_astrometric_excess_noise"  : _f("astrometric_excess_noise"),
         }
@@ -134,6 +138,9 @@ class CatalogExtractor:
         return {
             "gaia_parallax"                  : None,
             "gaia_parallax_error"            : None,
+            "gaia_g_mean_mag"                : None,
+            "gaia_bp_mean_mag"               : None,
+            "gaia_rp_mean_mag"               : None,
             "gaia_bp_rp"                     : None,
             "gaia_astrometric_excess_noise"  : None,
         }

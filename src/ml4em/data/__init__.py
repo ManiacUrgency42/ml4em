@@ -6,7 +6,6 @@ Any object implementing fetch_batch() is a valid source.
 Sources
 -------
 ZTFSource        Real ZTF photometry via Kowalski (penquins)
-RubinSource      Rubin DP1 photometry via TAP (pyvo) — stub
 SimulatedSource  Synthetic WDB light curves via Lcurve — stub
 
 Usage
@@ -20,13 +19,11 @@ Usage
 """
 
 from .base import LightCurveSource
-from .rubin import RubinSource
 from .simulation import SimulatedSource
 from .ztf import ZTFSource
 
 __all__ = [
     "LightCurveSource",
     "ZTFSource",
-    "RubinSource",
     "SimulatedSource",
 ]
