@@ -2037,37 +2037,39 @@
 </thead>
 <tbody>
 <tr>
+<td><code>DMDT_DT_EDGES</code></td>
+<td>27 edges, 0 → 2000 days</td>
+<td>Δt bin edges (time axis)</td>
+</tr>
+<tr>
+<td><code>DMDT_DM_EDGES</code></td>
+<td>27 edges, −8 → +8 mag</td>
+<td>Δmag bin edges (magnitude axis)</td>
+</tr>
+<tr>
 <td><code>N_DT_BINS</code></td>
 <td>26</td>
-<td>Number of Δt bins (time axis)</td>
+<td><code>len(DMDT_DT_EDGES) - 1</code></td>
 </tr>
 <tr>
 <td><code>N_DM_BINS</code></td>
 <td>26</td>
-<td>Number of Δmag bins (magnitude axis)</td>
-</tr>
-<tr>
-<td><code>DMDT_DT_MIN</code></td>
-<td>1×10⁻³ days</td>
-<td>Minimum time separation (~1.4 min)</td>
-</tr>
-<tr>
-<td><code>DMDT_DT_MAX</code></td>
-<td>1×10³ days</td>
-<td>Maximum time separation (~2.7 years)</td>
-</tr>
-<tr>
-<td><code>DMDT_DM_MIN</code></td>
-<td>−3.0 mag</td>
-<td>Minimum magnitude difference</td>
-</tr>
-<tr>
-<td><code>DMDT_DM_MAX</code></td>
-<td>+3.0 mag</td>
-<td>Maximum magnitude difference</td>
+<td><code>len(DMDT_DM_EDGES) - 1</code></td>
 </tr>
 </tbody>
 </table>
+<p>Both axes are <strong>non-uniform by design</strong> — these are the hand-tuned edges from the
+reference WDB production run, and the exact values are part of the feature
+definition. A histogram computed on different edges is not comparable to one
+computed on these, even at the same 26×26 shape. Two properties are lost under
+uniform spacing:</p>
+<ul>
+<li>Δmag spans ±8 mag so deep eclipses land in a real bin instead of saturating the
+  outermost one, while the edges tighten to 0.05 mag either side of zero to resolve
+  low-amplitude variability.</li>
+<li>Δt starts at exactly 0 and places four edges inside the first 0.12 d, resolving
+  same-night pairs instead of collapsing them into one bin.</li>
+</ul>
 <h3 id="survey-parameters">Survey parameters<a class="headerlink" href="#survey-parameters" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2119,7 +2121,7 @@
 variability pipeline would use. A 30-minute threshold discards every pair of epochs
 closer together than half an hour, which is precisely the regime short-period
 binaries live in, and it contradicts a period search that reaches down to
-<code>min_period_days = 0.01</code> d (14.4 minutes). Five minutes still removes the
+<code>min_period_days = 0.003472</code> d (5 minutes). Five minutes still removes the
 back-to-back exposures that would otherwise imprint the nightly cadence on the
 periodogram, without deleting the signal being looked for.</p>
 <hr />

@@ -1993,10 +1993,10 @@ gradient-boosted tree that operates only on the 43 scalar fields listed in
   <code>src/ml4em/config/schema.py</code></li>
 <li>Implementation: <code>src/ml4em/features/dmdt.py:DmdtExtractor</code></li>
 <li>Backend: <code>periodfind.DmDt</code> (Rust implementation, same library as everything else)</li>
-<li>Bin edges (Δt and Δmag) are pre-built once in <code>DmdtExtractor.__init__()</code> using the
-  config parameters and reused for all <code>extract()</code> calls</li>
-<li>Constants: <code>N_DT_BINS = 26</code>, <code>N_DM_BINS = 26</code>, <code>DMDT_DT_MIN/MAX</code>,
-  <code>DMDT_DM_MIN/MAX</code> in <code>src/ml4em/constants.py</code></li>
+<li>Bin edges (Δt and Δmag) are cast to <code>float32</code> once in <code>DmdtExtractor.__init__()</code>
+  and reused for all <code>extract()</code> calls</li>
+<li>Constants: <code>DMDT_DT_EDGES</code>, <code>DMDT_DM_EDGES</code> in <code>src/ml4em/constants.py</code>;
+  <code>N_DT_BINS</code> and <code>N_DM_BINS</code> (both 26) are derived from their lengths</li>
 </ul>
 
 
