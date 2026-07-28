@@ -116,7 +116,7 @@ scp data/wdb_sources.csv jin00404@login.msi.umn.edu:/scratch.global/jin00404/ml4
 cat > /scratch.global/$USER/ml4em_data/config_msi.yaml << EOF
 sources:
   ztf:
-    host: melman.caltech.edu
+    host: gloria.caltech.edu
     port: 443
     timeout: 300
     collection_sources: ZTF_sources_20240515

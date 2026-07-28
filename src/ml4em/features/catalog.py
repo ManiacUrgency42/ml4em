@@ -26,6 +26,7 @@ all Gaia fields are left at their FeatureVector defaults (None).
 
 from __future__ import annotations
 
+import logging
 import math
 from typing import Any
 
@@ -33,6 +34,8 @@ import numpy as np
 
 from ml4em.config.schema import CatalogConfig
 from ml4em.types import LightCurve
+
+log = logging.getLogger(__name__)
 
 # Kowalski collection name — same as scope-ml config.defaults.yaml
 _GAIA_CATALOG = "Gaia_EDR3"
@@ -223,13 +226,35 @@ class CatalogExtractor:
 
             # Flatten response: data -> Gaia_EDR3 -> {source_id: [matches]}
             gaia_by_sid: dict[str, list] = {}
+            n_failed = 0
             for _instance, resp_list in responses.items():
                 for resp in resp_list:
                     if resp.get("status") != "success":
+                        n_failed += 1
                         continue
                     gaia_by_sid.update(
                         resp.get("data", {}).get(_GAIA_CATALOG, {})
                     )
+
+            # A host that does not carry Gaia_EDR3 fails every query, which
+            # otherwise looks identical to "no source has a counterpart":
+            # all 7 Gaia fields come back None and the run continues.  ZTF
+            # light curves and the reference catalogs live on different
+            # Kowalski instances, so this is a configuration mistake worth
+            # surfacing rather than a real astronomical null result.
+            if n_failed:
+                log.warning(
+                    "Gaia cross-match: %d/%d queries failed. If all failed, "
+                    "the configured Kowalski host may not carry %s — ZTF "
+                    "light curves and the reference catalogs are on "
+                    "different instances.",
+                    n_failed, len(queries), _GAIA_CATALOG,
+                )
+            elif not gaia_by_sid:
+                log.warning(
+                    "Gaia cross-match returned no counterparts for any of "
+                    "%d sources; all Gaia features will be None.", len(valid),
+                )
 
             for src_idx, sid, ra, dec in valid:
                 matches = gaia_by_sid.get(sid, [])

@@ -163,7 +163,7 @@ def test_ztf_fetch_real_lightcurves():
     if not token:
         pytest.skip("ML4EM_ZTF_TOKEN not set")
 
-    # Real source ID confirmed present in ZTF_sources_20240515 on melman
+    # Real source ID confirmed present in ZTF_sources_20240515 on gloria
     source_id = "10269362000000"
 
     source = ZTFSource(ZTFConfig(), token=token)

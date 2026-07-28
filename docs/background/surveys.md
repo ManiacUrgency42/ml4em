@@ -36,7 +36,7 @@ Kowalski is organized into collections. The one used by ml4em —
 in that collection is one single-band light curve for one sky position, identified by
 an integer `_id`.
 
-ml4em talks to Kowalski via the **penquins** Python client at `melman.caltech.edu`.
+ml4em talks to Kowalski via the **penquins** Python client at `gloria.caltech.edu`.
 Kowalski is not publicly accessible — you need an account and an API token
 (`ML4EM_ZTF_TOKEN` in your `.env`).
 
@@ -46,7 +46,7 @@ Kowalski is not publicly accessible — you need an account and an API token
 flowchart TD
     A["Palomar telescope<br/>takes photos every few nights"]
     B["ZTF survey<br/>processes photos → brightness measurements"]
-    C["Kowalski database<br/>melman.caltech.edu<br/>stores all light curves, queryable by ID"]
+    C["Kowalski database<br/>gloria.caltech.edu<br/>stores all light curves, queryable by ID"]
     D["ZTFSource.fetch_batch()<br/>sends query, receives light curve data"]
     E["list[LightCurve]<br/>→ feature extraction, model, etc."]
 

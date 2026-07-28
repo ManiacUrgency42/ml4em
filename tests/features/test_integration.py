@@ -2,7 +2,7 @@
 
 Requires:
 - ML4EM_ZTF_TOKEN environment variable (Kowalski API token)
-- Network access to melman.caltech.edu
+- Network access to gloria.caltech.edu
 
 Run with:
     pytest tests/features/test_integration.py -m integration -v
@@ -18,7 +18,7 @@ What this tests
 
 Source IDs used
 ---------------
-ZTF_sources_20240515 collection on melman.  IDs are confirmed present.
+ZTF_sources_20240515 collection on gloria.  IDs are confirmed present.
 """
 
 import os

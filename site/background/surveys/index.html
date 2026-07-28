@@ -1927,14 +1927,14 @@ send it a list of source IDs and it sends back the corresponding light curves.</
 <code>ZTF_sources_20240515</code> — contains ~84 million sources from ZTF DR20. Each document
 in that collection is one single-band light curve for one sky position, identified by
 an integer <code>_id</code>.</p>
-<p>ml4em talks to Kowalski via the <strong>penquins</strong> Python client at <code>melman.caltech.edu</code>.
+<p>ml4em talks to Kowalski via the <strong>penquins</strong> Python client at <code>gloria.caltech.edu</code>.
 Kowalski is not publicly accessible — you need an account and an API token
 (<code>ML4EM_ZTF_TOKEN</code> in your <code>.env</code>).</p>
 <h3 id="how-it-fits-together">How it fits together<a class="headerlink" href="#how-it-fits-together" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
     A["Palomar telescope&lt;br/&gt;takes photos every few nights"]
     B["ZTF survey&lt;br/&gt;processes photos → brightness measurements"]
-    C["Kowalski database&lt;br/&gt;melman.caltech.edu&lt;br/&gt;stores all light curves, queryable by ID"]
+    C["Kowalski database&lt;br/&gt;gloria.caltech.edu&lt;br/&gt;stores all light curves, queryable by ID"]
     D["ZTFSource.fetch_batch()&lt;br/&gt;sends query, receives light curve data"]
     E["list[LightCurve]&lt;br/&gt;→ feature extraction, model, etc."]
 

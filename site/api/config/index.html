@@ -2047,13 +2047,7 @@ storage:
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-472">472</a></span>
-<span class="normal"><a href="#__codelineno-0-473">473</a></span>
-<span class="normal"><a href="#__codelineno-0-474">474</a></span>
-<span class="normal"><a href="#__codelineno-0-475">475</a></span>
-<span class="normal"><a href="#__codelineno-0-476">476</a></span>
-<span class="normal"><a href="#__codelineno-0-477">477</a></span>
-<span class="normal"><a href="#__codelineno-0-478">478</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-478">478</a></span>
 <span class="normal"><a href="#__codelineno-0-479">479</a></span>
 <span class="normal"><a href="#__codelineno-0-480">480</a></span>
 <span class="normal"><a href="#__codelineno-0-481">481</a></span>
@@ -2076,36 +2070,42 @@ storage:
 <span class="normal"><a href="#__codelineno-0-498">498</a></span>
 <span class="normal"><a href="#__codelineno-0-499">499</a></span>
 <span class="normal"><a href="#__codelineno-0-500">500</a></span>
-<span class="normal"><a href="#__codelineno-0-501">501</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-472" name="__codelineno-0-472"></a><span class="k">class</span><span class="w"> </span><span class="nc">PipelineConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-473" name="__codelineno-0-473"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Root configuration for the ml4em pipeline.</span>
-<a id="__codelineno-0-474" name="__codelineno-0-474"></a>
-<a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="sd">    Maps directly to the structure of config.yaml.</span>
-<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">    Calling PipelineConfig() with no arguments returns a fully valid config</span>
-<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">    using all defaults — no file required.</span>
-<a id="__codelineno-0-478" name="__codelineno-0-478"></a>
-<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">    This config is science-case agnostic.  The researcher&#39;s science case</span>
-<a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">    (WDB, AGN, RR Lyrae, etc.) is defined by the model trained and the</span>
-<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">    labels used — not by this config.</span>
-<a id="__codelineno-0-482" name="__codelineno-0-482"></a>
-<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">    Minimal config.yaml example (override only what differs):</span>
+<span class="normal"><a href="#__codelineno-0-501">501</a></span>
+<span class="normal"><a href="#__codelineno-0-502">502</a></span>
+<span class="normal"><a href="#__codelineno-0-503">503</a></span>
+<span class="normal"><a href="#__codelineno-0-504">504</a></span>
+<span class="normal"><a href="#__codelineno-0-505">505</a></span>
+<span class="normal"><a href="#__codelineno-0-506">506</a></span>
+<span class="normal"><a href="#__codelineno-0-507">507</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="k">class</span><span class="w"> </span><span class="nc">PipelineConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Root configuration for the ml4em pipeline.</span>
+<a id="__codelineno-0-480" name="__codelineno-0-480"></a>
+<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">    Maps directly to the structure of config.yaml.</span>
+<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">    Calling PipelineConfig() with no arguments returns a fully valid config</span>
+<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">    using all defaults — no file required.</span>
 <a id="__codelineno-0-484" name="__codelineno-0-484"></a>
-<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">        sources:</span>
-<a id="__codelineno-0-486" name="__codelineno-0-486"></a><span class="sd">          ztf:</span>
-<a id="__codelineno-0-487" name="__codelineno-0-487"></a><span class="sd">            collection_sources: ZTF_sources_20240515</span>
-<a id="__codelineno-0-488" name="__codelineno-0-488"></a><span class="sd">        features:</span>
-<a id="__codelineno-0-489" name="__codelineno-0-489"></a><span class="sd">          period:</span>
-<a id="__codelineno-0-490" name="__codelineno-0-490"></a><span class="sd">            algorithms: [CE, AOV, LS, MHF, FPW]</span>
-<a id="__codelineno-0-491" name="__codelineno-0-491"></a><span class="sd">            min_period_days: 0.003472</span>
-<a id="__codelineno-0-492" name="__codelineno-0-492"></a><span class="sd">            max_period_days: 10.0</span>
-<a id="__codelineno-0-493" name="__codelineno-0-493"></a><span class="sd">        storage:</span>
-<a id="__codelineno-0-494" name="__codelineno-0-494"></a><span class="sd">          features_dir: /data/ml4em/features</span>
-<a id="__codelineno-0-495" name="__codelineno-0-495"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-496" name="__codelineno-0-496"></a>
-<a id="__codelineno-0-497" name="__codelineno-0-497"></a>    <span class="n">sources</span>  <span class="p">:</span> <span class="n">SourcesConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">SourcesConfig</span><span class="p">)</span>
-<a id="__codelineno-0-498" name="__codelineno-0-498"></a>    <span class="n">features</span> <span class="p">:</span> <span class="n">FeatureConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FeatureConfig</span><span class="p">)</span>
-<a id="__codelineno-0-499" name="__codelineno-0-499"></a>    <span class="n">storage</span>  <span class="p">:</span> <span class="n">StorageConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StorageConfig</span><span class="p">)</span>
-<a id="__codelineno-0-500" name="__codelineno-0-500"></a>    <span class="n">training</span> <span class="p">:</span> <span class="n">TrainingConfig</span>  <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrainingConfig</span><span class="p">)</span>
-<a id="__codelineno-0-501" name="__codelineno-0-501"></a>    <span class="n">inference</span><span class="p">:</span> <span class="n">InferenceConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InferenceConfig</span><span class="p">)</span>
+<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">    This config is science-case agnostic.  The researcher&#39;s science case</span>
+<a id="__codelineno-0-486" name="__codelineno-0-486"></a><span class="sd">    (WDB, AGN, RR Lyrae, etc.) is defined by the model trained and the</span>
+<a id="__codelineno-0-487" name="__codelineno-0-487"></a><span class="sd">    labels used — not by this config.</span>
+<a id="__codelineno-0-488" name="__codelineno-0-488"></a>
+<a id="__codelineno-0-489" name="__codelineno-0-489"></a><span class="sd">    Minimal config.yaml example (override only what differs):</span>
+<a id="__codelineno-0-490" name="__codelineno-0-490"></a>
+<a id="__codelineno-0-491" name="__codelineno-0-491"></a><span class="sd">        sources:</span>
+<a id="__codelineno-0-492" name="__codelineno-0-492"></a><span class="sd">          ztf:</span>
+<a id="__codelineno-0-493" name="__codelineno-0-493"></a><span class="sd">            collection_sources: ZTF_sources_20240515</span>
+<a id="__codelineno-0-494" name="__codelineno-0-494"></a><span class="sd">        features:</span>
+<a id="__codelineno-0-495" name="__codelineno-0-495"></a><span class="sd">          period:</span>
+<a id="__codelineno-0-496" name="__codelineno-0-496"></a><span class="sd">            algorithms: [CE, AOV, LS, MHF, FPW]</span>
+<a id="__codelineno-0-497" name="__codelineno-0-497"></a><span class="sd">            min_period_days: 0.003472</span>
+<a id="__codelineno-0-498" name="__codelineno-0-498"></a><span class="sd">            max_period_days: 10.0</span>
+<a id="__codelineno-0-499" name="__codelineno-0-499"></a><span class="sd">        storage:</span>
+<a id="__codelineno-0-500" name="__codelineno-0-500"></a><span class="sd">          features_dir: /data/ml4em/features</span>
+<a id="__codelineno-0-501" name="__codelineno-0-501"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-502" name="__codelineno-0-502"></a>
+<a id="__codelineno-0-503" name="__codelineno-0-503"></a>    <span class="n">sources</span>  <span class="p">:</span> <span class="n">SourcesConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">SourcesConfig</span><span class="p">)</span>
+<a id="__codelineno-0-504" name="__codelineno-0-504"></a>    <span class="n">features</span> <span class="p">:</span> <span class="n">FeatureConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FeatureConfig</span><span class="p">)</span>
+<a id="__codelineno-0-505" name="__codelineno-0-505"></a>    <span class="n">storage</span>  <span class="p">:</span> <span class="n">StorageConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StorageConfig</span><span class="p">)</span>
+<a id="__codelineno-0-506" name="__codelineno-0-506"></a>    <span class="n">training</span> <span class="p">:</span> <span class="n">TrainingConfig</span>  <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrainingConfig</span><span class="p">)</span>
+<a id="__codelineno-0-507" name="__codelineno-0-507"></a>    <span class="n">inference</span><span class="p">:</span> <span class="n">InferenceConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InferenceConfig</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2158,11 +2158,11 @@ storage:
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-116">116</a></span>
-<span class="normal"><a href="#__codelineno-0-117">117</a></span>
-<span class="normal"><a href="#__codelineno-0-118">118</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-116" name="__codelineno-0-116"></a><span class="k">class</span><span class="w"> </span><span class="nc">SourcesConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;All data source configurations, grouped.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-118" name="__codelineno-0-118"></a>    <span class="n">ztf</span>   <span class="p">:</span> <span class="n">ZTFConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ZTFConfig</span><span class="p">)</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-122">122</a></span>
+<span class="normal"><a href="#__codelineno-0-123">123</a></span>
+<span class="normal"><a href="#__codelineno-0-124">124</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-122" name="__codelineno-0-122"></a><span class="k">class</span><span class="w"> </span><span class="nc">SourcesConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-123" name="__codelineno-0-123"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;All data source configurations, grouped.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-124" name="__codelineno-0-124"></a>    <span class="n">ztf</span>   <span class="p">:</span> <span class="n">ZTFConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ZTFConfig</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2287,7 +2287,13 @@ Load it via ml4em.config.get_ztf_token() → reads ML4EM_ZTF_TOKEN from env.</p>
 <span class="normal"><a href="#__codelineno-0-109">109</a></span>
 <span class="normal"><a href="#__codelineno-0-110">110</a></span>
 <span class="normal"><a href="#__codelineno-0-111">111</a></span>
-<span class="normal"><a href="#__codelineno-0-112">112</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="k">class</span><span class="w"> </span><span class="nc">ZTFConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span>
+<span class="normal"><a href="#__codelineno-0-117">117</a></span>
+<span class="normal"><a href="#__codelineno-0-118">118</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="k">class</span><span class="w"> </span><span class="nc">ZTFConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Connection and data-selection settings for ZTF via Kowalski.</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a>
 <a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    The API token is NOT stored here.</span>
@@ -2298,66 +2304,72 @@ Load it via ml4em.config.get_ztf_token() → reads ML4EM_ZTF_TOKEN from env.</p>
 <a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
 <a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 <a id="__codelineno-0-52" name="__codelineno-0-52"></a>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>    <span class="n">host</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;melman.caltech.edu&quot;</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>    <span class="n">port</span>     <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">443</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="n">protocol</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https&quot;</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="n">timeout</span>  <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span>   <span class="c1"># seconds</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="c1"># Source catalog to query for light curves.  Kowalski names these</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="c1"># ZTF_sources_&lt;YYYYMMDD&gt;.  Note the date is the catalog build date, not a</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="c1"># data-release label, and the ZTF_exposures_* collections carry *different*</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="c1"># dates — picking an exposures date here yields a collection that does not</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="c1"># exist and a silent zero-result cone search.</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="n">collection_sources</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ZTF_sources_20240515&quot;</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="c1"># Restrict to observations before this HJD (end of a specific data release).</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="c1"># None → use every epoch in collection_sources.</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="c1">#</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="c1"># Default is None rather than ZTF_DR16_MAX_HJD.  collection_sources points</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="c1"># at a DR20 collection, so pairing it with the DR16 cutoff would give DR20</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="c1"># sky coverage with DR16 time coverage — roughly two years of epochs</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="c1"># silently discarded, shortening every baseline and coarsening the</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="c1"># frequency grid.  Set this explicitly (to ZTF_DR16_MAX_HJD) only when</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="c1"># deliberately reproducing a DR16-era result.</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="n">max_timestamp_hjd</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="c1"># Bands to fetch. Each band produces one LightCurve per source.</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="n">bands</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ZTF_BANDS</span><span class="p">)</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="c1"># Drop observations closer together than this before feature extraction.</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="c1"># Removes intra-night duplicates that bias period-finding.</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="n">min_cadence_days</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ZTF_MIN_CADENCE_DAYS</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="c1"># Server-side minimum epoch count for source discovery (near_ids()).</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="c1"># Kowalski indexes an `nobs` field per source, so filtering here rejects</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="c1"># sparsely-sampled sources before any light curve data crosses the network.</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="c1"># Without it a region query returns every source in the footprint and the</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="c1"># pipeline pays the full transfer cost for rows it will immediately discard</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="c1"># against FeatureConfig.min_observations.  Matches scope-ml&#39;s `minobs`</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="c1"># filter in get_quad_ids.py.  Set to 0 to disable.</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="n">min_nobs</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="c1"># Number of parallel Kowalski threads for batch light curve fetching.</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="c1"># scope-ml equivalent: Ncore in get_lightcurves_via_ids().</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="c1"># On MSI set to 8–16; leave at 1 for local/single-source runs.</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="n">n_workers</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="c1"># ZTF programid filter: 1=public, 2=ZTF partnership, 3=Caltech private.</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="c1"># Matches scope-ml&#39;s default program_id_selector=[1,2,3].</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="n">program_ids</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="c1"># Maximum source IDs per Kowalski find query.</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>    <span class="c1"># Matches scope-ml&#39;s limit_per_query=1000 in get_lightcurves_via_ids().</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="c1"># fetch_batch() sends queries in a sliding window of this size.</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">limit_per_query</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;bands&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_bands</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="n">bad</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">ZTF_BANDS</span><span class="p">)</span>
-<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="k">if</span> <span class="n">bad</span><span class="p">:</span>
-<a id="__codelineno-0-111" name="__codelineno-0-111"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown ZTF bands: </span><span class="si">{</span><span class="n">bad</span><span class="si">}</span><span class="s2">. Valid: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">ZTF_BANDS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-112" name="__codelineno-0-112"></a>        <span class="k">return</span> <span class="n">v</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>    <span class="c1"># Kowalski is split across instances: ZTF light curves live on gloria,</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>    <span class="c1"># while melman carries the reference catalogs (Gaia_EDR3, PS1, AllWISE)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="c1"># and only 16-document ZTF_sources_* stubs.  ZTFSource opens a single</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="c1"># connection and CatalogExtractor reuses it, so this one host serves both</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="c1"># the light-curve fetch and the Gaia cross-match — see the note on</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="c1"># CatalogConfig if the cross-match comes back empty.</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="n">host</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gloria.caltech.edu&quot;</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="n">port</span>     <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">443</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="n">protocol</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https&quot;</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="n">timeout</span>  <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span>   <span class="c1"># seconds</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="c1"># Source catalog to query for light curves.  Kowalski names these</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="c1"># ZTF_sources_&lt;YYYYMMDD&gt;.  Note the date is the catalog build date, not a</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="c1"># data-release label, and the ZTF_exposures_* collections carry *different*</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="c1"># dates — picking an exposures date here yields a collection that does not</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="c1"># exist and a silent zero-result cone search.</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="n">collection_sources</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ZTF_sources_20240515&quot;</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="c1"># Restrict to observations before this HJD (end of a specific data release).</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="c1"># None → use every epoch in collection_sources.</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="c1">#</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="c1"># Default is None rather than ZTF_DR16_MAX_HJD.  collection_sources points</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="c1"># at a DR20 collection, so pairing it with the DR16 cutoff would give DR20</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="c1"># sky coverage with DR16 time coverage — roughly two years of epochs</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="c1"># silently discarded, shortening every baseline and coarsening the</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="c1"># frequency grid.  Set this explicitly (to ZTF_DR16_MAX_HJD) only when</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="c1"># deliberately reproducing a DR16-era result.</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="n">max_timestamp_hjd</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="c1"># Bands to fetch. Each band produces one LightCurve per source.</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="n">bands</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ZTF_BANDS</span><span class="p">)</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="c1"># Drop observations closer together than this before feature extraction.</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="c1"># Removes intra-night duplicates that bias period-finding.</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="n">min_cadence_days</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ZTF_MIN_CADENCE_DAYS</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="c1"># Server-side minimum epoch count for source discovery (near_ids()).</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="c1"># Kowalski indexes an `nobs` field per source, so filtering here rejects</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="c1"># sparsely-sampled sources before any light curve data crosses the network.</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="c1"># Without it a region query returns every source in the footprint and the</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="c1"># pipeline pays the full transfer cost for rows it will immediately discard</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="c1"># against FeatureConfig.min_observations.  Matches scope-ml&#39;s `minobs`</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="c1"># filter in get_quad_ids.py.  Set to 0 to disable.</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="n">min_nobs</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="c1"># Number of parallel Kowalski threads for batch light curve fetching.</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="c1"># scope-ml equivalent: Ncore in get_lightcurves_via_ids().</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="c1"># On MSI set to 8–16; leave at 1 for local/single-source runs.</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="n">n_workers</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="c1"># ZTF programid filter: 1=public, 2=ZTF partnership, 3=Caltech private.</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="c1"># Matches scope-ml&#39;s default program_id_selector=[1,2,3].</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="n">program_ids</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="c1"># Maximum source IDs per Kowalski find query.</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="c1"># Matches scope-ml&#39;s limit_per_query=1000 in get_lightcurves_via_ids().</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>    <span class="c1"># fetch_batch() sends queries in a sliding window of this size.</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="n">limit_per_query</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;bands&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_bands</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>        <span class="n">bad</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">ZTF_BANDS</span><span class="p">)</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a>        <span class="k">if</span> <span class="n">bad</span><span class="p">:</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown ZTF bands: </span><span class="si">{</span><span class="n">bad</span><span class="si">}</span><span class="s2">. Valid: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">ZTF_BANDS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a>        <span class="k">return</span> <span class="n">v</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2410,13 +2422,7 @@ Load it via ml4em.config.get_ztf_token() → reads ML4EM_ZTF_TOKEN from env.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-273">273</a></span>
-<span class="normal"><a href="#__codelineno-0-274">274</a></span>
-<span class="normal"><a href="#__codelineno-0-275">275</a></span>
-<span class="normal"><a href="#__codelineno-0-276">276</a></span>
-<span class="normal"><a href="#__codelineno-0-277">277</a></span>
-<span class="normal"><a href="#__codelineno-0-278">278</a></span>
-<span class="normal"><a href="#__codelineno-0-279">279</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-279">279</a></span>
 <span class="normal"><a href="#__codelineno-0-280">280</a></span>
 <span class="normal"><a href="#__codelineno-0-281">281</a></span>
 <span class="normal"><a href="#__codelineno-0-282">282</a></span>
@@ -2472,69 +2478,75 @@ Load it via ml4em.config.get_ztf_token() → reads ML4EM_ZTF_TOKEN from env.</p>
 <span class="normal"><a href="#__codelineno-0-332">332</a></span>
 <span class="normal"><a href="#__codelineno-0-333">333</a></span>
 <span class="normal"><a href="#__codelineno-0-334">334</a></span>
-<span class="normal"><a href="#__codelineno-0-335">335</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;All feature extraction settings, grouped.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a>    <span class="c1"># Overriding a field after load — cfg.features.device = &quot;cuda&quot; — is the</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="c1"># normal way scripts and benchmarks reconfigure a run.  Without this,</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a>    <span class="c1"># pydantic skips field validators on assignment, so the device alias</span>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a>    <span class="c1"># normalisation below would apply to YAML but not to that assignment, and</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a>    <span class="c1"># the unnormalised value would reach periodfind.set_device() and raise.</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a>    <span class="n">period</span>  <span class="p">:</span> <span class="n">PeriodConfig</span>  <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PeriodConfig</span><span class="p">)</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="n">dmdt</span>    <span class="p">:</span> <span class="n">DmdtConfig</span>    <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">DmdtConfig</span><span class="p">)</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a>    <span class="n">catalog</span> <span class="p">:</span> <span class="n">CatalogConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">CatalogConfig</span><span class="p">)</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span class="c1"># Minimum observations required to attempt feature extraction.</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a>    <span class="c1"># Sources below this are skipped and logged as insufficient data.</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a>    <span class="n">min_observations</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a>    <span class="c1"># Whether to compute the dm/dt histogram.</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a>    <span class="c1"># Set False for XGBoost-only runs to skip the O(N²) pairwise computation.</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a>    <span class="n">compute_dmdt</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>    <span class="c1"># periodfind device selection.</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>    <span class="c1"># &#39;auto&#39; tries GPU (nvidia-smi check), falls back to CPU if unavailable.</span>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="c1">#</span>
-<a id="__codelineno-0-298" name="__codelineno-0-298"></a>    <span class="c1"># periodfind.set_device() itself accepts only the literals &#39;cpu&#39; and &#39;gpu&#39;.</span>
-<a id="__codelineno-0-299" name="__codelineno-0-299"></a>    <span class="c1"># &#39;auto&#39; is an ml4em-level value resolved by the pipeline before the call;</span>
-<a id="__codelineno-0-300" name="__codelineno-0-300"></a>    <span class="c1"># &#39;cuda&#39; is accepted as a convenience alias and normalised to &#39;gpu&#39; here so</span>
-<a id="__codelineno-0-301" name="__codelineno-0-301"></a>    <span class="c1"># a plausible config value cannot reach set_device() and raise.</span>
-<a id="__codelineno-0-302" name="__codelineno-0-302"></a>    <span class="n">device</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
-<a id="__codelineno-0-303" name="__codelineno-0-303"></a>
-<a id="__codelineno-0-304" name="__codelineno-0-304"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-306" name="__codelineno-0-306"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_device</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-307" name="__codelineno-0-307"></a>        <span class="n">norm</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;auto&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">:</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu&quot;</span><span class="p">}</span>
-<a id="__codelineno-0-308" name="__codelineno-0-308"></a>        <span class="n">key</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-<a id="__codelineno-0-309" name="__codelineno-0-309"></a>        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">norm</span><span class="p">:</span>
-<a id="__codelineno-0-310" name="__codelineno-0-310"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<a id="__codelineno-0-311" name="__codelineno-0-311"></a>                <span class="sa">f</span><span class="s2">&quot;Unknown device </span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2">. Valid: &#39;auto&#39;, &#39;cpu&#39;, &#39;gpu&#39; (alias &#39;cuda&#39;).&quot;</span>
-<a id="__codelineno-0-312" name="__codelineno-0-312"></a>            <span class="p">)</span>
-<a id="__codelineno-0-313" name="__codelineno-0-313"></a>        <span class="k">return</span> <span class="n">norm</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-<a id="__codelineno-0-314" name="__codelineno-0-314"></a>
-<a id="__codelineno-0-315" name="__codelineno-0-315"></a>    <span class="c1"># Number of sources processed per periodfind call.</span>
-<a id="__codelineno-0-316" name="__codelineno-0-316"></a>    <span class="c1"># Controls GPU memory usage — lower this if you hit OOM on large light curves.</span>
-<a id="__codelineno-0-317" name="__codelineno-0-317"></a>    <span class="n">feature_batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
-<a id="__codelineno-0-318" name="__codelineno-0-318"></a>
-<a id="__codelineno-0-319" name="__codelineno-0-319"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;feature_batch_size&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-320" name="__codelineno-0-320"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-321" name="__codelineno-0-321"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_positive_batch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-322" name="__codelineno-0-322"></a>        <span class="c1"># Chunking uses range(0, n, batch_size): zero raises mid-run, and a</span>
-<a id="__codelineno-0-323" name="__codelineno-0-323"></a>        <span class="c1"># negative value produces no chunks at all, so the pipeline returns</span>
-<a id="__codelineno-0-324" name="__codelineno-0-324"></a>        <span class="c1"># nothing without reporting an error.</span>
-<a id="__codelineno-0-325" name="__codelineno-0-325"></a>        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-326" name="__codelineno-0-326"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;feature_batch_size must be ≥ 1, got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-327" name="__codelineno-0-327"></a>        <span class="k">return</span> <span class="n">v</span>
-<a id="__codelineno-0-328" name="__codelineno-0-328"></a>
-<a id="__codelineno-0-329" name="__codelineno-0-329"></a>    <span class="c1"># Directory for batch checkpoint files.</span>
-<a id="__codelineno-0-330" name="__codelineno-0-330"></a>    <span class="c1"># When set, the pipeline saves a checkpoint after every feature_batch_size</span>
-<a id="__codelineno-0-331" name="__codelineno-0-331"></a>    <span class="c1"># chunk so that a crashed MSI job can resume from where it left off.</span>
-<a id="__codelineno-0-332" name="__codelineno-0-332"></a>    <span class="c1"># None → no checkpointing (default for local/single-source runs).</span>
-<a id="__codelineno-0-333" name="__codelineno-0-333"></a>    <span class="c1"># Example MSI path: /scratch.global/jin00404/ml4em/checkpoints/run_001</span>
-<a id="__codelineno-0-334" name="__codelineno-0-334"></a>    <span class="c1"># Each run should use a unique subdirectory to avoid cross-run conflicts.</span>
-<a id="__codelineno-0-335" name="__codelineno-0-335"></a>    <span class="n">checkpoint_dir</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="normal"><a href="#__codelineno-0-335">335</a></span>
+<span class="normal"><a href="#__codelineno-0-336">336</a></span>
+<span class="normal"><a href="#__codelineno-0-337">337</a></span>
+<span class="normal"><a href="#__codelineno-0-338">338</a></span>
+<span class="normal"><a href="#__codelineno-0-339">339</a></span>
+<span class="normal"><a href="#__codelineno-0-340">340</a></span>
+<span class="normal"><a href="#__codelineno-0-341">341</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-279" name="__codelineno-0-279"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;All feature extraction settings, grouped.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>    <span class="c1"># Overriding a field after load — cfg.features.device = &quot;cuda&quot; — is the</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>    <span class="c1"># normal way scripts and benchmarks reconfigure a run.  Without this,</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="c1"># pydantic skips field validators on assignment, so the device alias</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a>    <span class="c1"># normalisation below would apply to YAML but not to that assignment, and</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a>    <span class="c1"># the unnormalised value would reach periodfind.set_device() and raise.</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a>    <span class="n">period</span>  <span class="p">:</span> <span class="n">PeriodConfig</span>  <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PeriodConfig</span><span class="p">)</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a>    <span class="n">dmdt</span>    <span class="p">:</span> <span class="n">DmdtConfig</span>    <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">DmdtConfig</span><span class="p">)</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>    <span class="n">catalog</span> <span class="p">:</span> <span class="n">CatalogConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">CatalogConfig</span><span class="p">)</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a>    <span class="c1"># Minimum observations required to attempt feature extraction.</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>    <span class="c1"># Sources below this are skipped and logged as insufficient data.</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>    <span class="n">min_observations</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="c1"># Whether to compute the dm/dt histogram.</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>    <span class="c1"># Set False for XGBoost-only runs to skip the O(N²) pairwise computation.</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>    <span class="n">compute_dmdt</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>    <span class="c1"># periodfind device selection.</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>    <span class="c1"># &#39;auto&#39; tries GPU (nvidia-smi check), falls back to CPU if unavailable.</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="c1">#</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a>    <span class="c1"># periodfind.set_device() itself accepts only the literals &#39;cpu&#39; and &#39;gpu&#39;.</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="c1"># &#39;auto&#39; is an ml4em-level value resolved by the pipeline before the call;</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>    <span class="c1"># &#39;cuda&#39; is accepted as a convenience alias and normalised to &#39;gpu&#39; here so</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>    <span class="c1"># a plausible config value cannot reach set_device() and raise.</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>    <span class="n">device</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_device</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a>        <span class="n">norm</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;auto&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">:</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu&quot;</span><span class="p">}</span>
+<a id="__codelineno-0-314" name="__codelineno-0-314"></a>        <span class="n">key</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<a id="__codelineno-0-315" name="__codelineno-0-315"></a>        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">norm</span><span class="p">:</span>
+<a id="__codelineno-0-316" name="__codelineno-0-316"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="__codelineno-0-317" name="__codelineno-0-317"></a>                <span class="sa">f</span><span class="s2">&quot;Unknown device </span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2">. Valid: &#39;auto&#39;, &#39;cpu&#39;, &#39;gpu&#39; (alias &#39;cuda&#39;).&quot;</span>
+<a id="__codelineno-0-318" name="__codelineno-0-318"></a>            <span class="p">)</span>
+<a id="__codelineno-0-319" name="__codelineno-0-319"></a>        <span class="k">return</span> <span class="n">norm</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+<a id="__codelineno-0-320" name="__codelineno-0-320"></a>
+<a id="__codelineno-0-321" name="__codelineno-0-321"></a>    <span class="c1"># Number of sources processed per periodfind call.</span>
+<a id="__codelineno-0-322" name="__codelineno-0-322"></a>    <span class="c1"># Controls GPU memory usage — lower this if you hit OOM on large light curves.</span>
+<a id="__codelineno-0-323" name="__codelineno-0-323"></a>    <span class="n">feature_batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
+<a id="__codelineno-0-324" name="__codelineno-0-324"></a>
+<a id="__codelineno-0-325" name="__codelineno-0-325"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;feature_batch_size&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-326" name="__codelineno-0-326"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-327" name="__codelineno-0-327"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_positive_batch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-328" name="__codelineno-0-328"></a>        <span class="c1"># Chunking uses range(0, n, batch_size): zero raises mid-run, and a</span>
+<a id="__codelineno-0-329" name="__codelineno-0-329"></a>        <span class="c1"># negative value produces no chunks at all, so the pipeline returns</span>
+<a id="__codelineno-0-330" name="__codelineno-0-330"></a>        <span class="c1"># nothing without reporting an error.</span>
+<a id="__codelineno-0-331" name="__codelineno-0-331"></a>        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-332" name="__codelineno-0-332"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;feature_batch_size must be ≥ 1, got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-333" name="__codelineno-0-333"></a>        <span class="k">return</span> <span class="n">v</span>
+<a id="__codelineno-0-334" name="__codelineno-0-334"></a>
+<a id="__codelineno-0-335" name="__codelineno-0-335"></a>    <span class="c1"># Directory for batch checkpoint files.</span>
+<a id="__codelineno-0-336" name="__codelineno-0-336"></a>    <span class="c1"># When set, the pipeline saves a checkpoint after every feature_batch_size</span>
+<a id="__codelineno-0-337" name="__codelineno-0-337"></a>    <span class="c1"># chunk so that a crashed MSI job can resume from where it left off.</span>
+<a id="__codelineno-0-338" name="__codelineno-0-338"></a>    <span class="c1"># None → no checkpointing (default for local/single-source runs).</span>
+<a id="__codelineno-0-339" name="__codelineno-0-339"></a>    <span class="c1"># Example MSI path: /scratch.global/jin00404/ml4em/checkpoints/run_001</span>
+<a id="__codelineno-0-340" name="__codelineno-0-340"></a>    <span class="c1"># Each run should use a unique subdirectory to avoid cross-run conflicts.</span>
+<a id="__codelineno-0-341" name="__codelineno-0-341"></a>    <span class="n">checkpoint_dir</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2597,13 +2609,7 @@ MHF  Multi-Harmonic Fit</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-125">125</a></span>
-<span class="normal"><a href="#__codelineno-0-126">126</a></span>
-<span class="normal"><a href="#__codelineno-0-127">127</a></span>
-<span class="normal"><a href="#__codelineno-0-128">128</a></span>
-<span class="normal"><a href="#__codelineno-0-129">129</a></span>
-<span class="normal"><a href="#__codelineno-0-130">130</a></span>
-<span class="normal"><a href="#__codelineno-0-131">131</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-131">131</a></span>
 <span class="normal"><a href="#__codelineno-0-132">132</a></span>
 <span class="normal"><a href="#__codelineno-0-133">133</a></span>
 <span class="normal"><a href="#__codelineno-0-134">134</a></span>
@@ -2671,81 +2677,87 @@ MHF  Multi-Harmonic Fit</p>
 <span class="normal"><a href="#__codelineno-0-196">196</a></span>
 <span class="normal"><a href="#__codelineno-0-197">197</a></span>
 <span class="normal"><a href="#__codelineno-0-198">198</a></span>
-<span class="normal"><a href="#__codelineno-0-199">199</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-125" name="__codelineno-0-125"></a><span class="k">class</span><span class="w"> </span><span class="nc">PeriodConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-126" name="__codelineno-0-126"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Period-finding settings.</span>
-<a id="__codelineno-0-127" name="__codelineno-0-127"></a>
-<a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="sd">    Multiple algorithms run in parallel; results are compared via</span>
-<a id="__codelineno-0-129" name="__codelineno-0-129"></a><span class="sd">    agreement scoring.  The period with the highest cross-algorithm</span>
-<a id="__codelineno-0-130" name="__codelineno-0-130"></a><span class="sd">    agreement is used for Fourier decomposition.</span>
-<a id="__codelineno-0-131" name="__codelineno-0-131"></a>
-<a id="__codelineno-0-132" name="__codelineno-0-132"></a><span class="sd">    Algorithm identifiers (subset of periodfind library)</span>
-<a id="__codelineno-0-133" name="__codelineno-0-133"></a><span class="sd">    ----------------------------------------------------</span>
-<a id="__codelineno-0-134" name="__codelineno-0-134"></a><span class="sd">    CE   Conditional Entropy</span>
-<a id="__codelineno-0-135" name="__codelineno-0-135"></a><span class="sd">    AOV  Analysis of Variance</span>
-<a id="__codelineno-0-136" name="__codelineno-0-136"></a><span class="sd">    LS   Lomb-Scargle</span>
-<a id="__codelineno-0-137" name="__codelineno-0-137"></a><span class="sd">    BLS  Box Least Squares  (best for flat-bottomed eclipses)</span>
-<a id="__codelineno-0-138" name="__codelineno-0-138"></a><span class="sd">    FPW  Fast Period-finding with Wavelets</span>
-<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">    MHF  Multi-Harmonic Fit</span>
-<a id="__codelineno-0-140" name="__codelineno-0-140"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-141" name="__codelineno-0-141"></a>
-<a id="__codelineno-0-142" name="__codelineno-0-142"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-143" name="__codelineno-0-143"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-144" name="__codelineno-0-144"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-145" name="__codelineno-0-145"></a>
-<a id="__codelineno-0-146" name="__codelineno-0-146"></a>    <span class="n">algorithms</span>      <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>    <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CE&quot;</span><span class="p">,</span> <span class="s2">&quot;AOV&quot;</span><span class="p">,</span> <span class="s2">&quot;LS&quot;</span><span class="p">,</span> <span class="s2">&quot;MHF&quot;</span><span class="p">,</span> <span class="s2">&quot;FPW&quot;</span><span class="p">]</span>
+<span class="normal"><a href="#__codelineno-0-199">199</a></span>
+<span class="normal"><a href="#__codelineno-0-200">200</a></span>
+<span class="normal"><a href="#__codelineno-0-201">201</a></span>
+<span class="normal"><a href="#__codelineno-0-202">202</a></span>
+<span class="normal"><a href="#__codelineno-0-203">203</a></span>
+<span class="normal"><a href="#__codelineno-0-204">204</a></span>
+<span class="normal"><a href="#__codelineno-0-205">205</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-131" name="__codelineno-0-131"></a><span class="k">class</span><span class="w"> </span><span class="nc">PeriodConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-132" name="__codelineno-0-132"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Period-finding settings.</span>
+<a id="__codelineno-0-133" name="__codelineno-0-133"></a>
+<a id="__codelineno-0-134" name="__codelineno-0-134"></a><span class="sd">    Multiple algorithms run in parallel; results are compared via</span>
+<a id="__codelineno-0-135" name="__codelineno-0-135"></a><span class="sd">    agreement scoring.  The period with the highest cross-algorithm</span>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a><span class="sd">    agreement is used for Fourier decomposition.</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a><span class="sd">    Algorithm identifiers (subset of periodfind library)</span>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">    ----------------------------------------------------</span>
+<a id="__codelineno-0-140" name="__codelineno-0-140"></a><span class="sd">    CE   Conditional Entropy</span>
+<a id="__codelineno-0-141" name="__codelineno-0-141"></a><span class="sd">    AOV  Analysis of Variance</span>
+<a id="__codelineno-0-142" name="__codelineno-0-142"></a><span class="sd">    LS   Lomb-Scargle</span>
+<a id="__codelineno-0-143" name="__codelineno-0-143"></a><span class="sd">    BLS  Box Least Squares  (best for flat-bottomed eclipses)</span>
+<a id="__codelineno-0-144" name="__codelineno-0-144"></a><span class="sd">    FPW  Fast Period-finding with Wavelets</span>
+<a id="__codelineno-0-145" name="__codelineno-0-145"></a><span class="sd">    MHF  Multi-Harmonic Fit</span>
+<a id="__codelineno-0-146" name="__codelineno-0-146"></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-147" name="__codelineno-0-147"></a>
-<a id="__codelineno-0-148" name="__codelineno-0-148"></a>    <span class="c1"># 5 minutes — equivalent to the reference WDB production run&#39;s</span>
-<a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="c1"># --max-freq 288 (cycles/day).  A coarser floor silently excludes the</span>
-<a id="__codelineno-0-150" name="__codelineno-0-150"></a>    <span class="c1"># ultracompact and AM CVn systems that are the point of the pipeline,</span>
-<a id="__codelineno-0-151" name="__codelineno-0-151"></a>    <span class="c1"># and would contradict the 5-minute ZTF_MIN_CADENCE_DAYS filter that</span>
-<a id="__codelineno-0-152" name="__codelineno-0-152"></a>    <span class="c1"># exists precisely to preserve those epoch pairs.</span>
-<a id="__codelineno-0-153" name="__codelineno-0-153"></a>    <span class="n">min_period_days</span> <span class="p">:</span> <span class="nb">float</span>        <span class="o">=</span> <span class="mf">0.003472</span>   <span class="c1"># days (5 min)</span>
-<a id="__codelineno-0-154" name="__codelineno-0-154"></a>    <span class="n">max_period_days</span> <span class="p">:</span> <span class="nb">float</span>        <span class="o">=</span> <span class="mf">10.0</span>       <span class="c1"># days</span>
-<a id="__codelineno-0-155" name="__codelineno-0-155"></a>    <span class="n">top_n_periods</span>   <span class="p">:</span> <span class="nb">int</span>          <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># periods retained per algorithm before scoring (matches scope-ml)</span>
-<a id="__codelineno-0-156" name="__codelineno-0-156"></a>    <span class="n">min_agreement</span>   <span class="p">:</span> <span class="nb">int</span>          <span class="o">=</span> <span class="mi">2</span>      <span class="c1"># algorithms that must agree → &quot;high confidence&quot;</span>
-<a id="__codelineno-0-157" name="__codelineno-0-157"></a>
-<a id="__codelineno-0-158" name="__codelineno-0-158"></a>    <span class="c1"># Frequency-spaced grid step: df = 1 / (samples_per_peak * baseline).</span>
-<a id="__codelineno-0-159" name="__codelineno-0-159"></a>    <span class="c1"># Matches scope-ml&#39;s default of 10. Higher values = finer grid = slower.</span>
-<a id="__codelineno-0-160" name="__codelineno-0-160"></a>    <span class="n">samples_per_peak</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
-<a id="__codelineno-0-161" name="__codelineno-0-161"></a>
-<a id="__codelineno-0-162" name="__codelineno-0-162"></a>    <span class="c1"># Peak extraction granularity.  A real peak occupies many adjacent grid</span>
-<a id="__codelineno-0-163" name="__codelineno-0-163"></a>    <span class="c1"># points, so naively taking the top_n_periods best bins returns</span>
-<a id="__codelineno-0-164" name="__codelineno-0-164"></a>    <span class="c1"># top_n_periods samples of the *same* peak.  The periodogram is instead</span>
-<a id="__codelineno-0-165" name="__codelineno-0-165"></a>    <span class="c1"># split into (n_chunks_multiplier * top_n_periods) contiguous chunks, the</span>
-<a id="__codelineno-0-166" name="__codelineno-0-166"></a>    <span class="c1"># best point in each chunk is taken, and those winners are ranked.</span>
-<a id="__codelineno-0-167" name="__codelineno-0-167"></a>    <span class="c1"># Matches scope-ml&#39;s extract_top_n_periods default of 3.</span>
-<a id="__codelineno-0-168" name="__codelineno-0-168"></a>    <span class="n">n_chunks_multiplier</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
-<a id="__codelineno-0-169" name="__codelineno-0-169"></a>
-<a id="__codelineno-0-170" name="__codelineno-0-170"></a>    <span class="n">_KNOWN</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;CE&quot;</span><span class="p">,</span> <span class="s2">&quot;AOV&quot;</span><span class="p">,</span> <span class="s2">&quot;LS&quot;</span><span class="p">,</span> <span class="s2">&quot;FPW&quot;</span><span class="p">,</span> <span class="s2">&quot;BLS&quot;</span><span class="p">,</span> <span class="s2">&quot;MHF&quot;</span><span class="p">})</span>
-<a id="__codelineno-0-171" name="__codelineno-0-171"></a>
-<a id="__codelineno-0-172" name="__codelineno-0-172"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;algorithms&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-173" name="__codelineno-0-173"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-174" name="__codelineno-0-174"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_algorithms</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<a id="__codelineno-0-175" name="__codelineno-0-175"></a>        <span class="c1"># Strip legacy &quot;E&quot; prefix (ECE → CE) for scope-ml backward compat</span>
-<a id="__codelineno-0-176" name="__codelineno-0-176"></a>        <span class="n">normed</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_KNOWN</span> <span class="k">else</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
-<a id="__codelineno-0-177" name="__codelineno-0-177"></a>        <span class="n">bad</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">normed</span><span class="p">)</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_KNOWN</span>
-<a id="__codelineno-0-178" name="__codelineno-0-178"></a>        <span class="k">if</span> <span class="n">bad</span><span class="p">:</span>
-<a id="__codelineno-0-179" name="__codelineno-0-179"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown algorithms: </span><span class="si">{</span><span class="n">bad</span><span class="si">}</span><span class="s2">. Known: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_KNOWN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-180" name="__codelineno-0-180"></a>        <span class="k">return</span> <span class="n">normed</span>
-<a id="__codelineno-0-181" name="__codelineno-0-181"></a>
-<a id="__codelineno-0-182" name="__codelineno-0-182"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;min_period_days&quot;</span><span class="p">,</span> <span class="s2">&quot;max_period_days&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-183" name="__codelineno-0-183"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-184" name="__codelineno-0-184"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_positive</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-185" name="__codelineno-0-185"></a>        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-186" name="__codelineno-0-186"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Period bound must be positive, got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-187" name="__codelineno-0-187"></a>        <span class="k">return</span> <span class="n">v</span>
-<a id="__codelineno-0-188" name="__codelineno-0-188"></a>
-<a id="__codelineno-0-189" name="__codelineno-0-189"></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-190" name="__codelineno-0-190"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_ordered_period_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-0-191" name="__codelineno-0-191"></a>        <span class="c1"># An inverted range yields f_min &gt; f_max and therefore an empty</span>
-<a id="__codelineno-0-192" name="__codelineno-0-192"></a>        <span class="c1"># frequency grid, which surfaces far downstream as &quot;no periods found&quot;</span>
-<a id="__codelineno-0-193" name="__codelineno-0-193"></a>        <span class="c1"># rather than as a config error.</span>
-<a id="__codelineno-0-194" name="__codelineno-0-194"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_period_days</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_period_days</span><span class="p">:</span>
-<a id="__codelineno-0-195" name="__codelineno-0-195"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<a id="__codelineno-0-196" name="__codelineno-0-196"></a>                <span class="sa">f</span><span class="s2">&quot;min_period_days (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_period_days</span><span class="si">}</span><span class="s2">) must be &lt; &quot;</span>
-<a id="__codelineno-0-197" name="__codelineno-0-197"></a>                <span class="sa">f</span><span class="s2">&quot;max_period_days (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_period_days</span><span class="si">}</span><span class="s2">)&quot;</span>
-<a id="__codelineno-0-198" name="__codelineno-0-198"></a>            <span class="p">)</span>
-<a id="__codelineno-0-199" name="__codelineno-0-199"></a>        <span class="k">return</span> <span class="bp">self</span>
+<a id="__codelineno-0-148" name="__codelineno-0-148"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-150" name="__codelineno-0-150"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-151" name="__codelineno-0-151"></a>
+<a id="__codelineno-0-152" name="__codelineno-0-152"></a>    <span class="n">algorithms</span>      <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>    <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CE&quot;</span><span class="p">,</span> <span class="s2">&quot;AOV&quot;</span><span class="p">,</span> <span class="s2">&quot;LS&quot;</span><span class="p">,</span> <span class="s2">&quot;MHF&quot;</span><span class="p">,</span> <span class="s2">&quot;FPW&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-153" name="__codelineno-0-153"></a>
+<a id="__codelineno-0-154" name="__codelineno-0-154"></a>    <span class="c1"># 5 minutes — equivalent to the reference WDB production run&#39;s</span>
+<a id="__codelineno-0-155" name="__codelineno-0-155"></a>    <span class="c1"># --max-freq 288 (cycles/day).  A coarser floor silently excludes the</span>
+<a id="__codelineno-0-156" name="__codelineno-0-156"></a>    <span class="c1"># ultracompact and AM CVn systems that are the point of the pipeline,</span>
+<a id="__codelineno-0-157" name="__codelineno-0-157"></a>    <span class="c1"># and would contradict the 5-minute ZTF_MIN_CADENCE_DAYS filter that</span>
+<a id="__codelineno-0-158" name="__codelineno-0-158"></a>    <span class="c1"># exists precisely to preserve those epoch pairs.</span>
+<a id="__codelineno-0-159" name="__codelineno-0-159"></a>    <span class="n">min_period_days</span> <span class="p">:</span> <span class="nb">float</span>        <span class="o">=</span> <span class="mf">0.003472</span>   <span class="c1"># days (5 min)</span>
+<a id="__codelineno-0-160" name="__codelineno-0-160"></a>    <span class="n">max_period_days</span> <span class="p">:</span> <span class="nb">float</span>        <span class="o">=</span> <span class="mf">10.0</span>       <span class="c1"># days</span>
+<a id="__codelineno-0-161" name="__codelineno-0-161"></a>    <span class="n">top_n_periods</span>   <span class="p">:</span> <span class="nb">int</span>          <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># periods retained per algorithm before scoring (matches scope-ml)</span>
+<a id="__codelineno-0-162" name="__codelineno-0-162"></a>    <span class="n">min_agreement</span>   <span class="p">:</span> <span class="nb">int</span>          <span class="o">=</span> <span class="mi">2</span>      <span class="c1"># algorithms that must agree → &quot;high confidence&quot;</span>
+<a id="__codelineno-0-163" name="__codelineno-0-163"></a>
+<a id="__codelineno-0-164" name="__codelineno-0-164"></a>    <span class="c1"># Frequency-spaced grid step: df = 1 / (samples_per_peak * baseline).</span>
+<a id="__codelineno-0-165" name="__codelineno-0-165"></a>    <span class="c1"># Matches scope-ml&#39;s default of 10. Higher values = finer grid = slower.</span>
+<a id="__codelineno-0-166" name="__codelineno-0-166"></a>    <span class="n">samples_per_peak</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
+<a id="__codelineno-0-167" name="__codelineno-0-167"></a>
+<a id="__codelineno-0-168" name="__codelineno-0-168"></a>    <span class="c1"># Peak extraction granularity.  A real peak occupies many adjacent grid</span>
+<a id="__codelineno-0-169" name="__codelineno-0-169"></a>    <span class="c1"># points, so naively taking the top_n_periods best bins returns</span>
+<a id="__codelineno-0-170" name="__codelineno-0-170"></a>    <span class="c1"># top_n_periods samples of the *same* peak.  The periodogram is instead</span>
+<a id="__codelineno-0-171" name="__codelineno-0-171"></a>    <span class="c1"># split into (n_chunks_multiplier * top_n_periods) contiguous chunks, the</span>
+<a id="__codelineno-0-172" name="__codelineno-0-172"></a>    <span class="c1"># best point in each chunk is taken, and those winners are ranked.</span>
+<a id="__codelineno-0-173" name="__codelineno-0-173"></a>    <span class="c1"># Matches scope-ml&#39;s extract_top_n_periods default of 3.</span>
+<a id="__codelineno-0-174" name="__codelineno-0-174"></a>    <span class="n">n_chunks_multiplier</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+<a id="__codelineno-0-175" name="__codelineno-0-175"></a>
+<a id="__codelineno-0-176" name="__codelineno-0-176"></a>    <span class="n">_KNOWN</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;CE&quot;</span><span class="p">,</span> <span class="s2">&quot;AOV&quot;</span><span class="p">,</span> <span class="s2">&quot;LS&quot;</span><span class="p">,</span> <span class="s2">&quot;FPW&quot;</span><span class="p">,</span> <span class="s2">&quot;BLS&quot;</span><span class="p">,</span> <span class="s2">&quot;MHF&quot;</span><span class="p">})</span>
+<a id="__codelineno-0-177" name="__codelineno-0-177"></a>
+<a id="__codelineno-0-178" name="__codelineno-0-178"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;algorithms&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-179" name="__codelineno-0-179"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-180" name="__codelineno-0-180"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_algorithms</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-0-181" name="__codelineno-0-181"></a>        <span class="c1"># Strip legacy &quot;E&quot; prefix (ECE → CE) for scope-ml backward compat</span>
+<a id="__codelineno-0-182" name="__codelineno-0-182"></a>        <span class="n">normed</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_KNOWN</span> <span class="k">else</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+<a id="__codelineno-0-183" name="__codelineno-0-183"></a>        <span class="n">bad</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">normed</span><span class="p">)</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_KNOWN</span>
+<a id="__codelineno-0-184" name="__codelineno-0-184"></a>        <span class="k">if</span> <span class="n">bad</span><span class="p">:</span>
+<a id="__codelineno-0-185" name="__codelineno-0-185"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown algorithms: </span><span class="si">{</span><span class="n">bad</span><span class="si">}</span><span class="s2">. Known: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_KNOWN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-186" name="__codelineno-0-186"></a>        <span class="k">return</span> <span class="n">normed</span>
+<a id="__codelineno-0-187" name="__codelineno-0-187"></a>
+<a id="__codelineno-0-188" name="__codelineno-0-188"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;min_period_days&quot;</span><span class="p">,</span> <span class="s2">&quot;max_period_days&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-189" name="__codelineno-0-189"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-190" name="__codelineno-0-190"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_positive</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-191" name="__codelineno-0-191"></a>        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-192" name="__codelineno-0-192"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Period bound must be positive, got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-193" name="__codelineno-0-193"></a>        <span class="k">return</span> <span class="n">v</span>
+<a id="__codelineno-0-194" name="__codelineno-0-194"></a>
+<a id="__codelineno-0-195" name="__codelineno-0-195"></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-196" name="__codelineno-0-196"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_ordered_period_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-0-197" name="__codelineno-0-197"></a>        <span class="c1"># An inverted range yields f_min &gt; f_max and therefore an empty</span>
+<a id="__codelineno-0-198" name="__codelineno-0-198"></a>        <span class="c1"># frequency grid, which surfaces far downstream as &quot;no periods found&quot;</span>
+<a id="__codelineno-0-199" name="__codelineno-0-199"></a>        <span class="c1"># rather than as a config error.</span>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_period_days</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_period_days</span><span class="p">:</span>
+<a id="__codelineno-0-201" name="__codelineno-0-201"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="__codelineno-0-202" name="__codelineno-0-202"></a>                <span class="sa">f</span><span class="s2">&quot;min_period_days (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_period_days</span><span class="si">}</span><span class="s2">) must be &lt; &quot;</span>
+<a id="__codelineno-0-203" name="__codelineno-0-203"></a>                <span class="sa">f</span><span class="s2">&quot;max_period_days (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_period_days</span><span class="si">}</span><span class="s2">)&quot;</span>
+<a id="__codelineno-0-204" name="__codelineno-0-204"></a>            <span class="p">)</span>
+<a id="__codelineno-0-205" name="__codelineno-0-205"></a>        <span class="k">return</span> <span class="bp">self</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2801,13 +2813,7 @@ invalidates previously computed histograms and requires retraining.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-202">202</a></span>
-<span class="normal"><a href="#__codelineno-0-203">203</a></span>
-<span class="normal"><a href="#__codelineno-0-204">204</a></span>
-<span class="normal"><a href="#__codelineno-0-205">205</a></span>
-<span class="normal"><a href="#__codelineno-0-206">206</a></span>
-<span class="normal"><a href="#__codelineno-0-207">207</a></span>
-<span class="normal"><a href="#__codelineno-0-208">208</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-208">208</a></span>
 <span class="normal"><a href="#__codelineno-0-209">209</a></span>
 <span class="normal"><a href="#__codelineno-0-210">210</a></span>
 <span class="normal"><a href="#__codelineno-0-211">211</a></span>
@@ -2847,53 +2853,59 @@ invalidates previously computed histograms and requires retraining.</p>
 <span class="normal"><a href="#__codelineno-0-245">245</a></span>
 <span class="normal"><a href="#__codelineno-0-246">246</a></span>
 <span class="normal"><a href="#__codelineno-0-247">247</a></span>
-<span class="normal"><a href="#__codelineno-0-248">248</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-202" name="__codelineno-0-202"></a><span class="k">class</span><span class="w"> </span><span class="nc">DmdtConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-203" name="__codelineno-0-203"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;dm/dt histogram parameters.</span>
-<a id="__codelineno-0-204" name="__codelineno-0-204"></a>
-<a id="__codelineno-0-205" name="__codelineno-0-205"></a><span class="sd">    The histogram is a 2-D image (Δt vs. Δmag) over all observation pairs.</span>
-<a id="__codelineno-0-206" name="__codelineno-0-206"></a><span class="sd">    These parameters must stay fixed within a project — changing them</span>
-<a id="__codelineno-0-207" name="__codelineno-0-207"></a><span class="sd">    invalidates previously computed histograms and requires retraining.</span>
-<a id="__codelineno-0-208" name="__codelineno-0-208"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-209" name="__codelineno-0-209"></a>
-<a id="__codelineno-0-210" name="__codelineno-0-210"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-211" name="__codelineno-0-211"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-212" name="__codelineno-0-212"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-213" name="__codelineno-0-213"></a>
-<a id="__codelineno-0-214" name="__codelineno-0-214"></a>    <span class="c1"># Explicit edges rather than a min/max pair: the reference binning is</span>
-<a id="__codelineno-0-215" name="__codelineno-0-215"></a>    <span class="c1"># non-uniform and deliberately so (see constants.py), and no min/max plus</span>
-<a id="__codelineno-0-216" name="__codelineno-0-216"></a>    <span class="c1"># spacing law reproduces it.  Bin counts follow from the edge lists.</span>
-<a id="__codelineno-0-217" name="__codelineno-0-217"></a>    <span class="n">dt_edges</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DMDT_DT_EDGES</span><span class="p">)</span>   <span class="c1"># Δt   bin edges (days)</span>
-<a id="__codelineno-0-218" name="__codelineno-0-218"></a>    <span class="n">dm_edges</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DMDT_DM_EDGES</span><span class="p">)</span>   <span class="c1"># Δmag bin edges (mag)</span>
+<span class="normal"><a href="#__codelineno-0-248">248</a></span>
+<span class="normal"><a href="#__codelineno-0-249">249</a></span>
+<span class="normal"><a href="#__codelineno-0-250">250</a></span>
+<span class="normal"><a href="#__codelineno-0-251">251</a></span>
+<span class="normal"><a href="#__codelineno-0-252">252</a></span>
+<span class="normal"><a href="#__codelineno-0-253">253</a></span>
+<span class="normal"><a href="#__codelineno-0-254">254</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-208" name="__codelineno-0-208"></a><span class="k">class</span><span class="w"> </span><span class="nc">DmdtConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;dm/dt histogram parameters.</span>
+<a id="__codelineno-0-210" name="__codelineno-0-210"></a>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a><span class="sd">    The histogram is a 2-D image (Δt vs. Δmag) over all observation pairs.</span>
+<a id="__codelineno-0-212" name="__codelineno-0-212"></a><span class="sd">    These parameters must stay fixed within a project — changing them</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a><span class="sd">    invalidates previously computed histograms and requires retraining.</span>
+<a id="__codelineno-0-214" name="__codelineno-0-214"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-215" name="__codelineno-0-215"></a>
+<a id="__codelineno-0-216" name="__codelineno-0-216"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-217" name="__codelineno-0-217"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-218" name="__codelineno-0-218"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 <a id="__codelineno-0-219" name="__codelineno-0-219"></a>
-<a id="__codelineno-0-220" name="__codelineno-0-220"></a>    <span class="nd">@property</span>
-<a id="__codelineno-0-221" name="__codelineno-0-221"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dt_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-222" name="__codelineno-0-222"></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-<a id="__codelineno-0-223" name="__codelineno-0-223"></a>
-<a id="__codelineno-0-224" name="__codelineno-0-224"></a>    <span class="nd">@property</span>
-<a id="__codelineno-0-225" name="__codelineno-0-225"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dm_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-226" name="__codelineno-0-226"></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dm_edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-<a id="__codelineno-0-227" name="__codelineno-0-227"></a>
-<a id="__codelineno-0-228" name="__codelineno-0-228"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;dt_edges&quot;</span><span class="p">,</span> <span class="s2">&quot;dm_edges&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-229" name="__codelineno-0-229"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-230" name="__codelineno-0-230"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_strictly_increasing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<a id="__codelineno-0-231" name="__codelineno-0-231"></a>        <span class="c1"># periodfind.DmDt assigns a pair to a bin by searching these edges.</span>
-<a id="__codelineno-0-232" name="__codelineno-0-232"></a>        <span class="c1"># Duplicated or descending edges produce zero-width or negative-width</span>
-<a id="__codelineno-0-233" name="__codelineno-0-233"></a>        <span class="c1"># bins, which the kernel does not reject — it silently returns a</span>
-<a id="__codelineno-0-234" name="__codelineno-0-234"></a>        <span class="c1"># histogram that cannot be interpreted.  Reject here instead.</span>
-<a id="__codelineno-0-235" name="__codelineno-0-235"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-<a id="__codelineno-0-236" name="__codelineno-0-236"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Need at least 2 edges to form a bin, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-237" name="__codelineno-0-237"></a>        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
-<a id="__codelineno-0-238" name="__codelineno-0-238"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bin edges must be strictly increasing, got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-239" name="__codelineno-0-239"></a>        <span class="k">return</span> <span class="n">v</span>
-<a id="__codelineno-0-240" name="__codelineno-0-240"></a>
-<a id="__codelineno-0-241" name="__codelineno-0-241"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;dt_edges&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-242" name="__codelineno-0-242"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-243" name="__codelineno-0-243"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_non_negative_dt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<a id="__codelineno-0-244" name="__codelineno-0-244"></a>        <span class="c1"># Δt is |tⱼ − tᵢ| over ordered pairs, so it is never negative and a</span>
-<a id="__codelineno-0-245" name="__codelineno-0-245"></a>        <span class="c1"># negative edge would define a bin nothing can ever fall into.</span>
-<a id="__codelineno-0-246" name="__codelineno-0-246"></a>        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-247" name="__codelineno-0-247"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt_edges must start at ≥ 0, got </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-248" name="__codelineno-0-248"></a>        <span class="k">return</span> <span class="n">v</span>
+<a id="__codelineno-0-220" name="__codelineno-0-220"></a>    <span class="c1"># Explicit edges rather than a min/max pair: the reference binning is</span>
+<a id="__codelineno-0-221" name="__codelineno-0-221"></a>    <span class="c1"># non-uniform and deliberately so (see constants.py), and no min/max plus</span>
+<a id="__codelineno-0-222" name="__codelineno-0-222"></a>    <span class="c1"># spacing law reproduces it.  Bin counts follow from the edge lists.</span>
+<a id="__codelineno-0-223" name="__codelineno-0-223"></a>    <span class="n">dt_edges</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DMDT_DT_EDGES</span><span class="p">)</span>   <span class="c1"># Δt   bin edges (days)</span>
+<a id="__codelineno-0-224" name="__codelineno-0-224"></a>    <span class="n">dm_edges</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DMDT_DM_EDGES</span><span class="p">)</span>   <span class="c1"># Δmag bin edges (mag)</span>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a>
+<a id="__codelineno-0-226" name="__codelineno-0-226"></a>    <span class="nd">@property</span>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dt_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-228" name="__codelineno-0-228"></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<a id="__codelineno-0-229" name="__codelineno-0-229"></a>
+<a id="__codelineno-0-230" name="__codelineno-0-230"></a>    <span class="nd">@property</span>
+<a id="__codelineno-0-231" name="__codelineno-0-231"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dm_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-232" name="__codelineno-0-232"></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dm_edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<a id="__codelineno-0-233" name="__codelineno-0-233"></a>
+<a id="__codelineno-0-234" name="__codelineno-0-234"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;dt_edges&quot;</span><span class="p">,</span> <span class="s2">&quot;dm_edges&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-235" name="__codelineno-0-235"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-236" name="__codelineno-0-236"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_strictly_increasing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-0-237" name="__codelineno-0-237"></a>        <span class="c1"># periodfind.DmDt assigns a pair to a bin by searching these edges.</span>
+<a id="__codelineno-0-238" name="__codelineno-0-238"></a>        <span class="c1"># Duplicated or descending edges produce zero-width or negative-width</span>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a>        <span class="c1"># bins, which the kernel does not reject — it silently returns a</span>
+<a id="__codelineno-0-240" name="__codelineno-0-240"></a>        <span class="c1"># histogram that cannot be interpreted.  Reject here instead.</span>
+<a id="__codelineno-0-241" name="__codelineno-0-241"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-242" name="__codelineno-0-242"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Need at least 2 edges to form a bin, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-243" name="__codelineno-0-243"></a>        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bin edges must be strictly increasing, got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-245" name="__codelineno-0-245"></a>        <span class="k">return</span> <span class="n">v</span>
+<a id="__codelineno-0-246" name="__codelineno-0-246"></a>
+<a id="__codelineno-0-247" name="__codelineno-0-247"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;dt_edges&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-248" name="__codelineno-0-248"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_non_negative_dt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-0-250" name="__codelineno-0-250"></a>        <span class="c1"># Δt is |tⱼ − tᵢ| over ordered pairs, so it is never negative and a</span>
+<a id="__codelineno-0-251" name="__codelineno-0-251"></a>        <span class="c1"># negative edge would define a bin nothing can ever fall into.</span>
+<a id="__codelineno-0-252" name="__codelineno-0-252"></a>        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-253" name="__codelineno-0-253"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt_edges must start at ≥ 0, got </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a>        <span class="k">return</span> <span class="n">v</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2949,13 +2961,7 @@ appends parallax / colour / astrometric_excess_noise to the FeatureVector.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-251">251</a></span>
-<span class="normal"><a href="#__codelineno-0-252">252</a></span>
-<span class="normal"><a href="#__codelineno-0-253">253</a></span>
-<span class="normal"><a href="#__codelineno-0-254">254</a></span>
-<span class="normal"><a href="#__codelineno-0-255">255</a></span>
-<span class="normal"><a href="#__codelineno-0-256">256</a></span>
-<span class="normal"><a href="#__codelineno-0-257">257</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-257">257</a></span>
 <span class="normal"><a href="#__codelineno-0-258">258</a></span>
 <span class="normal"><a href="#__codelineno-0-259">259</a></span>
 <span class="normal"><a href="#__codelineno-0-260">260</a></span>
@@ -2968,26 +2974,32 @@ appends parallax / colour / astrometric_excess_noise to the FeatureVector.</p>
 <span class="normal"><a href="#__codelineno-0-267">267</a></span>
 <span class="normal"><a href="#__codelineno-0-268">268</a></span>
 <span class="normal"><a href="#__codelineno-0-269">269</a></span>
-<span class="normal"><a href="#__codelineno-0-270">270</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-251" name="__codelineno-0-251"></a><span class="k">class</span><span class="w"> </span><span class="nc">CatalogConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-252" name="__codelineno-0-252"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Gaia cross-match settings for the feature layer.</span>
-<a id="__codelineno-0-253" name="__codelineno-0-253"></a>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="sd">    Note: Gaia is NOT a light curve source — it is a feature enrichment step.</span>
-<a id="__codelineno-0-255" name="__codelineno-0-255"></a><span class="sd">    The CatalogExtractor queries Gaia EDR3 for each source&#39;s (ra, dec) and</span>
-<a id="__codelineno-0-256" name="__codelineno-0-256"></a><span class="sd">    appends parallax / colour / astrometric_excess_noise to the FeatureVector.</span>
-<a id="__codelineno-0-257" name="__codelineno-0-257"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-260" name="__codelineno-0-260"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-262" name="__codelineno-0-262"></a>
-<a id="__codelineno-0-263" name="__codelineno-0-263"></a>    <span class="n">xmatch_radius_arcsec</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">XMATCH_RADIUS_ARCSEC</span>
-<a id="__codelineno-0-264" name="__codelineno-0-264"></a>    <span class="n">include_gaia</span>         <span class="p">:</span> <span class="nb">bool</span>  <span class="o">=</span> <span class="kc">True</span>
-<a id="__codelineno-0-265" name="__codelineno-0-265"></a>
-<a id="__codelineno-0-266" name="__codelineno-0-266"></a>    <span class="c1"># Number of parallel Kowalski threads for batch Gaia cone searches.</span>
-<a id="__codelineno-0-267" name="__codelineno-0-267"></a>    <span class="c1"># scope-ml equivalent: Ncore in external_xmatch.py (splits radec dict</span>
-<a id="__codelineno-0-268" name="__codelineno-0-268"></a>    <span class="c1"># across threads for simultaneous cone_search queries).</span>
-<a id="__codelineno-0-269" name="__codelineno-0-269"></a>    <span class="c1"># On MSI set to 8–16; leave at 1 for local/single-source runs.</span>
-<a id="__codelineno-0-270" name="__codelineno-0-270"></a>    <span class="n">n_workers</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="normal"><a href="#__codelineno-0-270">270</a></span>
+<span class="normal"><a href="#__codelineno-0-271">271</a></span>
+<span class="normal"><a href="#__codelineno-0-272">272</a></span>
+<span class="normal"><a href="#__codelineno-0-273">273</a></span>
+<span class="normal"><a href="#__codelineno-0-274">274</a></span>
+<span class="normal"><a href="#__codelineno-0-275">275</a></span>
+<span class="normal"><a href="#__codelineno-0-276">276</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-257" name="__codelineno-0-257"></a><span class="k">class</span><span class="w"> </span><span class="nc">CatalogConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Gaia cross-match settings for the feature layer.</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a>
+<a id="__codelineno-0-260" name="__codelineno-0-260"></a><span class="sd">    Note: Gaia is NOT a light curve source — it is a feature enrichment step.</span>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="sd">    The CatalogExtractor queries Gaia EDR3 for each source&#39;s (ra, dec) and</span>
+<a id="__codelineno-0-262" name="__codelineno-0-262"></a><span class="sd">    appends parallax / colour / astrometric_excess_noise to the FeatureVector.</span>
+<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-264" name="__codelineno-0-264"></a>
+<a id="__codelineno-0-265" name="__codelineno-0-265"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-266" name="__codelineno-0-266"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-267" name="__codelineno-0-267"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-268" name="__codelineno-0-268"></a>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a>    <span class="n">xmatch_radius_arcsec</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">XMATCH_RADIUS_ARCSEC</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a>    <span class="n">include_gaia</span>         <span class="p">:</span> <span class="nb">bool</span>  <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a>    <span class="c1"># Number of parallel Kowalski threads for batch Gaia cone searches.</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a>    <span class="c1"># scope-ml equivalent: Ncore in external_xmatch.py (splits radec dict</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a>    <span class="c1"># across threads for simultaneous cone_search queries).</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>    <span class="c1"># On MSI set to 8–16; leave at 1 for local/single-source runs.</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a>    <span class="n">n_workers</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3062,13 +3074,7 @@ Inference layer→  reads from features_dir + models_dir,
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-342">342</a></span>
-<span class="normal"><a href="#__codelineno-0-343">343</a></span>
-<span class="normal"><a href="#__codelineno-0-344">344</a></span>
-<span class="normal"><a href="#__codelineno-0-345">345</a></span>
-<span class="normal"><a href="#__codelineno-0-346">346</a></span>
-<span class="normal"><a href="#__codelineno-0-347">347</a></span>
-<span class="normal"><a href="#__codelineno-0-348">348</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-348">348</a></span>
 <span class="normal"><a href="#__codelineno-0-349">349</a></span>
 <span class="normal"><a href="#__codelineno-0-350">350</a></span>
 <span class="normal"><a href="#__codelineno-0-351">351</a></span>
@@ -3107,52 +3113,58 @@ Inference layer→  reads from features_dir + models_dir,
 <span class="normal"><a href="#__codelineno-0-384">384</a></span>
 <span class="normal"><a href="#__codelineno-0-385">385</a></span>
 <span class="normal"><a href="#__codelineno-0-386">386</a></span>
-<span class="normal"><a href="#__codelineno-0-387">387</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-342" name="__codelineno-0-342"></a><span class="k">class</span><span class="w"> </span><span class="nc">StorageConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-343" name="__codelineno-0-343"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;File paths used by every layer to read and write pipeline artifacts.</span>
-<a id="__codelineno-0-344" name="__codelineno-0-344"></a>
-<a id="__codelineno-0-345" name="__codelineno-0-345"></a><span class="sd">    All paths are strings to avoid platform-specific Path issues in YAML.</span>
-<a id="__codelineno-0-346" name="__codelineno-0-346"></a><span class="sd">    Relative paths are resolved from the working directory at runtime.</span>
-<a id="__codelineno-0-347" name="__codelineno-0-347"></a><span class="sd">    On MSI, override these in config.yaml with absolute scratch paths.</span>
-<a id="__codelineno-0-348" name="__codelineno-0-348"></a>
-<a id="__codelineno-0-349" name="__codelineno-0-349"></a><span class="sd">    Input files (read by the pipeline)</span>
-<a id="__codelineno-0-350" name="__codelineno-0-350"></a><span class="sd">    ------------------------------------</span>
-<a id="__codelineno-0-351" name="__codelineno-0-351"></a><span class="sd">    catalog_path  CSV of known target sources with ra, dec columns.</span>
-<a id="__codelineno-0-352" name="__codelineno-0-352"></a><span class="sd">                  Resolved to ZTF source IDs via ZTFLoader.fetch_by_coords()</span>
-<a id="__codelineno-0-353" name="__codelineno-0-353"></a><span class="sd">                  cone search when building labels_path.</span>
-<a id="__codelineno-0-354" name="__codelineno-0-354"></a><span class="sd">                  Local default:  data/wdb_sources.csv</span>
-<a id="__codelineno-0-355" name="__codelineno-0-355"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/wdb_sources.csv</span>
-<a id="__codelineno-0-356" name="__codelineno-0-356"></a>
-<a id="__codelineno-0-357" name="__codelineno-0-357"></a><span class="sd">    labels_path   CSV supplied by the user; ml4em never generates labels.</span>
-<a id="__codelineno-0-358" name="__codelineno-0-358"></a><span class="sd">                  Columns: source_id (ZTF integer _id as str), label</span>
-<a id="__codelineno-0-359" name="__codelineno-0-359"></a><span class="sd">                  (non-negative class index; 0/1 for the binary case).</span>
-<a id="__codelineno-0-360" name="__codelineno-0-360"></a><span class="sd">                  Read by FeatureDataset._load_labels() during training.</span>
-<a id="__codelineno-0-361" name="__codelineno-0-361"></a><span class="sd">                  See docs/guides/label-preparation.md for the cross-match</span>
-<a id="__codelineno-0-362" name="__codelineno-0-362"></a><span class="sd">                  workflow that produces it.</span>
-<a id="__codelineno-0-363" name="__codelineno-0-363"></a><span class="sd">                  Local default:  data/labels.csv</span>
-<a id="__codelineno-0-364" name="__codelineno-0-364"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv</span>
-<a id="__codelineno-0-365" name="__codelineno-0-365"></a>
-<a id="__codelineno-0-366" name="__codelineno-0-366"></a><span class="sd">    Output directories (written by the pipeline)</span>
-<a id="__codelineno-0-367" name="__codelineno-0-367"></a><span class="sd">    ---------------------------------------------</span>
-<a id="__codelineno-0-368" name="__codelineno-0-368"></a><span class="sd">    Feature layer  →  writes to features_dir</span>
-<a id="__codelineno-0-369" name="__codelineno-0-369"></a><span class="sd">    Training layer →  reads from features_dir, writes to models_dir</span>
-<a id="__codelineno-0-370" name="__codelineno-0-370"></a><span class="sd">    Inference layer→  reads from features_dir + models_dir,</span>
-<a id="__codelineno-0-371" name="__codelineno-0-371"></a><span class="sd">                      writes to predictions_dir</span>
-<a id="__codelineno-0-372" name="__codelineno-0-372"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-373" name="__codelineno-0-373"></a>
-<a id="__codelineno-0-374" name="__codelineno-0-374"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-375" name="__codelineno-0-375"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-376" name="__codelineno-0-376"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-377" name="__codelineno-0-377"></a>
-<a id="__codelineno-0-378" name="__codelineno-0-378"></a>    <span class="c1"># Input files — must exist before running the pipeline.</span>
-<a id="__codelineno-0-379" name="__codelineno-0-379"></a>    <span class="c1"># Place them in ml4em/data/ locally (gitignored).</span>
-<a id="__codelineno-0-380" name="__codelineno-0-380"></a>    <span class="c1"># Override in config.yaml on MSI with absolute scratch paths.</span>
-<a id="__codelineno-0-381" name="__codelineno-0-381"></a>    <span class="n">catalog_path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/wdb_sources.csv&quot;</span>   <span class="c1"># ra/dec catalog of target sources</span>
-<a id="__codelineno-0-382" name="__codelineno-0-382"></a>    <span class="n">labels_path</span>  <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/labels.csv&quot;</span>         <span class="c1"># source_id,label — supplied by the user</span>
+<span class="normal"><a href="#__codelineno-0-387">387</a></span>
+<span class="normal"><a href="#__codelineno-0-388">388</a></span>
+<span class="normal"><a href="#__codelineno-0-389">389</a></span>
+<span class="normal"><a href="#__codelineno-0-390">390</a></span>
+<span class="normal"><a href="#__codelineno-0-391">391</a></span>
+<span class="normal"><a href="#__codelineno-0-392">392</a></span>
+<span class="normal"><a href="#__codelineno-0-393">393</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-348" name="__codelineno-0-348"></a><span class="k">class</span><span class="w"> </span><span class="nc">StorageConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-349" name="__codelineno-0-349"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;File paths used by every layer to read and write pipeline artifacts.</span>
+<a id="__codelineno-0-350" name="__codelineno-0-350"></a>
+<a id="__codelineno-0-351" name="__codelineno-0-351"></a><span class="sd">    All paths are strings to avoid platform-specific Path issues in YAML.</span>
+<a id="__codelineno-0-352" name="__codelineno-0-352"></a><span class="sd">    Relative paths are resolved from the working directory at runtime.</span>
+<a id="__codelineno-0-353" name="__codelineno-0-353"></a><span class="sd">    On MSI, override these in config.yaml with absolute scratch paths.</span>
+<a id="__codelineno-0-354" name="__codelineno-0-354"></a>
+<a id="__codelineno-0-355" name="__codelineno-0-355"></a><span class="sd">    Input files (read by the pipeline)</span>
+<a id="__codelineno-0-356" name="__codelineno-0-356"></a><span class="sd">    ------------------------------------</span>
+<a id="__codelineno-0-357" name="__codelineno-0-357"></a><span class="sd">    catalog_path  CSV of known target sources with ra, dec columns.</span>
+<a id="__codelineno-0-358" name="__codelineno-0-358"></a><span class="sd">                  Resolved to ZTF source IDs via ZTFLoader.fetch_by_coords()</span>
+<a id="__codelineno-0-359" name="__codelineno-0-359"></a><span class="sd">                  cone search when building labels_path.</span>
+<a id="__codelineno-0-360" name="__codelineno-0-360"></a><span class="sd">                  Local default:  data/wdb_sources.csv</span>
+<a id="__codelineno-0-361" name="__codelineno-0-361"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/wdb_sources.csv</span>
+<a id="__codelineno-0-362" name="__codelineno-0-362"></a>
+<a id="__codelineno-0-363" name="__codelineno-0-363"></a><span class="sd">    labels_path   CSV supplied by the user; ml4em never generates labels.</span>
+<a id="__codelineno-0-364" name="__codelineno-0-364"></a><span class="sd">                  Columns: source_id (ZTF integer _id as str), label</span>
+<a id="__codelineno-0-365" name="__codelineno-0-365"></a><span class="sd">                  (non-negative class index; 0/1 for the binary case).</span>
+<a id="__codelineno-0-366" name="__codelineno-0-366"></a><span class="sd">                  Read by FeatureDataset._load_labels() during training.</span>
+<a id="__codelineno-0-367" name="__codelineno-0-367"></a><span class="sd">                  See docs/guides/label-preparation.md for the cross-match</span>
+<a id="__codelineno-0-368" name="__codelineno-0-368"></a><span class="sd">                  workflow that produces it.</span>
+<a id="__codelineno-0-369" name="__codelineno-0-369"></a><span class="sd">                  Local default:  data/labels.csv</span>
+<a id="__codelineno-0-370" name="__codelineno-0-370"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv</span>
+<a id="__codelineno-0-371" name="__codelineno-0-371"></a>
+<a id="__codelineno-0-372" name="__codelineno-0-372"></a><span class="sd">    Output directories (written by the pipeline)</span>
+<a id="__codelineno-0-373" name="__codelineno-0-373"></a><span class="sd">    ---------------------------------------------</span>
+<a id="__codelineno-0-374" name="__codelineno-0-374"></a><span class="sd">    Feature layer  →  writes to features_dir</span>
+<a id="__codelineno-0-375" name="__codelineno-0-375"></a><span class="sd">    Training layer →  reads from features_dir, writes to models_dir</span>
+<a id="__codelineno-0-376" name="__codelineno-0-376"></a><span class="sd">    Inference layer→  reads from features_dir + models_dir,</span>
+<a id="__codelineno-0-377" name="__codelineno-0-377"></a><span class="sd">                      writes to predictions_dir</span>
+<a id="__codelineno-0-378" name="__codelineno-0-378"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-379" name="__codelineno-0-379"></a>
+<a id="__codelineno-0-380" name="__codelineno-0-380"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-381" name="__codelineno-0-381"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-382" name="__codelineno-0-382"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 <a id="__codelineno-0-383" name="__codelineno-0-383"></a>
-<a id="__codelineno-0-384" name="__codelineno-0-384"></a>    <span class="c1"># Output directories — created automatically by each layer</span>
-<a id="__codelineno-0-385" name="__codelineno-0-385"></a>    <span class="n">features_dir</span>    <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span>     <span class="c1"># parquet files, one per ZTF quadrant</span>
-<a id="__codelineno-0-386" name="__codelineno-0-386"></a>    <span class="n">models_dir</span>      <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>       <span class="c1"># trained model weights + feature scaler stats</span>
-<a id="__codelineno-0-387" name="__codelineno-0-387"></a>    <span class="n">predictions_dir</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predictions&quot;</span>  <span class="c1"># per-source WDB probability scores</span>
+<a id="__codelineno-0-384" name="__codelineno-0-384"></a>    <span class="c1"># Input files — must exist before running the pipeline.</span>
+<a id="__codelineno-0-385" name="__codelineno-0-385"></a>    <span class="c1"># Place them in ml4em/data/ locally (gitignored).</span>
+<a id="__codelineno-0-386" name="__codelineno-0-386"></a>    <span class="c1"># Override in config.yaml on MSI with absolute scratch paths.</span>
+<a id="__codelineno-0-387" name="__codelineno-0-387"></a>    <span class="n">catalog_path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/wdb_sources.csv&quot;</span>   <span class="c1"># ra/dec catalog of target sources</span>
+<a id="__codelineno-0-388" name="__codelineno-0-388"></a>    <span class="n">labels_path</span>  <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/labels.csv&quot;</span>         <span class="c1"># source_id,label — supplied by the user</span>
+<a id="__codelineno-0-389" name="__codelineno-0-389"></a>
+<a id="__codelineno-0-390" name="__codelineno-0-390"></a>    <span class="c1"># Output directories — created automatically by each layer</span>
+<a id="__codelineno-0-391" name="__codelineno-0-391"></a>    <span class="n">features_dir</span>    <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span>     <span class="c1"># parquet files, one per ZTF quadrant</span>
+<a id="__codelineno-0-392" name="__codelineno-0-392"></a>    <span class="n">models_dir</span>      <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>       <span class="c1"># trained model weights + feature scaler stats</span>
+<a id="__codelineno-0-393" name="__codelineno-0-393"></a>    <span class="n">predictions_dir</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predictions&quot;</span>  <span class="c1"># per-source WDB probability scores</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3208,13 +3220,7 @@ These settings have no effect on feature extraction or inference.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-394">394</a></span>
-<span class="normal"><a href="#__codelineno-0-395">395</a></span>
-<span class="normal"><a href="#__codelineno-0-396">396</a></span>
-<span class="normal"><a href="#__codelineno-0-397">397</a></span>
-<span class="normal"><a href="#__codelineno-0-398">398</a></span>
-<span class="normal"><a href="#__codelineno-0-399">399</a></span>
-<span class="normal"><a href="#__codelineno-0-400">400</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-400">400</a></span>
 <span class="normal"><a href="#__codelineno-0-401">401</a></span>
 <span class="normal"><a href="#__codelineno-0-402">402</a></span>
 <span class="normal"><a href="#__codelineno-0-403">403</a></span>
@@ -3234,33 +3240,39 @@ These settings have no effect on feature extraction or inference.</p>
 <span class="normal"><a href="#__codelineno-0-417">417</a></span>
 <span class="normal"><a href="#__codelineno-0-418">418</a></span>
 <span class="normal"><a href="#__codelineno-0-419">419</a></span>
-<span class="normal"><a href="#__codelineno-0-420">420</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-394" name="__codelineno-0-394"></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainingConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-395" name="__codelineno-0-395"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Hyperparameters for model training.</span>
-<a id="__codelineno-0-396" name="__codelineno-0-396"></a>
-<a id="__codelineno-0-397" name="__codelineno-0-397"></a><span class="sd">    The training layer reads features from StorageConfig.features_dir,</span>
-<a id="__codelineno-0-398" name="__codelineno-0-398"></a><span class="sd">    trains, and writes weights to StorageConfig.models_dir.</span>
-<a id="__codelineno-0-399" name="__codelineno-0-399"></a><span class="sd">    These settings have no effect on feature extraction or inference.</span>
-<a id="__codelineno-0-400" name="__codelineno-0-400"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-401" name="__codelineno-0-401"></a>
-<a id="__codelineno-0-402" name="__codelineno-0-402"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-403" name="__codelineno-0-403"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-404" name="__codelineno-0-404"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-405" name="__codelineno-0-405"></a>
-<a id="__codelineno-0-406" name="__codelineno-0-406"></a>    <span class="n">batch_size</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">64</span>
-<a id="__codelineno-0-407" name="__codelineno-0-407"></a>    <span class="n">learning_rate</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3e-4</span>
-<a id="__codelineno-0-408" name="__codelineno-0-408"></a>    <span class="n">max_epochs</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">100</span>
-<a id="__codelineno-0-409" name="__codelineno-0-409"></a>    <span class="n">patience</span>      <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">20</span>     <span class="c1"># early-stopping: epochs without improvement</span>
-<a id="__codelineno-0-410" name="__codelineno-0-410"></a>
-<a id="__codelineno-0-411" name="__codelineno-0-411"></a>    <span class="n">val_fraction</span>  <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for validation</span>
-<a id="__codelineno-0-412" name="__codelineno-0-412"></a>    <span class="n">test_fraction</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for final evaluation</span>
-<a id="__codelineno-0-413" name="__codelineno-0-413"></a>    <span class="n">seed</span>          <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">42</span>
-<a id="__codelineno-0-414" name="__codelineno-0-414"></a>
-<a id="__codelineno-0-415" name="__codelineno-0-415"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;val_fraction&quot;</span><span class="p">,</span> <span class="s2">&quot;test_fraction&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-416" name="__codelineno-0-416"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-417" name="__codelineno-0-417"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_fraction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-418" name="__codelineno-0-418"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-<a id="__codelineno-0-419" name="__codelineno-0-419"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fraction must be in (0, 1), got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-420" name="__codelineno-0-420"></a>        <span class="k">return</span> <span class="n">v</span>
+<span class="normal"><a href="#__codelineno-0-420">420</a></span>
+<span class="normal"><a href="#__codelineno-0-421">421</a></span>
+<span class="normal"><a href="#__codelineno-0-422">422</a></span>
+<span class="normal"><a href="#__codelineno-0-423">423</a></span>
+<span class="normal"><a href="#__codelineno-0-424">424</a></span>
+<span class="normal"><a href="#__codelineno-0-425">425</a></span>
+<span class="normal"><a href="#__codelineno-0-426">426</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-400" name="__codelineno-0-400"></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainingConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-401" name="__codelineno-0-401"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Hyperparameters for model training.</span>
+<a id="__codelineno-0-402" name="__codelineno-0-402"></a>
+<a id="__codelineno-0-403" name="__codelineno-0-403"></a><span class="sd">    The training layer reads features from StorageConfig.features_dir,</span>
+<a id="__codelineno-0-404" name="__codelineno-0-404"></a><span class="sd">    trains, and writes weights to StorageConfig.models_dir.</span>
+<a id="__codelineno-0-405" name="__codelineno-0-405"></a><span class="sd">    These settings have no effect on feature extraction or inference.</span>
+<a id="__codelineno-0-406" name="__codelineno-0-406"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-407" name="__codelineno-0-407"></a>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a>
+<a id="__codelineno-0-412" name="__codelineno-0-412"></a>    <span class="n">batch_size</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">64</span>
+<a id="__codelineno-0-413" name="__codelineno-0-413"></a>    <span class="n">learning_rate</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3e-4</span>
+<a id="__codelineno-0-414" name="__codelineno-0-414"></a>    <span class="n">max_epochs</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">100</span>
+<a id="__codelineno-0-415" name="__codelineno-0-415"></a>    <span class="n">patience</span>      <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">20</span>     <span class="c1"># early-stopping: epochs without improvement</span>
+<a id="__codelineno-0-416" name="__codelineno-0-416"></a>
+<a id="__codelineno-0-417" name="__codelineno-0-417"></a>    <span class="n">val_fraction</span>  <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for validation</span>
+<a id="__codelineno-0-418" name="__codelineno-0-418"></a>    <span class="n">test_fraction</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for final evaluation</span>
+<a id="__codelineno-0-419" name="__codelineno-0-419"></a>    <span class="n">seed</span>          <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">42</span>
+<a id="__codelineno-0-420" name="__codelineno-0-420"></a>
+<a id="__codelineno-0-421" name="__codelineno-0-421"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;val_fraction&quot;</span><span class="p">,</span> <span class="s2">&quot;test_fraction&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-422" name="__codelineno-0-422"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_fraction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-424" name="__codelineno-0-424"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+<a id="__codelineno-0-425" name="__codelineno-0-425"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fraction must be in (0, 1), got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-426" name="__codelineno-0-426"></a>        <span class="k">return</span> <span class="n">v</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3316,13 +3328,7 @@ StorageConfig.predictions_dir.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-427">427</a></span>
-<span class="normal"><a href="#__codelineno-0-428">428</a></span>
-<span class="normal"><a href="#__codelineno-0-429">429</a></span>
-<span class="normal"><a href="#__codelineno-0-430">430</a></span>
-<span class="normal"><a href="#__codelineno-0-431">431</a></span>
-<span class="normal"><a href="#__codelineno-0-432">432</a></span>
-<span class="normal"><a href="#__codelineno-0-433">433</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-433">433</a></span>
 <span class="normal"><a href="#__codelineno-0-434">434</a></span>
 <span class="normal"><a href="#__codelineno-0-435">435</a></span>
 <span class="normal"><a href="#__codelineno-0-436">436</a></span>
@@ -3354,45 +3360,51 @@ StorageConfig.predictions_dir.</p>
 <span class="normal"><a href="#__codelineno-0-462">462</a></span>
 <span class="normal"><a href="#__codelineno-0-463">463</a></span>
 <span class="normal"><a href="#__codelineno-0-464">464</a></span>
-<span class="normal"><a href="#__codelineno-0-465">465</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-427" name="__codelineno-0-427"></a><span class="k">class</span><span class="w"> </span><span class="nc">InferenceConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-428" name="__codelineno-0-428"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Settings for the inference layer.</span>
-<a id="__codelineno-0-429" name="__codelineno-0-429"></a>
-<a id="__codelineno-0-430" name="__codelineno-0-430"></a><span class="sd">    The inference layer reads features from StorageConfig.features_dir,</span>
-<a id="__codelineno-0-431" name="__codelineno-0-431"></a><span class="sd">    loads the model from model_path, and writes results to</span>
-<a id="__codelineno-0-432" name="__codelineno-0-432"></a><span class="sd">    StorageConfig.predictions_dir.</span>
-<a id="__codelineno-0-433" name="__codelineno-0-433"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-434" name="__codelineno-0-434"></a>
-<a id="__codelineno-0-435" name="__codelineno-0-435"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-436" name="__codelineno-0-436"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-437" name="__codelineno-0-437"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-438" name="__codelineno-0-438"></a>
-<a id="__codelineno-0-439" name="__codelineno-0-439"></a>    <span class="c1"># Path to the trained model weights file.</span>
-<a id="__codelineno-0-440" name="__codelineno-0-440"></a>    <span class="c1"># None means &quot;use the latest model found in StorageConfig.models_dir&quot;.</span>
-<a id="__codelineno-0-441" name="__codelineno-0-441"></a>    <span class="n">model_path</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<a id="__codelineno-0-442" name="__codelineno-0-442"></a>
-<a id="__codelineno-0-443" name="__codelineno-0-443"></a>    <span class="c1"># How many feature rows to process per forward pass.</span>
-<a id="__codelineno-0-444" name="__codelineno-0-444"></a>    <span class="n">batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span>
-<a id="__codelineno-0-445" name="__codelineno-0-445"></a>
-<a id="__codelineno-0-446" name="__codelineno-0-446"></a>    <span class="c1"># Probability thresholds for the qualitative confidence label.</span>
-<a id="__codelineno-0-447" name="__codelineno-0-447"></a>    <span class="c1"># A source with probability &gt;= high_threshold → &quot;high&quot;,</span>
-<a id="__codelineno-0-448" name="__codelineno-0-448"></a>    <span class="c1"># &gt;= medium_threshold → &quot;medium&quot;, otherwise → &quot;low&quot;.</span>
-<a id="__codelineno-0-449" name="__codelineno-0-449"></a>    <span class="n">confidence_thresholds</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-<a id="__codelineno-0-450" name="__codelineno-0-450"></a>        <span class="n">default</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
-<a id="__codelineno-0-451" name="__codelineno-0-451"></a>    <span class="p">)</span>
-<a id="__codelineno-0-452" name="__codelineno-0-452"></a>
-<a id="__codelineno-0-453" name="__codelineno-0-453"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;confidence_thresholds&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-454" name="__codelineno-0-454"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-455" name="__codelineno-0-455"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_thresholds</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<a id="__codelineno-0-456" name="__codelineno-0-456"></a>        <span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">}</span>
-<a id="__codelineno-0-457" name="__codelineno-0-457"></a>        <span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="n">v</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<a id="__codelineno-0-458" name="__codelineno-0-458"></a>        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-<a id="__codelineno-0-459" name="__codelineno-0-459"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;confidence_thresholds must contain keys: </span><span class="si">{</span><span class="n">required</span><span class="si">}</span><span class="s2">. Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-460" name="__codelineno-0-460"></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-461" name="__codelineno-0-461"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-<a id="__codelineno-0-462" name="__codelineno-0-462"></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Threshold &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; must be in [0, 1], got </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-463" name="__codelineno-0-463"></a>        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]:</span>
-<a id="__codelineno-0-464" name="__codelineno-0-464"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;high&#39; threshold must be greater than &#39;medium&#39;&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-465" name="__codelineno-0-465"></a>        <span class="k">return</span> <span class="n">v</span>
+<span class="normal"><a href="#__codelineno-0-465">465</a></span>
+<span class="normal"><a href="#__codelineno-0-466">466</a></span>
+<span class="normal"><a href="#__codelineno-0-467">467</a></span>
+<span class="normal"><a href="#__codelineno-0-468">468</a></span>
+<span class="normal"><a href="#__codelineno-0-469">469</a></span>
+<span class="normal"><a href="#__codelineno-0-470">470</a></span>
+<span class="normal"><a href="#__codelineno-0-471">471</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-433" name="__codelineno-0-433"></a><span class="k">class</span><span class="w"> </span><span class="nc">InferenceConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-434" name="__codelineno-0-434"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Settings for the inference layer.</span>
+<a id="__codelineno-0-435" name="__codelineno-0-435"></a>
+<a id="__codelineno-0-436" name="__codelineno-0-436"></a><span class="sd">    The inference layer reads features from StorageConfig.features_dir,</span>
+<a id="__codelineno-0-437" name="__codelineno-0-437"></a><span class="sd">    loads the model from model_path, and writes results to</span>
+<a id="__codelineno-0-438" name="__codelineno-0-438"></a><span class="sd">    StorageConfig.predictions_dir.</span>
+<a id="__codelineno-0-439" name="__codelineno-0-439"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-440" name="__codelineno-0-440"></a>
+<a id="__codelineno-0-441" name="__codelineno-0-441"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-442" name="__codelineno-0-442"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-443" name="__codelineno-0-443"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-444" name="__codelineno-0-444"></a>
+<a id="__codelineno-0-445" name="__codelineno-0-445"></a>    <span class="c1"># Path to the trained model weights file.</span>
+<a id="__codelineno-0-446" name="__codelineno-0-446"></a>    <span class="c1"># None means &quot;use the latest model found in StorageConfig.models_dir&quot;.</span>
+<a id="__codelineno-0-447" name="__codelineno-0-447"></a>    <span class="n">model_path</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-448" name="__codelineno-0-448"></a>
+<a id="__codelineno-0-449" name="__codelineno-0-449"></a>    <span class="c1"># How many feature rows to process per forward pass.</span>
+<a id="__codelineno-0-450" name="__codelineno-0-450"></a>    <span class="n">batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span>
+<a id="__codelineno-0-451" name="__codelineno-0-451"></a>
+<a id="__codelineno-0-452" name="__codelineno-0-452"></a>    <span class="c1"># Probability thresholds for the qualitative confidence label.</span>
+<a id="__codelineno-0-453" name="__codelineno-0-453"></a>    <span class="c1"># A source with probability &gt;= high_threshold → &quot;high&quot;,</span>
+<a id="__codelineno-0-454" name="__codelineno-0-454"></a>    <span class="c1"># &gt;= medium_threshold → &quot;medium&quot;, otherwise → &quot;low&quot;.</span>
+<a id="__codelineno-0-455" name="__codelineno-0-455"></a>    <span class="n">confidence_thresholds</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+<a id="__codelineno-0-456" name="__codelineno-0-456"></a>        <span class="n">default</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
+<a id="__codelineno-0-457" name="__codelineno-0-457"></a>    <span class="p">)</span>
+<a id="__codelineno-0-458" name="__codelineno-0-458"></a>
+<a id="__codelineno-0-459" name="__codelineno-0-459"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;confidence_thresholds&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-460" name="__codelineno-0-460"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-461" name="__codelineno-0-461"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_thresholds</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-0-462" name="__codelineno-0-462"></a>        <span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">}</span>
+<a id="__codelineno-0-463" name="__codelineno-0-463"></a>        <span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="n">v</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<a id="__codelineno-0-464" name="__codelineno-0-464"></a>        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+<a id="__codelineno-0-465" name="__codelineno-0-465"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;confidence_thresholds must contain keys: </span><span class="si">{</span><span class="n">required</span><span class="si">}</span><span class="s2">. Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-466" name="__codelineno-0-466"></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-467" name="__codelineno-0-467"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+<a id="__codelineno-0-468" name="__codelineno-0-468"></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Threshold &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; must be in [0, 1], got </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-469" name="__codelineno-0-469"></a>        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]:</span>
+<a id="__codelineno-0-470" name="__codelineno-0-470"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;high&#39; threshold must be greater than &#39;medium&#39;&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-471" name="__codelineno-0-471"></a>        <span class="k">return</span> <span class="n">v</span>
 </code></pre></div></td></tr></table></div>
               </details>
 

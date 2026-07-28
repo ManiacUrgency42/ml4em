@@ -61,7 +61,7 @@ The storage paths use `/data` — the run command maps your scratch directory to
 cat > /scratch.global/$USER/ml4em_data/config_msi.yaml << 'EOF'
 sources:
   ztf:
-    host: melman.caltech.edu
+    host: gloria.caltech.edu
     port: 443
     timeout: 300
     collection_sources: ZTF_sources_20240515

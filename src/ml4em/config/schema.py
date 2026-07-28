@@ -50,7 +50,13 @@ class ZTFConfig(BaseModel):
     # silently and only fails much later, inside whatever consumes it.
     model_config = {"validate_assignment": True}
 
-    host     : str = "melman.caltech.edu"
+    # Kowalski is split across instances: ZTF light curves live on gloria,
+    # while melman carries the reference catalogs (Gaia_EDR3, PS1, AllWISE)
+    # and only 16-document ZTF_sources_* stubs.  ZTFSource opens a single
+    # connection and CatalogExtractor reuses it, so this one host serves both
+    # the light-curve fetch and the Gaia cross-match — see the note on
+    # CatalogConfig if the cross-match comes back empty.
+    host     : str = "gloria.caltech.edu"
     port     : int = 443
     protocol : str = "https"
     timeout  : int = 300   # seconds
