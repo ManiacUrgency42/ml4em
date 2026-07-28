@@ -857,6 +857,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parquet round trip
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#standardtrainer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1817,6 +1828,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parquet round trip
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#standardtrainer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1877,92 +1899,164 @@
 <ul>
 <li><a href="#trainer">Trainer Protocol</a></li>
 <li><a href="#featuredataset">FeatureDataset</a></li>
+<li><a href="#parquet">Parquet round trip</a></li>
 <li><a href="#standardtrainer">StandardTrainer (shell)</a></li>
 </ul>
 <hr />
 <h2 id="trainer"><code>Trainer</code> Protocol<a class="headerlink" href="#trainer" title="Permanent link">&para;</a></h2>
 <p>The contract every trainer must satisfy.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Trainer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">FeatureDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@runtime_checkable</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Trainer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">FeatureDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
+<p><code>fit</code> takes <strong>one</strong> <code>FeatureDataset</code> — not a <code>(train, val)</code> pair. The trainer performs the
+split itself using <code>val_fraction</code>, <code>test_fraction</code> and <code>seed</code> from <code>TrainingConfig</code>, so
+the split is reproducible from configuration rather than from however the caller happened
+to divide the data. The model architecture and its own config are passed to the concrete
+trainer at construction time, not through this Protocol.</p>
 <hr />
 <h2 id="featuredataset"><code>FeatureDataset</code><a class="headerlink" href="#featuredataset" title="Permanent link">&para;</a></h2>
-<p>Loads <code>FeatureVector</code> objects from parquet files and joins them with a researcher-supplied labels CSV.</p>
-<p><strong>Consumes:</strong> Parquet feature files + <code>labels.csv</code></p>
+<p>Joins <code>FeatureVector</code> objects with a researcher-supplied label per <code>source_id</code> and
+produces <code>LabeledSample</code>s.</p>
 <p><strong>Emits:</strong> <code>list[LabeledSample]</code> — <code>FeatureVector</code> + integer label, joined on <code>source_id</code></p>
+<p>There are two construction paths.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">From disk (<code>from_storage</code>)</label><label for="__tabbed_1_2">From memory (<code>from_feature_vectors</code>)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Reads every <code>*.parquet</code> file in <code>storage.features_dir</code> and a labels CSV. Use this for
+production runs where feature extraction and training are separate jobs.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureDataset</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">FeatureDataset</span><span class="o">.</span><span class="n">from_storage</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="n">labels_path</span><span class="o">=</span><span class="s2">&quot;labels.csv&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">class_counts</span><span class="p">())</span>       <span class="c1"># {0: 5000, 1: 320}</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">positive_fraction</span><span class="p">())</span>  <span class="c1"># 0.060</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">val_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">test_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Takes <code>FeaturePipeline.run_batch()</code> output and a <code>dict[source_id, label]</code> directly.
+No disk I/O. Use this for the demo and for single-process runs.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">FeatureDataset</span><span class="o">.</span><span class="n">from_feature_vectors</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;123&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Both paths silently drop sources present in only one of (features, labels). A join is
+expected to be partial — a label file covering the whole sky would not be a label file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">class_counts</span><span class="p">())</span>       <span class="c1"># {0: 5000, 1: 320}</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">positive_fraction</span><span class="p">())</span>  <span class="c1"># 0.060  — counts label == 1 only</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">val_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">test_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</code></pre></div>
+<p><code>split()</code> shuffles with a seeded <code>random.Random</code> and slices; it is <strong>not stratified</strong>, so
+class balance is not preserved across splits. Both fractions must be in (0, 1) and must
+sum to less than 1.</p>
+<p><code>class_counts()</code> is the general accessor. <code>positive_fraction()</code> counts <code>label == 1</code>
+specifically and is therefore only meaningful for a binary problem.</p>
 <h3 id="labels-csv-format">Labels CSV format<a class="headerlink" href="#labels-csv-format" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>source_id,label
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>686149073900013696,1
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>686149073900013697,0
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>source_id,label
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>686149073900013696,1
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>686149073900013697,0
 </code></pre></div>
 <ul>
 <li><code>source_id</code>: same string ID as <code>LightCurve.source_id</code></li>
-<li><code>label</code>: <code>1</code> = positive class, <code>0</code> = background</li>
-<li>Sources present in only one of (features, labels) are silently skipped</li>
+<li><code>label</code>: a <strong>non-negative class index</strong>. <code>0</code>/<code>1</code> is the binary case, but any
+  non-negative integer is accepted — the feature store is not specific to binary
+  classification and a multi-class head is an equally valid consumer of it. Negative
+  values are rejected, since they are almost always a parse error rather than a real class.</li>
 </ul>
 <p>Labels are never generated by ml4em. See <a href="../../guides/label-preparation/">Preparing Labels</a> for sourcing them from external catalogs.</p>
 <hr />
+<h2 id="parquet">Parquet round trip<a class="headerlink" href="#parquet" title="Permanent link">&para;</a></h2>
+<p><code>FeatureDataset.save_feature_vectors(feature_vectors, "features/batch_001.parquet")</code>
+persists a batch so a later job can reload it without re-running GPU feature extraction.
+<code>_load_features()</code> reverses everything below, so a model sees the same input whether
+features came from memory or from disk.</p>
+<p>Most fields map to columns directly. Three do not:</p>
+<p><strong><code>dmdt</code>.</strong> Parquet has no 2-D cell type but does have <code>list&lt;double&gt;</code>, so the histogram is
+stored flat in <code>dmdt_flat</code> with its shape in <code>dmdt_rows</code> and <code>dmdt_cols</code>, and rebuilt on
+load. A <code>None</code> histogram writes all three columns as null and reloads as <code>None</code>.</p>
+<p><strong><code>period_top</code> and <code>significance_top</code>.</strong> These are dicts of variable-length lists, which
+parquet has no useful representation for, and downstream models want flat columns anyway.
+Each becomes one column per (rank, algorithm) pair: <code>period_0_CE</code>, <code>period_1_CE</code>, …,
+<code>significance_0_CE</code>, …. On load the pattern is matched anchored at the start of the name
+and requiring digits in the rank position, so scalar fields that share the prefix —
+<code>period_significance</code>, <code>period_agree_score</code> — are left alone.</p>
+<p><strong>The optional Gaia floats.</strong> <code>None</code> is stored as NaN and restored to <code>None</code> on load, so
+"no counterpart" survives the round trip as itself rather than becoming a number.</p>
+<p>Loading tolerates schema drift in both directions and warns once, not per row:</p>
+<ul>
+<li>Columns the current <code>FeatureVector</code> no longer declares are dropped, with a warning. The
+  warning matters because silently discarding columns is exactly how a schema change turns
+  into a model quietly trained on fewer features than the file contains.</li>
+<li>Fields absent from the parquet are left at their dataclass defaults, also with a warning.</li>
+</ul>
+<hr />
 <h2 id="standardtrainer"><code>StandardTrainer</code> <em>(shell)</em><a class="headerlink" href="#standardtrainer" title="Permanent link">&para;</a></h2>
-<p>Orchestrates training: calls <code>model.fit(train, val)</code> and delegates <code>save</code> to <code>model.save(path)</code>.</p>
+<p>Model-agnostic driver. It accepts any object satisfying <code>MLModel</code> and takes loop
+hyperparameters from <code>TrainingConfig</code>. Architecture-specific decisions — hidden dims,
+dropout, tree count — live in the model's own config, not here.</p>
 <p><strong>Consumes:</strong> <code>FeatureDataset</code> + <code>MLModel</code></p>
 <p><strong>Emits:</strong> Saved model directory</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardTrainer</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">StandardTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">training</span><span class="p">)</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>   <span class="c1"># NotImplementedError — training loop pending</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>     <span class="c1"># delegates to model.save(path) — implemented</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardTrainer</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">StandardTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">training</span><span class="p">)</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>   <span class="c1"># NotImplementedError — training loop pending</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>     <span class="c1"># delegates to model.save(path) — implemented</span>
 </code></pre></div>
 <h3 id="cfgtraining-parameters"><code>cfg.training</code> parameters<a class="headerlink" href="#cfgtraining-parameters" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Parameter</th>
+<th>Default</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>learning_rate</code></td>
+<td><code>3e-4</code></td>
 <td>Step size for gradient descent (neural net trainers)</td>
 </tr>
 <tr>
 <td><code>batch_size</code></td>
+<td><code>64</code></td>
 <td>Samples per gradient update</td>
 </tr>
 <tr>
 <td><code>max_epochs</code></td>
+<td><code>100</code></td>
 <td>Maximum training epochs</td>
 </tr>
 <tr>
 <td><code>patience</code></td>
+<td><code>20</code></td>
 <td>Early stopping: halt after this many epochs with no val improvement</td>
 </tr>
 <tr>
 <td><code>val_fraction</code></td>
+<td><code>0.1</code></td>
 <td>Fraction of data held out for validation</td>
 </tr>
 <tr>
 <td><code>test_fraction</code></td>
+<td><code>0.1</code></td>
 <td>Fraction of data held out for final evaluation</td>
 </tr>
 <tr>
 <td><code>seed</code></td>
+<td><code>42</code></td>
 <td>Random seed for reproducibility</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>Status:</strong> <code>fit</code> raises <code>NotImplementedError</code> — training loop pending model architecture finalization. <code>save</code> is fully implemented.</p>
+<p><strong>Status:</strong> <code>fit</code> raises <code>NotImplementedError</code> with implementation notes in the message.
+The loop depends on the model backend — a PyTorch model needs an explicit epoch loop
+with early stopping, a gradient-boosting model does its own — so it is left until the
+architecture is settled rather than guessed at. <code>save</code> is fully implemented and
+delegates to <code>model.save(path)</code>.</p>
+<p>In the meantime, <code>LogisticExampleClassifier</code> carries its own <code>fit(features, labels)</code>
+and can be trained directly. See <a href="../models/#logistic-example">Models</a>.</p>
 </blockquote>
 <hr />
 <p><a class="md-button" href="../models/">← Models</a> <a class="md-button md-button--primary" href="../inference/">Inference →</a></p>

@@ -2047,10 +2047,7 @@ storage:
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-460">460</a></span>
-<span class="normal"><a href="#__codelineno-0-461">461</a></span>
-<span class="normal"><a href="#__codelineno-0-462">462</a></span>
-<span class="normal"><a href="#__codelineno-0-463">463</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-463">463</a></span>
 <span class="normal"><a href="#__codelineno-0-464">464</a></span>
 <span class="normal"><a href="#__codelineno-0-465">465</a></span>
 <span class="normal"><a href="#__codelineno-0-466">466</a></span>
@@ -2076,36 +2073,39 @@ storage:
 <span class="normal"><a href="#__codelineno-0-486">486</a></span>
 <span class="normal"><a href="#__codelineno-0-487">487</a></span>
 <span class="normal"><a href="#__codelineno-0-488">488</a></span>
-<span class="normal"><a href="#__codelineno-0-489">489</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-460" name="__codelineno-0-460"></a><span class="k">class</span><span class="w"> </span><span class="nc">PipelineConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-461" name="__codelineno-0-461"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Root configuration for the ml4em pipeline.</span>
-<a id="__codelineno-0-462" name="__codelineno-0-462"></a>
-<a id="__codelineno-0-463" name="__codelineno-0-463"></a><span class="sd">    Maps directly to the structure of config.yaml.</span>
-<a id="__codelineno-0-464" name="__codelineno-0-464"></a><span class="sd">    Calling PipelineConfig() with no arguments returns a fully valid config</span>
-<a id="__codelineno-0-465" name="__codelineno-0-465"></a><span class="sd">    using all defaults — no file required.</span>
-<a id="__codelineno-0-466" name="__codelineno-0-466"></a>
-<a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="sd">    This config is science-case agnostic.  The researcher&#39;s science case</span>
-<a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">    (WDB, AGN, RR Lyrae, etc.) is defined by the model trained and the</span>
-<a id="__codelineno-0-469" name="__codelineno-0-469"></a><span class="sd">    labels used — not by this config.</span>
-<a id="__codelineno-0-470" name="__codelineno-0-470"></a>
-<a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">    Minimal config.yaml example (override only what differs):</span>
-<a id="__codelineno-0-472" name="__codelineno-0-472"></a>
-<a id="__codelineno-0-473" name="__codelineno-0-473"></a><span class="sd">        sources:</span>
-<a id="__codelineno-0-474" name="__codelineno-0-474"></a><span class="sd">          ztf:</span>
-<a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="sd">            collection_sources: ZTF_sources_20240515</span>
-<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">        features:</span>
-<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">          period:</span>
-<a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="sd">            algorithms: [CE, AOV, LS, BLS]</span>
-<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">            min_period_days: 0.01</span>
-<a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">            max_period_days: 10.0</span>
-<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">        storage:</span>
-<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">          features_dir: /data/ml4em/features</span>
-<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-484" name="__codelineno-0-484"></a>
-<a id="__codelineno-0-485" name="__codelineno-0-485"></a>    <span class="n">sources</span>  <span class="p">:</span> <span class="n">SourcesConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">SourcesConfig</span><span class="p">)</span>
-<a id="__codelineno-0-486" name="__codelineno-0-486"></a>    <span class="n">features</span> <span class="p">:</span> <span class="n">FeatureConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FeatureConfig</span><span class="p">)</span>
-<a id="__codelineno-0-487" name="__codelineno-0-487"></a>    <span class="n">storage</span>  <span class="p">:</span> <span class="n">StorageConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StorageConfig</span><span class="p">)</span>
-<a id="__codelineno-0-488" name="__codelineno-0-488"></a>    <span class="n">training</span> <span class="p">:</span> <span class="n">TrainingConfig</span>  <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrainingConfig</span><span class="p">)</span>
-<a id="__codelineno-0-489" name="__codelineno-0-489"></a>    <span class="n">inference</span><span class="p">:</span> <span class="n">InferenceConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InferenceConfig</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-489">489</a></span>
+<span class="normal"><a href="#__codelineno-0-490">490</a></span>
+<span class="normal"><a href="#__codelineno-0-491">491</a></span>
+<span class="normal"><a href="#__codelineno-0-492">492</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-463" name="__codelineno-0-463"></a><span class="k">class</span><span class="w"> </span><span class="nc">PipelineConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-464" name="__codelineno-0-464"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Root configuration for the ml4em pipeline.</span>
+<a id="__codelineno-0-465" name="__codelineno-0-465"></a>
+<a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="sd">    Maps directly to the structure of config.yaml.</span>
+<a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="sd">    Calling PipelineConfig() with no arguments returns a fully valid config</span>
+<a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">    using all defaults — no file required.</span>
+<a id="__codelineno-0-469" name="__codelineno-0-469"></a>
+<a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">    This config is science-case agnostic.  The researcher&#39;s science case</span>
+<a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">    (WDB, AGN, RR Lyrae, etc.) is defined by the model trained and the</span>
+<a id="__codelineno-0-472" name="__codelineno-0-472"></a><span class="sd">    labels used — not by this config.</span>
+<a id="__codelineno-0-473" name="__codelineno-0-473"></a>
+<a id="__codelineno-0-474" name="__codelineno-0-474"></a><span class="sd">    Minimal config.yaml example (override only what differs):</span>
+<a id="__codelineno-0-475" name="__codelineno-0-475"></a>
+<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">        sources:</span>
+<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">          ztf:</span>
+<a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="sd">            collection_sources: ZTF_sources_20240515</span>
+<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">        features:</span>
+<a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">          period:</span>
+<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">            algorithms: [CE, AOV, LS, BLS]</span>
+<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">            min_period_days: 0.01</span>
+<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">            max_period_days: 10.0</span>
+<a id="__codelineno-0-484" name="__codelineno-0-484"></a><span class="sd">        storage:</span>
+<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">          features_dir: /data/ml4em/features</span>
+<a id="__codelineno-0-486" name="__codelineno-0-486"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-487" name="__codelineno-0-487"></a>
+<a id="__codelineno-0-488" name="__codelineno-0-488"></a>    <span class="n">sources</span>  <span class="p">:</span> <span class="n">SourcesConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">SourcesConfig</span><span class="p">)</span>
+<a id="__codelineno-0-489" name="__codelineno-0-489"></a>    <span class="n">features</span> <span class="p">:</span> <span class="n">FeatureConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FeatureConfig</span><span class="p">)</span>
+<a id="__codelineno-0-490" name="__codelineno-0-490"></a>    <span class="n">storage</span>  <span class="p">:</span> <span class="n">StorageConfig</span>   <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StorageConfig</span><span class="p">)</span>
+<a id="__codelineno-0-491" name="__codelineno-0-491"></a>    <span class="n">training</span> <span class="p">:</span> <span class="n">TrainingConfig</span>  <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrainingConfig</span><span class="p">)</span>
+<a id="__codelineno-0-492" name="__codelineno-0-492"></a>    <span class="n">inference</span><span class="p">:</span> <span class="n">InferenceConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InferenceConfig</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3009,13 +3009,16 @@ Relative paths are resolved from the working directory at runtime.
 On MSI, override these in config.yaml with absolute scratch paths.</p>
 <h4 id="ml4em.config.schema.StorageConfig--input-files-read-by-the-pipeline">Input files (read by the pipeline)<a class="headerlink" href="#ml4em.config.schema.StorageConfig--input-files-read-by-the-pipeline" title="Permanent link">&para;</a></h4>
 <p>catalog_path  CSV of known target sources with ra, dec columns.
-              Used by scripts/prepare_labels.py to look up ZTF IDs
-              via cone search and produce labels_path.
+              Resolved to ZTF source IDs via ZTFLoader.fetch_by_coords()
+              cone search when building labels_path.
               Local default:  data/wdb_sources.csv
               MSI example:    /scratch.global/jin00404/ml4em/data/wdb_sources.csv</p>
-<p>labels_path   CSV produced by prepare_labels.py.
-              Columns: source_id (ZTF integer _id as str), label (0 or 1).
+<p>labels_path   CSV supplied by the user; ml4em never generates labels.
+              Columns: source_id (ZTF integer _id as str), label
+              (non-negative class index; 0/1 for the binary case).
               Read by FeatureDataset._load_labels() during training.
+              See docs/guides/label-preparation.md for the cross-match
+              workflow that produces it.
               Local default:  data/labels.csv
               MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv</p>
 <h4 id="ml4em.config.schema.StorageConfig--output-directories-written-by-the-pipeline">Output directories (written by the pipeline)<a class="headerlink" href="#ml4em.config.schema.StorageConfig--output-directories-written-by-the-pipeline" title="Permanent link">&para;</a></h4>
@@ -3075,7 +3078,10 @@ Inference layer→  reads from features_dir + models_dir,
 <span class="normal"><a href="#__codelineno-0-372">372</a></span>
 <span class="normal"><a href="#__codelineno-0-373">373</a></span>
 <span class="normal"><a href="#__codelineno-0-374">374</a></span>
-<span class="normal"><a href="#__codelineno-0-375">375</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-333" name="__codelineno-0-333"></a><span class="k">class</span><span class="w"> </span><span class="nc">StorageConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-375">375</a></span>
+<span class="normal"><a href="#__codelineno-0-376">376</a></span>
+<span class="normal"><a href="#__codelineno-0-377">377</a></span>
+<span class="normal"><a href="#__codelineno-0-378">378</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-333" name="__codelineno-0-333"></a><span class="k">class</span><span class="w"> </span><span class="nc">StorageConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <a id="__codelineno-0-334" name="__codelineno-0-334"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;File paths used by every layer to read and write pipeline artifacts.</span>
 <a id="__codelineno-0-335" name="__codelineno-0-335"></a>
 <a id="__codelineno-0-336" name="__codelineno-0-336"></a><span class="sd">    All paths are strings to avoid platform-specific Path issues in YAML.</span>
@@ -3085,39 +3091,42 @@ Inference layer→  reads from features_dir + models_dir,
 <a id="__codelineno-0-340" name="__codelineno-0-340"></a><span class="sd">    Input files (read by the pipeline)</span>
 <a id="__codelineno-0-341" name="__codelineno-0-341"></a><span class="sd">    ------------------------------------</span>
 <a id="__codelineno-0-342" name="__codelineno-0-342"></a><span class="sd">    catalog_path  CSV of known target sources with ra, dec columns.</span>
-<a id="__codelineno-0-343" name="__codelineno-0-343"></a><span class="sd">                  Used by scripts/prepare_labels.py to look up ZTF IDs</span>
-<a id="__codelineno-0-344" name="__codelineno-0-344"></a><span class="sd">                  via cone search and produce labels_path.</span>
+<a id="__codelineno-0-343" name="__codelineno-0-343"></a><span class="sd">                  Resolved to ZTF source IDs via ZTFLoader.fetch_by_coords()</span>
+<a id="__codelineno-0-344" name="__codelineno-0-344"></a><span class="sd">                  cone search when building labels_path.</span>
 <a id="__codelineno-0-345" name="__codelineno-0-345"></a><span class="sd">                  Local default:  data/wdb_sources.csv</span>
 <a id="__codelineno-0-346" name="__codelineno-0-346"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/wdb_sources.csv</span>
 <a id="__codelineno-0-347" name="__codelineno-0-347"></a>
-<a id="__codelineno-0-348" name="__codelineno-0-348"></a><span class="sd">    labels_path   CSV produced by prepare_labels.py.</span>
-<a id="__codelineno-0-349" name="__codelineno-0-349"></a><span class="sd">                  Columns: source_id (ZTF integer _id as str), label (0 or 1).</span>
-<a id="__codelineno-0-350" name="__codelineno-0-350"></a><span class="sd">                  Read by FeatureDataset._load_labels() during training.</span>
-<a id="__codelineno-0-351" name="__codelineno-0-351"></a><span class="sd">                  Local default:  data/labels.csv</span>
-<a id="__codelineno-0-352" name="__codelineno-0-352"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv</span>
-<a id="__codelineno-0-353" name="__codelineno-0-353"></a>
-<a id="__codelineno-0-354" name="__codelineno-0-354"></a><span class="sd">    Output directories (written by the pipeline)</span>
-<a id="__codelineno-0-355" name="__codelineno-0-355"></a><span class="sd">    ---------------------------------------------</span>
-<a id="__codelineno-0-356" name="__codelineno-0-356"></a><span class="sd">    Feature layer  →  writes to features_dir</span>
-<a id="__codelineno-0-357" name="__codelineno-0-357"></a><span class="sd">    Training layer →  reads from features_dir, writes to models_dir</span>
-<a id="__codelineno-0-358" name="__codelineno-0-358"></a><span class="sd">    Inference layer→  reads from features_dir + models_dir,</span>
-<a id="__codelineno-0-359" name="__codelineno-0-359"></a><span class="sd">                      writes to predictions_dir</span>
-<a id="__codelineno-0-360" name="__codelineno-0-360"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-361" name="__codelineno-0-361"></a>
-<a id="__codelineno-0-362" name="__codelineno-0-362"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-363" name="__codelineno-0-363"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-364" name="__codelineno-0-364"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-365" name="__codelineno-0-365"></a>
-<a id="__codelineno-0-366" name="__codelineno-0-366"></a>    <span class="c1"># Input files — must exist before running the pipeline.</span>
-<a id="__codelineno-0-367" name="__codelineno-0-367"></a>    <span class="c1"># Place them in ml4em/data/ locally (gitignored).</span>
-<a id="__codelineno-0-368" name="__codelineno-0-368"></a>    <span class="c1"># Override in config.yaml on MSI with absolute scratch paths.</span>
-<a id="__codelineno-0-369" name="__codelineno-0-369"></a>    <span class="n">catalog_path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/wdb_sources.csv&quot;</span>   <span class="c1"># ra/dec catalog of target sources</span>
-<a id="__codelineno-0-370" name="__codelineno-0-370"></a>    <span class="n">labels_path</span>  <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/labels.csv&quot;</span>         <span class="c1"># source_id,label — produced by prepare_labels.py</span>
-<a id="__codelineno-0-371" name="__codelineno-0-371"></a>
-<a id="__codelineno-0-372" name="__codelineno-0-372"></a>    <span class="c1"># Output directories — created automatically by each layer</span>
-<a id="__codelineno-0-373" name="__codelineno-0-373"></a>    <span class="n">features_dir</span>    <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span>     <span class="c1"># parquet files, one per ZTF quadrant</span>
-<a id="__codelineno-0-374" name="__codelineno-0-374"></a>    <span class="n">models_dir</span>      <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>       <span class="c1"># trained model weights + feature scaler stats</span>
-<a id="__codelineno-0-375" name="__codelineno-0-375"></a>    <span class="n">predictions_dir</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predictions&quot;</span>  <span class="c1"># per-source WDB probability scores</span>
+<a id="__codelineno-0-348" name="__codelineno-0-348"></a><span class="sd">    labels_path   CSV supplied by the user; ml4em never generates labels.</span>
+<a id="__codelineno-0-349" name="__codelineno-0-349"></a><span class="sd">                  Columns: source_id (ZTF integer _id as str), label</span>
+<a id="__codelineno-0-350" name="__codelineno-0-350"></a><span class="sd">                  (non-negative class index; 0/1 for the binary case).</span>
+<a id="__codelineno-0-351" name="__codelineno-0-351"></a><span class="sd">                  Read by FeatureDataset._load_labels() during training.</span>
+<a id="__codelineno-0-352" name="__codelineno-0-352"></a><span class="sd">                  See docs/guides/label-preparation.md for the cross-match</span>
+<a id="__codelineno-0-353" name="__codelineno-0-353"></a><span class="sd">                  workflow that produces it.</span>
+<a id="__codelineno-0-354" name="__codelineno-0-354"></a><span class="sd">                  Local default:  data/labels.csv</span>
+<a id="__codelineno-0-355" name="__codelineno-0-355"></a><span class="sd">                  MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv</span>
+<a id="__codelineno-0-356" name="__codelineno-0-356"></a>
+<a id="__codelineno-0-357" name="__codelineno-0-357"></a><span class="sd">    Output directories (written by the pipeline)</span>
+<a id="__codelineno-0-358" name="__codelineno-0-358"></a><span class="sd">    ---------------------------------------------</span>
+<a id="__codelineno-0-359" name="__codelineno-0-359"></a><span class="sd">    Feature layer  →  writes to features_dir</span>
+<a id="__codelineno-0-360" name="__codelineno-0-360"></a><span class="sd">    Training layer →  reads from features_dir, writes to models_dir</span>
+<a id="__codelineno-0-361" name="__codelineno-0-361"></a><span class="sd">    Inference layer→  reads from features_dir + models_dir,</span>
+<a id="__codelineno-0-362" name="__codelineno-0-362"></a><span class="sd">                      writes to predictions_dir</span>
+<a id="__codelineno-0-363" name="__codelineno-0-363"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-364" name="__codelineno-0-364"></a>
+<a id="__codelineno-0-365" name="__codelineno-0-365"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-366" name="__codelineno-0-366"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-367" name="__codelineno-0-367"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-368" name="__codelineno-0-368"></a>
+<a id="__codelineno-0-369" name="__codelineno-0-369"></a>    <span class="c1"># Input files — must exist before running the pipeline.</span>
+<a id="__codelineno-0-370" name="__codelineno-0-370"></a>    <span class="c1"># Place them in ml4em/data/ locally (gitignored).</span>
+<a id="__codelineno-0-371" name="__codelineno-0-371"></a>    <span class="c1"># Override in config.yaml on MSI with absolute scratch paths.</span>
+<a id="__codelineno-0-372" name="__codelineno-0-372"></a>    <span class="n">catalog_path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/wdb_sources.csv&quot;</span>   <span class="c1"># ra/dec catalog of target sources</span>
+<a id="__codelineno-0-373" name="__codelineno-0-373"></a>    <span class="n">labels_path</span>  <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data/labels.csv&quot;</span>         <span class="c1"># source_id,label — supplied by the user</span>
+<a id="__codelineno-0-374" name="__codelineno-0-374"></a>
+<a id="__codelineno-0-375" name="__codelineno-0-375"></a>    <span class="c1"># Output directories — created automatically by each layer</span>
+<a id="__codelineno-0-376" name="__codelineno-0-376"></a>    <span class="n">features_dir</span>    <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span>     <span class="c1"># parquet files, one per ZTF quadrant</span>
+<a id="__codelineno-0-377" name="__codelineno-0-377"></a>    <span class="n">models_dir</span>      <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>       <span class="c1"># trained model weights + feature scaler stats</span>
+<a id="__codelineno-0-378" name="__codelineno-0-378"></a>    <span class="n">predictions_dir</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predictions&quot;</span>  <span class="c1"># per-source WDB probability scores</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3173,10 +3182,7 @@ These settings have no effect on feature extraction or inference.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-382">382</a></span>
-<span class="normal"><a href="#__codelineno-0-383">383</a></span>
-<span class="normal"><a href="#__codelineno-0-384">384</a></span>
-<span class="normal"><a href="#__codelineno-0-385">385</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-385">385</a></span>
 <span class="normal"><a href="#__codelineno-0-386">386</a></span>
 <span class="normal"><a href="#__codelineno-0-387">387</a></span>
 <span class="normal"><a href="#__codelineno-0-388">388</a></span>
@@ -3199,33 +3205,36 @@ These settings have no effect on feature extraction or inference.</p>
 <span class="normal"><a href="#__codelineno-0-405">405</a></span>
 <span class="normal"><a href="#__codelineno-0-406">406</a></span>
 <span class="normal"><a href="#__codelineno-0-407">407</a></span>
-<span class="normal"><a href="#__codelineno-0-408">408</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-382" name="__codelineno-0-382"></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainingConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-383" name="__codelineno-0-383"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Hyperparameters for model training.</span>
-<a id="__codelineno-0-384" name="__codelineno-0-384"></a>
-<a id="__codelineno-0-385" name="__codelineno-0-385"></a><span class="sd">    The training layer reads features from StorageConfig.features_dir,</span>
-<a id="__codelineno-0-386" name="__codelineno-0-386"></a><span class="sd">    trains, and writes weights to StorageConfig.models_dir.</span>
-<a id="__codelineno-0-387" name="__codelineno-0-387"></a><span class="sd">    These settings have no effect on feature extraction or inference.</span>
-<a id="__codelineno-0-388" name="__codelineno-0-388"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-389" name="__codelineno-0-389"></a>
-<a id="__codelineno-0-390" name="__codelineno-0-390"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-391" name="__codelineno-0-391"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-392" name="__codelineno-0-392"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-393" name="__codelineno-0-393"></a>
-<a id="__codelineno-0-394" name="__codelineno-0-394"></a>    <span class="n">batch_size</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">64</span>
-<a id="__codelineno-0-395" name="__codelineno-0-395"></a>    <span class="n">learning_rate</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3e-4</span>
-<a id="__codelineno-0-396" name="__codelineno-0-396"></a>    <span class="n">max_epochs</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">100</span>
-<a id="__codelineno-0-397" name="__codelineno-0-397"></a>    <span class="n">patience</span>      <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">20</span>     <span class="c1"># early-stopping: epochs without improvement</span>
-<a id="__codelineno-0-398" name="__codelineno-0-398"></a>
-<a id="__codelineno-0-399" name="__codelineno-0-399"></a>    <span class="n">val_fraction</span>  <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for validation</span>
-<a id="__codelineno-0-400" name="__codelineno-0-400"></a>    <span class="n">test_fraction</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for final evaluation</span>
-<a id="__codelineno-0-401" name="__codelineno-0-401"></a>    <span class="n">seed</span>          <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">42</span>
-<a id="__codelineno-0-402" name="__codelineno-0-402"></a>
-<a id="__codelineno-0-403" name="__codelineno-0-403"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;val_fraction&quot;</span><span class="p">,</span> <span class="s2">&quot;test_fraction&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-404" name="__codelineno-0-404"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-405" name="__codelineno-0-405"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_fraction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-406" name="__codelineno-0-406"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-<a id="__codelineno-0-407" name="__codelineno-0-407"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fraction must be in (0, 1), got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-408" name="__codelineno-0-408"></a>        <span class="k">return</span> <span class="n">v</span>
+<span class="normal"><a href="#__codelineno-0-408">408</a></span>
+<span class="normal"><a href="#__codelineno-0-409">409</a></span>
+<span class="normal"><a href="#__codelineno-0-410">410</a></span>
+<span class="normal"><a href="#__codelineno-0-411">411</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-385" name="__codelineno-0-385"></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainingConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-386" name="__codelineno-0-386"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Hyperparameters for model training.</span>
+<a id="__codelineno-0-387" name="__codelineno-0-387"></a>
+<a id="__codelineno-0-388" name="__codelineno-0-388"></a><span class="sd">    The training layer reads features from StorageConfig.features_dir,</span>
+<a id="__codelineno-0-389" name="__codelineno-0-389"></a><span class="sd">    trains, and writes weights to StorageConfig.models_dir.</span>
+<a id="__codelineno-0-390" name="__codelineno-0-390"></a><span class="sd">    These settings have no effect on feature extraction or inference.</span>
+<a id="__codelineno-0-391" name="__codelineno-0-391"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-392" name="__codelineno-0-392"></a>
+<a id="__codelineno-0-393" name="__codelineno-0-393"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-394" name="__codelineno-0-394"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-395" name="__codelineno-0-395"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-396" name="__codelineno-0-396"></a>
+<a id="__codelineno-0-397" name="__codelineno-0-397"></a>    <span class="n">batch_size</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">64</span>
+<a id="__codelineno-0-398" name="__codelineno-0-398"></a>    <span class="n">learning_rate</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3e-4</span>
+<a id="__codelineno-0-399" name="__codelineno-0-399"></a>    <span class="n">max_epochs</span>    <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">100</span>
+<a id="__codelineno-0-400" name="__codelineno-0-400"></a>    <span class="n">patience</span>      <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">20</span>     <span class="c1"># early-stopping: epochs without improvement</span>
+<a id="__codelineno-0-401" name="__codelineno-0-401"></a>
+<a id="__codelineno-0-402" name="__codelineno-0-402"></a>    <span class="n">val_fraction</span>  <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for validation</span>
+<a id="__codelineno-0-403" name="__codelineno-0-403"></a>    <span class="n">test_fraction</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>    <span class="c1"># fraction held out for final evaluation</span>
+<a id="__codelineno-0-404" name="__codelineno-0-404"></a>    <span class="n">seed</span>          <span class="p">:</span> <span class="nb">int</span>   <span class="o">=</span> <span class="mi">42</span>
+<a id="__codelineno-0-405" name="__codelineno-0-405"></a>
+<a id="__codelineno-0-406" name="__codelineno-0-406"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;val_fraction&quot;</span><span class="p">,</span> <span class="s2">&quot;test_fraction&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-407" name="__codelineno-0-407"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_fraction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fraction must be in (0, 1), got </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a>        <span class="k">return</span> <span class="n">v</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3281,10 +3290,7 @@ StorageConfig.predictions_dir.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/config/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-415">415</a></span>
-<span class="normal"><a href="#__codelineno-0-416">416</a></span>
-<span class="normal"><a href="#__codelineno-0-417">417</a></span>
-<span class="normal"><a href="#__codelineno-0-418">418</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-418">418</a></span>
 <span class="normal"><a href="#__codelineno-0-419">419</a></span>
 <span class="normal"><a href="#__codelineno-0-420">420</a></span>
 <span class="normal"><a href="#__codelineno-0-421">421</a></span>
@@ -3319,45 +3325,48 @@ StorageConfig.predictions_dir.</p>
 <span class="normal"><a href="#__codelineno-0-450">450</a></span>
 <span class="normal"><a href="#__codelineno-0-451">451</a></span>
 <span class="normal"><a href="#__codelineno-0-452">452</a></span>
-<span class="normal"><a href="#__codelineno-0-453">453</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-415" name="__codelineno-0-415"></a><span class="k">class</span><span class="w"> </span><span class="nc">InferenceConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<a id="__codelineno-0-416" name="__codelineno-0-416"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Settings for the inference layer.</span>
-<a id="__codelineno-0-417" name="__codelineno-0-417"></a>
-<a id="__codelineno-0-418" name="__codelineno-0-418"></a><span class="sd">    The inference layer reads features from StorageConfig.features_dir,</span>
-<a id="__codelineno-0-419" name="__codelineno-0-419"></a><span class="sd">    loads the model from model_path, and writes results to</span>
-<a id="__codelineno-0-420" name="__codelineno-0-420"></a><span class="sd">    StorageConfig.predictions_dir.</span>
-<a id="__codelineno-0-421" name="__codelineno-0-421"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-422" name="__codelineno-0-422"></a>
-<a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
-<a id="__codelineno-0-424" name="__codelineno-0-424"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
-<a id="__codelineno-0-425" name="__codelineno-0-425"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-<a id="__codelineno-0-426" name="__codelineno-0-426"></a>
-<a id="__codelineno-0-427" name="__codelineno-0-427"></a>    <span class="c1"># Path to the trained model weights file.</span>
-<a id="__codelineno-0-428" name="__codelineno-0-428"></a>    <span class="c1"># None means &quot;use the latest model found in StorageConfig.models_dir&quot;.</span>
-<a id="__codelineno-0-429" name="__codelineno-0-429"></a>    <span class="n">model_path</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<a id="__codelineno-0-430" name="__codelineno-0-430"></a>
-<a id="__codelineno-0-431" name="__codelineno-0-431"></a>    <span class="c1"># How many feature rows to process per forward pass.</span>
-<a id="__codelineno-0-432" name="__codelineno-0-432"></a>    <span class="n">batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span>
+<span class="normal"><a href="#__codelineno-0-453">453</a></span>
+<span class="normal"><a href="#__codelineno-0-454">454</a></span>
+<span class="normal"><a href="#__codelineno-0-455">455</a></span>
+<span class="normal"><a href="#__codelineno-0-456">456</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-418" name="__codelineno-0-418"></a><span class="k">class</span><span class="w"> </span><span class="nc">InferenceConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-0-419" name="__codelineno-0-419"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Settings for the inference layer.</span>
+<a id="__codelineno-0-420" name="__codelineno-0-420"></a>
+<a id="__codelineno-0-421" name="__codelineno-0-421"></a><span class="sd">    The inference layer reads features from StorageConfig.features_dir,</span>
+<a id="__codelineno-0-422" name="__codelineno-0-422"></a><span class="sd">    loads the model from model_path, and writes results to</span>
+<a id="__codelineno-0-423" name="__codelineno-0-423"></a><span class="sd">    StorageConfig.predictions_dir.</span>
+<a id="__codelineno-0-424" name="__codelineno-0-424"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-425" name="__codelineno-0-425"></a>
+<a id="__codelineno-0-426" name="__codelineno-0-426"></a>    <span class="c1"># Without this, assigning an invalid value after construction sticks</span>
+<a id="__codelineno-0-427" name="__codelineno-0-427"></a>    <span class="c1"># silently and only fails much later, inside whatever consumes it.</span>
+<a id="__codelineno-0-428" name="__codelineno-0-428"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;validate_assignment&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-0-429" name="__codelineno-0-429"></a>
+<a id="__codelineno-0-430" name="__codelineno-0-430"></a>    <span class="c1"># Path to the trained model weights file.</span>
+<a id="__codelineno-0-431" name="__codelineno-0-431"></a>    <span class="c1"># None means &quot;use the latest model found in StorageConfig.models_dir&quot;.</span>
+<a id="__codelineno-0-432" name="__codelineno-0-432"></a>    <span class="n">model_path</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <a id="__codelineno-0-433" name="__codelineno-0-433"></a>
-<a id="__codelineno-0-434" name="__codelineno-0-434"></a>    <span class="c1"># Probability thresholds for the qualitative confidence label.</span>
-<a id="__codelineno-0-435" name="__codelineno-0-435"></a>    <span class="c1"># A source with probability &gt;= high_threshold → &quot;high&quot;,</span>
-<a id="__codelineno-0-436" name="__codelineno-0-436"></a>    <span class="c1"># &gt;= medium_threshold → &quot;medium&quot;, otherwise → &quot;low&quot;.</span>
-<a id="__codelineno-0-437" name="__codelineno-0-437"></a>    <span class="n">confidence_thresholds</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-<a id="__codelineno-0-438" name="__codelineno-0-438"></a>        <span class="n">default</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
-<a id="__codelineno-0-439" name="__codelineno-0-439"></a>    <span class="p">)</span>
-<a id="__codelineno-0-440" name="__codelineno-0-440"></a>
-<a id="__codelineno-0-441" name="__codelineno-0-441"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;confidence_thresholds&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-442" name="__codelineno-0-442"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-0-443" name="__codelineno-0-443"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_thresholds</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<a id="__codelineno-0-444" name="__codelineno-0-444"></a>        <span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">}</span>
-<a id="__codelineno-0-445" name="__codelineno-0-445"></a>        <span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="n">v</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<a id="__codelineno-0-446" name="__codelineno-0-446"></a>        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-<a id="__codelineno-0-447" name="__codelineno-0-447"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;confidence_thresholds must contain keys: </span><span class="si">{</span><span class="n">required</span><span class="si">}</span><span class="s2">. Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-448" name="__codelineno-0-448"></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-449" name="__codelineno-0-449"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-<a id="__codelineno-0-450" name="__codelineno-0-450"></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Threshold &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; must be in [0, 1], got </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-451" name="__codelineno-0-451"></a>        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]:</span>
-<a id="__codelineno-0-452" name="__codelineno-0-452"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;high&#39; threshold must be greater than &#39;medium&#39;&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-453" name="__codelineno-0-453"></a>        <span class="k">return</span> <span class="n">v</span>
+<a id="__codelineno-0-434" name="__codelineno-0-434"></a>    <span class="c1"># How many feature rows to process per forward pass.</span>
+<a id="__codelineno-0-435" name="__codelineno-0-435"></a>    <span class="n">batch_size</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span>
+<a id="__codelineno-0-436" name="__codelineno-0-436"></a>
+<a id="__codelineno-0-437" name="__codelineno-0-437"></a>    <span class="c1"># Probability thresholds for the qualitative confidence label.</span>
+<a id="__codelineno-0-438" name="__codelineno-0-438"></a>    <span class="c1"># A source with probability &gt;= high_threshold → &quot;high&quot;,</span>
+<a id="__codelineno-0-439" name="__codelineno-0-439"></a>    <span class="c1"># &gt;= medium_threshold → &quot;medium&quot;, otherwise → &quot;low&quot;.</span>
+<a id="__codelineno-0-440" name="__codelineno-0-440"></a>    <span class="n">confidence_thresholds</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+<a id="__codelineno-0-441" name="__codelineno-0-441"></a>        <span class="n">default</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
+<a id="__codelineno-0-442" name="__codelineno-0-442"></a>    <span class="p">)</span>
+<a id="__codelineno-0-443" name="__codelineno-0-443"></a>
+<a id="__codelineno-0-444" name="__codelineno-0-444"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;confidence_thresholds&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-445" name="__codelineno-0-445"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-446" name="__codelineno-0-446"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_valid_thresholds</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-0-447" name="__codelineno-0-447"></a>        <span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">}</span>
+<a id="__codelineno-0-448" name="__codelineno-0-448"></a>        <span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="n">v</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<a id="__codelineno-0-449" name="__codelineno-0-449"></a>        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+<a id="__codelineno-0-450" name="__codelineno-0-450"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;confidence_thresholds must contain keys: </span><span class="si">{</span><span class="n">required</span><span class="si">}</span><span class="s2">. Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-451" name="__codelineno-0-451"></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-452" name="__codelineno-0-452"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+<a id="__codelineno-0-453" name="__codelineno-0-453"></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Threshold &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; must be in [0, 1], got </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-454" name="__codelineno-0-454"></a>        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]:</span>
+<a id="__codelineno-0-455" name="__codelineno-0-455"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;high&#39; threshold must be greater than &#39;medium&#39;&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-456" name="__codelineno-0-456"></a>        <span class="k">return</span> <span class="n">v</span>
 </code></pre></div></td></tr></table></div>
               </details>
 

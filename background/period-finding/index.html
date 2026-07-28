@@ -2372,7 +2372,7 @@ at the cadence period and its harmonics. These are called <strong>aliases</stron
   stored as <code>ZTF_SIDEREAL_DAY</code> in <code>constants.py</code>)</li>
 <li>0.5 day, 0.3333 day, ... (harmonics)</li>
 </ul>
-<p>The <code>min_cadence_days</code> filter in <code>ZTFSource</code> (default 30 minutes) reduces intra-night
+<p>The <code>min_cadence_days</code> filter in <code>ZTFSource</code> (default 5 minutes) reduces intra-night
 aliases but does not eliminate the ~1-day alias. The feature vector contains the raw
 period without alias correction — alias rejection is left to the trained model.</p>
 <hr />

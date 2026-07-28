@@ -1951,10 +1951,17 @@ example, because the source fell near a cosmic ray hit, or because conditions we
 <p><code>ZTFSource</code> silently discards all observations where <code>catflags != 0</code>. The resulting
 light curve contains only clean measurements.</p>
 <h3 id="cadence-and-intra-night-duplicates">Cadence and intra-night duplicates<a class="headerlink" href="#cadence-and-intra-night-duplicates" title="Permanent link">&para;</a></h3>
-<p>ZTF sometimes observes the same source multiple times in a single night. Observations
-separated by less than 30 minutes (<code>ZTF_MIN_CADENCE_DAYS = 30/1440 days</code>) are treated
-as duplicates and all but the first are removed. This prevents the nightly cadence from
-creating a spurious ~0.02-day "period" signal in the period-finding step.</p>
+<p>ZTF sometimes observes the same source multiple times in a single night, occasionally
+in back-to-back exposures a few minutes apart. Observations separated by less than
+5 minutes (<code>ZTF_MIN_CADENCE_DAYS = 5/1440 days</code>) are treated as duplicates and all but
+the first are removed. This stops a burst of near-simultaneous exposures from imprinting
+itself on the periodogram as a spurious very-short "period".</p>
+<p>The threshold is deliberately tight. A half-hour cutoff — the conventional choice for a
+general variability search — would delete every pair of epochs closer together than
+30 minutes, and short-period binaries are exactly the sources whose signal lives there.
+It would also be inconsistent with searching down to <code>min_period_days = 0.01</code> d
+(14.4 minutes), since no epoch pair short enough to constrain such a period would
+survive the filter.</p>
 <h3 id="data-releases">Data releases<a class="headerlink" href="#data-releases" title="Permanent link">&para;</a></h3>
 <p>ZTF periodically publishes frozen snapshots of its catalog. The constant
 <code>ZTF_DR16_MAX_HJD</code> in <code>constants.py</code> is the maximum timestamp in ZTF Data Release 16.

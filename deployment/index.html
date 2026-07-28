@@ -956,6 +956,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#slurm-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLURM conventions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SLURM conventions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#submit-from-the-repository-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Submit from the repository root
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs-must-already-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logs/ must already exist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fail-fast-preconditions-and-unbuffered-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fail-fast preconditions and unbuffered output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1727,6 +1788,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#slurm-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLURM conventions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SLURM conventions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#submit-from-the-repository-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Submit from the repository root
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs-must-already-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logs/ must already exist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fail-fast-preconditions-and-unbuffered-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fail-fast preconditions and unbuffered output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1841,6 +1963,79 @@ happen once.</p>
 </table>
 <p>Both paths install ml4em in <strong>editable mode</strong>: changes to Python source files
 are picked up immediately with <code>git pull</code> — no rebuild or reinstall needed.</p>
+<hr />
+<h2 id="slurm-conventions">SLURM conventions<a class="headerlink" href="#slurm-conventions" title="Permanent link">&para;</a></h2>
+<p>Everything in <code>slurm/</code> and <code>benchmarks/slurm/</code> follows the same four rules.
+They are not stylistic — each one exists because the obvious alternative fails
+silently on MSI.</p>
+<h3 id="submit-from-the-repository-root">Submit from the repository root<a class="headerlink" href="#submit-from-the-repository-root" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sbatch<span class="w"> </span>benchmarks/slurm/scaling_gpu.sh
+</code></pre></div>
+<p><code>sbatch</code> copies the submitted script to <code>/var/spool</code> on the compute node before
+running it, so <code>${BASH_SOURCE[0]}</code> inside the job points at the spool copy and
+not at your checkout. Every script therefore resolves the repository from
+<code>SLURM_SUBMIT_DIR</code> — the directory <code>sbatch</code> was invoked from — and falls back to
+<code>BASH_SOURCE</code> only for the case where you run the file directly with <code>bash</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">REPO_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">SLURM_SUBMIT_DIR</span><span class="k">:-$(</span><span class="nb">cd</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">/..&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">pwd</span><span class="k">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>Submitting from inside <code>slurm/</code> or <code>benchmarks/slurm/</code> makes <code>REPO_DIR</code> point at
+the wrong directory and the job fails on the first path it builds from it.</p>
+<h3 id="logs-must-already-exist"><code>logs/</code> must already exist<a class="headerlink" href="#logs-must-already-exist" title="Permanent link">&para;</a></h3>
+<p>Every script writes to <code>logs/&lt;name&gt;_%j.out</code>. SLURM opens that file <em>before</em> the
+job body runs, so an in-script <code>mkdir -p logs</code> is too late — the job is rejected
+at submission with an output-file error. The directory is tracked in git via
+<code>logs/.gitkeep</code>, so a fresh clone already has it and no manual step is needed.</p>
+<h3 id="partitions">Partitions<a class="headerlink" href="#partitions" title="Permanent link">&para;</a></h3>
+<p>The legacy <code>a100</code>, <code>agsmall</code> and <code>amdsmall</code> partitions no longer exist on MSI.
+Current ones:</p>
+<table>
+<thead>
+<tr>
+<th>Job type</th>
+<th>Partition</th>
+<th>Extra flags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPU batch</td>
+<td><code>msigpu</code></td>
+<td><code>--gres=gpu:a100:1</code> (or <code>:4</code>)</td>
+</tr>
+<tr>
+<td>CPU batch</td>
+<td><code>msismall</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Interactive GPU</td>
+<td><code>interactive-gpu</code></td>
+<td><code>--gres=gpu:a100:1</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>msilarge</code>, <code>msibigmem</code>, <code>msilong</code>, <code>preempt-gpu</code>, <code>a100-4-long</code> and
+<code>a100-8-long</code> also exist but nothing in this repository requests them.</p>
+<p>Validate a script's account and partition before queuing it for real:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sbatch<span class="w"> </span>--test-only<span class="w"> </span>benchmarks/slurm/scaling_gpu.sh
+</code></pre></div>
+<p><code>--test-only</code> performs the full authorization check and reports the estimated
+start time without submitting anything, which catches a wrong <code>-A</code> or a
+partition you are not authorized for immediately rather than after the job sits
+in the queue and then fails.</p>
+<h3 id="fail-fast-preconditions-and-unbuffered-output">Fail-fast preconditions and unbuffered output<a class="headerlink" href="#fail-fast-preconditions-and-unbuffered-output" title="Permanent link">&para;</a></h3>
+<p>Each script sources <code>$DATA_DIR/.env</code> and then checks two prerequisites before
+doing any work:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>!<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DATA_DIR</span><span class="si">}</span><span class="s2">/config_msi.yaml&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>...<span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ML4EM_ZTF_TOKEN</span><span class="k">:-</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>...<span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+</code></pre></div>
+<p>Both would otherwise surface minutes later as a pydantic validation error or a
+Kowalski authentication failure, neither of which names the actual missing file.</p>
+<p>The Python step runs under <code>conda run --no-capture-output</code>. Without that flag
+<code>conda run</code> buffers stdout and stderr until the process exits, so <code>tail -f</code> on
+the log file shows nothing at all while a multi-hour benchmark is running.</p>
 
 
 

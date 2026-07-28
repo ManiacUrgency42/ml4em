@@ -2056,9 +2056,11 @@ PATH so periodfind's CUDA extensions can be compiled in the next step.</p>
 as a SLURM job — no GPU needed, it runs on a CPU node.</p>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
 </code></pre></div></p>
+<p>Submit from the repository root, not from inside <code>slurm/</code> — the script resolves
+the checkout from <code>SLURM_SUBMIT_DIR</code>. <code>logs/</code> is already tracked in git, so there
+is nothing to create. See <a href="../deployment/#slurm-conventions">Deployment → SLURM conventions</a>.</p>
 <p>Monitor progress:</p>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
@@ -2070,6 +2072,12 @@ as a SLURM job — no GPU needed, it runs on a CPU node.</p>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>conda<span class="w"> </span>activate<span class="w"> </span>ml4em-gpu
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import ml4em; import periodfind; print(&quot;OK&quot;)&#39;</span>
 </code></pre></div></p>
+<p>The job installs torch for the requested mode, builds periodfind's Rust and
+Cython extensions, and finishes with
+<code>pip install -e ".[ztf,catalog,training,plots,dev]"</code>. The <code>plots</code> extra is
+included because the scaling benchmarks call <code>benchmarks/plot_scaling.py</code> at
+the end of the job; without matplotlib in the environment the run still
+completes but produces no figure.</p>
 <hr />
 <h2 id="4-first-time-data-setup">4. First-time data setup<a class="headerlink" href="#4-first-time-data-setup" title="Permanent link">&para;</a></h2>
 <p>Do this once. Everything here persists across SLURM jobs on scratch.</p>
@@ -2095,7 +2103,7 @@ as a SLURM job — no GPU needed, it runs on a CPU node.</p>
 <a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="s">    collection_sources: ZTF_sources_84525009</span>
 <a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="s">    max_timestamp_hjd: 2459951.5</span>
 <a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="s">    bands: [g, r, i]</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="s">    min_cadence_days: 0.020833</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="s">    min_cadence_days: 0.003472</span>
 <a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
 <a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="s">features:</span>
 <a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="s">  device: cuda</span>
@@ -2132,8 +2140,7 @@ your credentials at any time, re-run the script.</p>
 <h3 id="batch-job-recommended">Batch job (recommended)<a class="headerlink" href="#batch-job-recommended" title="Permanent link">&para;</a></h3>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>sbatch<span class="w"> </span>slurm/run_demo_conda.sh
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sbatch<span class="w"> </span>slurm/run_demo_conda.sh
 </code></pre></div></p>
 <p>Monitor:</p>
 <p><strong>Run on MSI:</strong>
@@ -2148,9 +2155,13 @@ your credentials at any time, re-run the script.</p>
 <h3 id="interactive-run-debugging-only">Interactive run (debugging only)<a class="headerlink" href="#interactive-run-debugging-only" title="Permanent link">&para;</a></h3>
 <p>First, request a GPU compute node:</p>
 <p><strong>Run on MSI:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>interactive-gpu<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
 </code></pre></div></p>
+<p><code>interactive-gpu</code> is the partition for short <code>--pty</code> sessions; batch jobs use
+<code>msigpu</code>, which is what <code>slurm/run_demo_conda.sh</code> requests. The legacy <code>a100</code>,
+<code>agsmall</code> and <code>amdsmall</code> partitions no longer exist — see
+<a href="../deployment/#slurm-conventions">Deployment → SLURM conventions</a>.</p>
 <p>Once on the compute node:</p>
 <p><strong>Run on MSI (compute node):</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>module<span class="w"> </span>load<span class="w"> </span>conda<span class="w"> </span>cuda/11.8.0
@@ -2187,7 +2198,7 @@ checkout as an editable install. Updating the pipeline is:</p>
 </tr>
 <tr>
 <td><code>pyproject.toml</code> — new pure-Python dep</td>
-<td><code>pip install -e ".[ztf,catalog,training,dev]"</code> inside the active env</td>
+<td><code>pip install -e ".[ztf,catalog,training,plots,dev]"</code> inside the active env</td>
 </tr>
 <tr>
 <td><code>external/periodfind</code> submodule update</td>
@@ -2202,7 +2213,7 @@ checkout as an editable install. Updating the pipeline is:</p>
 <p>Full rebuild from scratch:</p>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>-n<span class="w"> </span>ml4em-gpu<span class="w"> </span>--yes
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>sbatch<span class="w"> </span>slurm/setup_conda.sh
 </code></pre></div></p>
 

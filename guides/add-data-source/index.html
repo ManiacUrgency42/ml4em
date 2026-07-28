@@ -1127,10 +1127,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-implement-the-two-methods" class="md-nav__link">
+  <a href="#step-2-implement-fetch_batch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2 — Implement the two methods
+        Step 2 — Implement fetch_batch()
       
     </span>
   </a>
@@ -1761,10 +1761,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-implement-the-two-methods" class="md-nav__link">
+  <a href="#step-2-implement-fetch_batch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2 — Implement the two methods
+        Step 2 — Implement fetch_batch()
       
     </span>
   </a>
@@ -1842,66 +1842,80 @@ to change (except optionally exporting from <code>data/__init__.py</code> for co
 <h2 id="step-1-create-the-file">Step 1 — Create the file<a class="headerlink" href="#step-1-create-the-file" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/data/my_source.py
 </code></pre></div>
-<h2 id="step-2-implement-the-two-methods">Step 2 — Implement the two methods<a class="headerlink" href="#step-2-implement-the-two-methods" title="Permanent link">&para;</a></h2>
-<p>Your class must have exactly two methods with these signatures:</p>
+<h2 id="step-2-implement-fetch_batch">Step 2 — Implement <code>fetch_batch()</code><a class="headerlink" href="#step-2-implement-fetch_batch" title="Permanent link">&para;</a></h2>
+<p><code>LightCurveSource</code> requires exactly one method:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightCurve</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">MySource</span><span class="p">:</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all bands for one source.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all bands for all sources in one call.&quot;&quot;&quot;</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="o">...</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all bands for all sources in one call.&quot;&quot;&quot;</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="o">...</span>
 </code></pre></div>
-<p>Both methods return a <strong>flat</strong> <code>list[LightCurve]</code> — not grouped by source. If one
-source has 3 bands, the list has 3 entries. The feature layer groups them by
-<code>source_id</code> internally.</p>
+<p>It returns a <strong>flat</strong> <code>list[LightCurve]</code> — not grouped by source. If one source has 3
+bands, the list has 3 entries, and order is not guaranteed. Callers group by <code>source_id</code>
+before handing the result to the feature layer.</p>
+<p>There is no separate single-source method on the Protocol. For one source, pass a
+one-element list: <code>fetch_batch([source_id])</code>. Adding your own convenience <code>fetch()</code> is
+fine — <code>ZTFSource</code> has one — but nothing in the pipeline calls it.</p>
+<p>Batch the underlying requests wherever the API supports it. The whole point of the
+batch-first signature is that a run over 100k sources should not become 100k round trips.</p>
 <h2 id="step-3-build-lightcurve-objects">Step 3 — Build LightCurve objects<a class="headerlink" href="#step-3-build-lightcurve-objects" title="Permanent link">&para;</a></h2>
-<p>Each <code>LightCurve</code> must have:
-- <code>time</code>: timestamps in <strong>days</strong> (MJD or HJD — pick one and be consistent)
-- <code>mag</code>: apparent magnitude (smaller = brighter)
-- <code>mag_err</code>: 1-sigma uncertainty, same units as <code>mag</code>
-- <code>band</code>: one of <code>"u"</code>, <code>"g"</code>, <code>"r"</code>, <code>"i"</code>, <code>"z"</code>, <code>"y"</code>
-- <code>survey</code>: a string identifying your survey (e.g. <code>"my_survey"</code>)
-- <code>ra</code>, <code>dec</code>: sky position in decimal degrees</p>
+<p>Each <code>LightCurve</code> must have:</p>
+<ul>
+<li><code>time</code>: timestamps in <strong>days</strong>, <strong>float64</strong> — see the dtype note below</li>
+<li><code>mag</code>: apparent magnitude (smaller = brighter)</li>
+<li><code>mag_err</code>: 1-sigma uncertainty, same units as <code>mag</code></li>
+<li><code>band</code>: one of <code>"u"</code>, <code>"g"</code>, <code>"r"</code>, <code>"i"</code>, <code>"z"</code>, <code>"y"</code></li>
+<li><code>survey</code>: a string identifying your survey (e.g. <code>"my_survey"</code>)</li>
+<li><code>ra</code>, <code>dec</code>: sky position in decimal degrees</li>
+<li><code>time_system</code>: which time scale <code>time</code> is on — <code>"hjd"</code>, <code>"mjd"</code>, <code>"bjd"</code>, <code>"jd"</code>, or
+  <code>"relative"</code>. Defaults to <code>"hjd"</code>, so set it explicitly if that is not what you are
+  publishing.</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title"><code>time</code> must be float64</p>
+<p><code>LightCurve.__post_init__</code> <strong>rejects a float32 <code>time</code> array with a <code>ValueError</code></strong>.
+It is not upcast.</p>
+<p>At HJD ~2.46e6 one float32 ULP is 0.25 days, so by the time such an array reaches the
+constructor every pair of epochs less than six hours apart has already collapsed to a
+separation of exactly zero — the entire short-period signal is gone and nothing later
+can detect that it was ever there. Upcasting would satisfy the float64 guarantee while
+carrying that damage forward invisibly, so the constructor refuses instead, while the
+loader that produced the array is still identifiable.</p>
+<p>Build the array in float64 in your loader: <code>np.asarray(raw["mjd"], dtype=np.float64)</code>.
+<code>mag</code> and <code>mag_err</code> are coerced rather than rejected, since they carry no large zero
+point.</p>
+<p>Extractors do eventually hand times to periodfind as float32, but only after
+zero-offsetting in float64 — see
+<a href="../../layers/features/#time-precision">Feature layer → Time precision</a>.</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightCurve</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">MySource</span><span class="p">:</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">LightCurve</span><span class="p">(</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            <span class="n">source_id</span><span class="o">=</span><span class="n">source_id</span><span class="p">,</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>            <span class="n">time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>            <span class="n">mag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>            <span class="n">mag_err</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;magerr&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>            <span class="n">band</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>          <span class="c1"># &quot;g&quot;, &quot;r&quot;, etc.</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>            <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>            <span class="n">ra</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>            <span class="n">dec</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="p">)]</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="c1"># Make one batched API call instead of N individual calls</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">results</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">batch_get</span><span class="p">(</span><span class="n">source_ids</span><span class="p">)</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="n">lcs</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>            <span class="n">lc</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>                <span class="n">source_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>                <span class="n">time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>                <span class="n">mag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>                <span class="n">mag_err</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;magerr&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>                <span class="n">band</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>                <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>                <span class="n">ra</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>                <span class="n">dec</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]),</span>
-<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>            <span class="p">)</span>
-<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>            <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
-<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>        <span class="k">return</span> <span class="n">lcs</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="c1"># Make one batched API call instead of N individual calls</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="n">results</span> <span class="o">=</span> <span class="n">my_api</span><span class="o">.</span><span class="n">batch_get</span><span class="p">(</span><span class="n">source_ids</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="n">lcs</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>            <span class="n">lc</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>                <span class="n">source_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>                <span class="n">time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mjd&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>   <span class="c1"># float64, always</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>                <span class="n">mag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mag&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>                <span class="n">mag_err</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;magerr&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>                <span class="n">band</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>                <span class="n">survey</span><span class="o">=</span><span class="s2">&quot;my_survey&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>                <span class="n">ra</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]),</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>                <span class="n">dec</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]),</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>                <span class="n">time_system</span><span class="o">=</span><span class="s2">&quot;mjd&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>            <span class="p">)</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>            <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="k">return</span> <span class="n">lcs</span>
 </code></pre></div>
+<p>The constructor sorts <code>time</code> ascending and permutes <code>mag</code> and <code>mag_err</code> to match, so you
+do not need to sort. It does <strong>not</strong> drop non-finite values — whether to discard bad
+epochs is your loader's decision, and silently doing it here would hide that from the
+caller.</p>
 <h2 id="step-4-optional-export-for-convenience">Step 4 — Optional: export for convenience<a class="headerlink" href="#step-4-optional-export-for-convenience" title="Permanent link">&para;</a></h2>
 <p>Add to <code>src/ml4em/data/__init__.py</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">.my_source</span><span class="w"> </span><span class="kn">import</span> <span class="n">MySource</span>
@@ -1924,15 +1938,22 @@ source has 3 bands, the list has 3 entries. The feature layer groups them by
 </code></pre></div>
 <hr />
 <h2 id="common-pitfalls">Common pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
-<p><strong>Wrong array dtype:</strong> <code>LightCurve.__post_init__</code> validates that <code>time</code>, <code>mag</code>, and
+<p><strong>float32 timestamps:</strong> the single most common one. Many APIs and parquet files hand back
+float32 columns. <code>LightCurve</code> raises rather than accepting them — cast to float64 at the
+point you build the array, not afterwards. Casting a float32 array up to float64 does not
+recover anything; the precision is already gone.</p>
+<p><strong>Wrong array shape:</strong> <code>LightCurve.__post_init__</code> validates that <code>time</code>, <code>mag</code>, and
 <code>mag_err</code> are all 1-dimensional and the same length. If your arrays are 2D (e.g. from
 a pandas DataFrame without <code>.values.flatten()</code>), you'll get a validation error.</p>
 <p><strong>Flux instead of magnitude:</strong> Many surveys return flux in Janskies or nJy, not
 magnitudes. Convert before building <code>LightCurve</code>:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">mag</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flux_njy</span> <span class="o">/</span> <span class="mf">3631e9</span><span class="p">)</span>   <span class="c1"># AB magnitude</span>
 </code></pre></div></p>
-<p><strong>HJD vs MJD:</strong> Both are fine as long as you're consistent. ZTF uses HJD; other surveys
-publish MJD. The feature extractors treat <code>time</code> as just a float array of days.</p>
+<p><strong>HJD vs MJD:</strong> Both are fine, but say which one you are using via <code>time_system</code>. Every
+feature here depends only on time <em>differences</em>, so nothing downstream can tell the
+systems apart from the values alone, and an unlabelled mix of HJD and MJD light curves
+would produce plausible-looking nonsense rather than an error. Recording the system makes
+a merge checkable instead of silent.</p>
 
 
 

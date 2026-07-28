@@ -1166,6 +1166,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#step-2b-optional-implement-prepare" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2b — (optional) Implement prepare()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#step-3-add-it-to-featurepipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1761,6 +1772,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#step-2b-optional-implement-prepare" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2b — (optional) Implement prepare()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#step-3-add-it-to-featurepipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1841,30 +1863,60 @@ bands), output is one dict per source.</p>
 <a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>        <span class="c1"># your computation here</span>
 <a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>        <span class="o">...</span>
 </code></pre></div>
-<p><strong>Rules:</strong>
-- The method must <strong>never raise</strong>. On any failure (missing data, computation error),
-  return <code>{}</code> for that source. The pipeline fills in NaN for missing fields.
-- Dict keys must match field names in <code>FeatureVector</code> exactly. If you want to add a
+<p><strong>Rules:</strong></p>
+<ul>
+<li><code>extract()</code> is the <strong>only member the Protocol requires</strong>.</li>
+<li>The method must <strong>never raise</strong>. On any failure (missing data, computation error),
+  return <code>{}</code> for that source. The pipeline fills in NaN for missing fields.</li>
+<li>The returned list must have <strong>exactly one entry per input source</strong>, in the same order.
+  The pipeline checks this and discards your extractor's output for the whole chunk if it
+  does not match, because a short list would misalign features onto the wrong sources.</li>
+<li>Dict keys must match field names in <code>FeatureVector</code> exactly. If you want to add a
   new field, you must first add it to <code>FeatureVector</code> in <code>types.py</code> and
-  <code>SCALAR_FIELDS</code> in <code>models/base.py</code>.
-- Processing is done in Python-level loops in this example, but for performance you
-  should batch across sources (like <code>StatisticsExtractor</code> does with periodfind).</p>
+  <code>SCALAR_FIELDS</code> in <code>models/base.py</code>.</li>
+<li>Times arrive as float64. If you hand them to a float32 consumer, use
+  <code>ml4em.features.base.to_float32_time()</code> rather than casting directly — see
+  <a href="../../layers/features/#time-precision">Feature layer → Time precision</a> for why.</li>
+<li>Processing is done in Python-level loops in this example, but for performance you
+  should batch across sources (like <code>StatisticsExtractor</code> does with periodfind).</li>
+</ul>
+<h2 id="step-2b-optional-implement-prepare">Step 2b — (optional) Implement <code>prepare()</code><a class="headerlink" href="#step-2b-optional-implement-prepare" title="Permanent link">&para;</a></h2>
+<p>If your extractor needs a quantity that must be <strong>identical for every source in the run</strong>
+— a shared grid, a global normalisation, a fitted scaler — compute it in <code>prepare()</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Called once with the complete source list, before chunking.&quot;&quot;&quot;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_global_baseline</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>            <span class="nb">float</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>            <span class="k">for</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="n">sources</span> <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">lcs</span> <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">n_obs</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="p">)</span>
+</code></pre></div>
+<p>The pipeline calls it once with the full per-band source list before splitting into
+chunks. <code>PeriodExtractor</code> uses it to build its frequency grid; without it the grid would
+be rebuilt per chunk and the same star would get a different period depending on which
+sources happened to share its batch.</p>
+<p><code>prepare()</code> is <strong>not declared on the <code>FeatureExtractor</code> Protocol</strong>, and you should not
+add it there. <code>FeatureExtractor</code> is <code>@runtime_checkable</code>, so <code>isinstance()</code> against it
+tests for every declared member. Declaring an optional method would make every extractor
+that does not need one — including <code>StatisticsExtractor</code> and <code>DmdtExtractor</code> — fail an
+<code>isinstance()</code> check against the protocol they satisfy. The pipeline probes for the
+method with <code>getattr(extractor, "prepare", None)</code> and calls it only if present, so simply
+defining it is enough.</p>
 <h2 id="step-3-add-it-to-featurepipeline">Step 3 — Add it to FeaturePipeline<a class="headerlink" href="#step-3-add-it-to-featurepipeline" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Pass at construction</label><label for="__tabbed_1_2">Add to FeaturePipeline.default()</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeaturePipeline</span><span class="p">,</span> <span class="n">StatisticsExtractor</span><span class="p">,</span> <span class="n">PeriodExtractor</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.my_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyExtractor</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="p">(</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">extractors</span><span class="o">=</span><span class="p">[</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">StatisticsExtractor</span><span class="p">(),</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="n">PeriodExtractor</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">period</span><span class="p">),</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="n">MyExtractor</span><span class="p">(),</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">],</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">min_observations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeaturePipeline</span><span class="p">,</span> <span class="n">StatisticsExtractor</span><span class="p">,</span> <span class="n">PeriodExtractor</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.features.my_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyExtractor</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FeaturePipeline</span><span class="p">(</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">extractors</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="n">StatisticsExtractor</span><span class="p">(),</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="n">PeriodExtractor</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">period</span><span class="p">),</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="n">MyExtractor</span><span class="p">(),</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="p">],</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">min_observations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -1876,55 +1928,71 @@ pipeline for all users.</p>
 </div>
 <h2 id="step-4-if-needed-add-fields-to-featurevector">Step 4 — (if needed) Add fields to FeatureVector<a class="headerlink" href="#step-4-if-needed-add-fields-to-featurevector" title="Permanent link">&para;</a></h2>
 <p>If your extractor produces a new feature, add it to <code>FeatureVector</code> in <code>types.py</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># src/ml4em/types.py</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureVector</span><span class="p">:</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="o">...</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">my_feature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>  <span class="c1"># add here</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># src/ml4em/types.py</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nd">@dataclass</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureVector</span><span class="p">:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="o">...</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">my_feature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>  <span class="c1"># add here</span>
 </code></pre></div>
 <p>And to <code>SCALAR_FIELDS</code> in <code>models/base.py</code> (append at the end to preserve existing
 model compatibility):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">SCALAR_FIELDS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="o">...</span><span class="p">,</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="s2">&quot;my_feature&quot;</span><span class="p">,</span>   <span class="c1"># append at the end</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">]</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">N_SCALAR_FEATURES</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">SCALAR_FIELDS</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">SCALAR_FIELDS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="o">...</span><span class="p">,</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">&quot;my_feature&quot;</span><span class="p">,</span>   <span class="c1"># append at the end</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">]</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">N_SCALAR_FEATURES</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">SCALAR_FIELDS</span><span class="p">)</span>
 </code></pre></div>
+<p>A name in <code>SCALAR_FIELDS</code> that <code>FeatureVector</code> does not declare is checked at import and
+raises immediately, so a typo fails loudly instead of leaving every model training on a
+column that is silently always NaN.</p>
 <div class="admonition warning">
 <p class="admonition-title">Adding to SCALAR_FIELDS invalidates existing saved models</p>
 <p>If you append a new field to <code>SCALAR_FIELDS</code>, any model trained on the old
-43-field ordering will produce wrong predictions on the new 44-field input.
+45-field ordering will produce wrong predictions on the new 46-field input.
 Retrain the model after adding new fields.</p>
 </div>
+<p>Adding a field to <code>FeatureVector</code> also changes the schema fingerprint the feature
+pipeline stores in its checkpoints, so any in-flight checkpointed run will restart from
+chunk zero rather than mixing old and new field sets. That is intentional.</p>
 <hr />
 <h2 id="example-median-gr-colour-extractor">Example: median g−r colour extractor<a class="headerlink" href="#example-median-gr-colour-extractor" title="Permanent link">&para;</a></h2>
 <p>This extractor computes the median colour index (g magnitude minus r magnitude) for
 sources observed in both bands.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightCurve</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span><span class="w"> </span><span class="nc">ColourExtractor</span><span class="p">:</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Median g-r colour from multi-band light curves.&quot;&quot;&quot;</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="k">for</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>            <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_colour</span><span class="p">(</span><span class="n">lcs</span><span class="p">))</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        <span class="k">return</span> <span class="n">results</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_colour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>        <span class="n">g</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">lc</span> <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">lcs</span> <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="s2">&quot;g&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
-<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>        <span class="n">r</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">lc</span> <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">lcs</span> <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
-<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>        <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>            <span class="k">return</span> <span class="p">{}</span>
-<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;colour_g_r&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">mag</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">mag</span><span class="p">))}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightCurve</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">class</span><span class="w"> </span><span class="nc">ColourExtractor</span><span class="p">:</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Median g-r colour from multi-band light curves.&quot;&quot;&quot;</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        <span class="k">for</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>            <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_colour</span><span class="p">(</span><span class="n">lcs</span><span class="p">))</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>        <span class="k">return</span> <span class="n">results</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_colour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>        <span class="n">g</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">lc</span> <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">lcs</span> <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="s2">&quot;g&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>        <span class="n">r</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">lc</span> <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">lcs</span> <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>            <span class="k">return</span> <span class="p">{}</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;colour_g_r&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">mag</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">mag</span><span class="p">))}</span>
 </code></pre></div>
 <p>This extractor requires adding <code>colour_g_r: float = field(default=np.nan)</code> to
 <code>FeatureVector</code> and <code>"colour_g_r"</code> to <code>SCALAR_FIELDS</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">This example needs multi-band groups</p>
+<p><code>FeaturePipeline.run_batch()</code> expands each source into <strong>one single-band group per
+<code>LightCurve</code></strong> before calling extractors, so <code>lcs</code> normally holds exactly one band and
+a cross-band extractor written this way will always return <code>{}</code>. A colour feature
+needs either its own pass over the un-expanded <code>list[list[LightCurve]]</code>, or a join
+across the per-band <code>FeatureVector</code> rows after the pipeline has run. The rest of the
+example — the never-raise contract, the one-dict-per-source shape, the field
+registration — applies unchanged.</p>
+</div>
 
 
 

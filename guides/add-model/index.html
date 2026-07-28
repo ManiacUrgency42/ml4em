@@ -1847,48 +1847,54 @@ inference, and postprocessing are unchanged.</p>
 <a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
 <a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="sd">        Returns (N, 2) array: column 0 = P(background), column 1 = P(positive).</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="sd">        Returns a (N,) float32 array: P(positive class) for each source.</span>
 <a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="sd">        &quot;&quot;&quot;</span>
-<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>   <span class="c1"># (N, 43) float32</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>   <span class="c1"># (N, 45) float32</span>
 <a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>        <span class="c1"># or use dmdt: stack [fv.dmdt for fv in features]  → (N, 26, 26)</span>
-<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>        <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>        <span class="k">return</span> <span class="n">probs</span>   <span class="c1"># shape (N, 2)</span>
-<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>
-<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>        <span class="c1"># save model weights</span>
-<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_weights</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>        <span class="c1"># REQUIRED: write manifest so load_model can reconstruct this class</span>
-<a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;manifest.json&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;model_class&quot;</span><span class="p">:</span> <span class="s2">&quot;MyModel&quot;</span><span class="p">},</span> <span class="n">f</span><span class="p">)</span>
-<a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>
-<a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>    <span class="nd">@classmethod</span>
-<a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MyModel&quot;</span><span class="p">:</span>
-<a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-<a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>        <span class="c1"># load model weights</span>
-<a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>        <span class="n">model</span><span class="o">.</span><span class="n">_load_weights</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a>        <span class="k">return</span> <span class="n">model</span>
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>   <span class="c1"># shape (N,)</span>
+<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>        <span class="c1"># save model weights</span>
+<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_weights</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>        <span class="c1"># REQUIRED: write manifest so load_model can reconstruct this class</span>
+<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;manifest.json&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;model_class&quot;</span><span class="p">:</span> <span class="s2">&quot;MyModel&quot;</span><span class="p">},</span> <span class="n">f</span><span class="p">)</span>
+<a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>
+<a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MyModel&quot;</span><span class="p">:</span>
+<a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+<a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>        <span class="c1"># load model weights</span>
+<a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>        <span class="n">model</span><span class="o">.</span><span class="n">_load_weights</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>        <span class="k">return</span> <span class="n">model</span>
 </code></pre></div>
-<p><strong><code>predict_proba</code> contract:</strong>
-- Input: <code>list[FeatureVector]</code> — arbitrary length
-- Output: <code>np.ndarray</code> of shape <code>(N, 2)</code>, dtype float
-- Column 0 = probability of background class
-- Column 1 = probability of positive class
-- Probabilities must sum to 1 per row</p>
+<p><strong><code>predict_proba</code> contract:</strong></p>
+<ul>
+<li>Input: <code>list[FeatureVector]</code> — arbitrary length</li>
+<li>Output: <code>np.ndarray</code> of shape <code>(N,)</code>, dtype float32</li>
+<li>Each value is P(positive class) in <code>[0, 1]</code></li>
+<li>Same order as the input; one entry per input, no filtering</li>
+</ul>
+<p>A single column, not a per-class matrix. <code>probabilities_to_candidates</code> and
+<code>InferenceConfig.confidence_thresholds</code> both operate on one probability per source, and
+for a binary problem the second column is redundant. If your backend returns <code>(N, 2)</code>,
+take <code>[:, 1]</code>.</p>
 <p><strong><code>manifest.json</code> is required.</strong> <code>load_model</code> reads it to know which class to
-instantiate. Use the exact class name as the string.</p>
+instantiate. Use the exact class name as the string. Anything <code>load()</code> needs to
+reconstruct the model — a serialised config, for example — should go in the manifest too;
+see <code>LogisticExampleClassifier.save()</code> for the pattern.</p>
 <h2 id="step-3-register-in-the-loader">Step 3 — Register in the loader<a class="headerlink" href="#step-3-register-in-the-loader" title="Permanent link">&para;</a></h2>
 <p>Add one entry to <code>src/ml4em/inference/loader.py</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">_MODEL_REGISTRY</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="s2">&quot;XGBoostClassifier&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.xgboost&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="s2">&quot;LogisticExampleClassifier&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.logistic_example&quot;</span><span class="p">,</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s2">&quot;MyModel&quot;</span><span class="p">:</span> <span class="s2">&quot;ml4em.models.my_model&quot;</span><span class="p">,</span>   <span class="c1"># add this</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="step-4-use-it">Step 4 — Use it<a class="headerlink" href="#step-4-use-it" title="Permanent link">&para;</a></h2>
 <p>Swap one import and one constructor in your training script:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Before:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># from ml4em.models import XGBoostClassifier, XGBoostConfig</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># model = XGBoostClassifier(config=XGBoostConfig(n_estimators=500))</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># from ml4em.models import LogisticExampleClassifier, LogisticExampleConfig</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># model = LogisticExampleClassifier(config=LogisticExampleConfig(n_epochs=300))</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># After:</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models.my_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyModel</span><span class="p">,</span> <span class="n">MyModelConfig</span>
@@ -1899,6 +1905,9 @@ instantiate. Use the exact class name as the string.</p>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;models/my_model_v1/&quot;</span><span class="p">)</span>
 </code></pre></div>
+<p><code>StandardTrainer.fit</code> currently raises <code>NotImplementedError</code> — see
+<a href="../../layers/training/#standardtrainer">Training</a>. Until it is filled in, give your model
+its own <code>fit()</code> and call it directly, as <code>LogisticExampleClassifier</code> does.</p>
 <p>Loading at inference time:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
@@ -1912,13 +1921,25 @@ instantiate. Use the exact class name as the string.</p>
 of <code>models.SCALAR_FIELDS</code>. If you train with one version of <code>SCALAR_FIELDS</code> and then
 change it, your saved model will produce wrong predictions on the new ordering. Always
 retrain after changing <code>SCALAR_FIELDS</code>.</p>
-<p><strong>Using the dmdt image:</strong> <code>XGBoostClassifier</code> ignores <code>dmdt</code> because gradient-boosted
-trees don't have spatial awareness. A CNN can use it:
+<p><strong>Missing values:</strong> <code>features_to_array</code> preserves <code>np.nan</code>, and maps the optional Gaia
+fields' <code>None</code> to NaN as well. Imputation is your model's decision. Tree ensembles handle
+NaN natively; a neural net does not, and <code>LogisticExampleClassifier</code> zeroes them with
+<code>np.nan_to_num</code> before fitting.</p>
+<p><strong>Using the dmdt image:</strong> a scalar-only model ignores <code>dmdt</code>; gradient-boosted trees have
+no spatial awareness, so the flattened histogram would just be 676 weak columns. A CNN can
+use it:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">fv</span><span class="o">.</span><span class="n">dmdt</span> <span class="k">for</span> <span class="n">fv</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># (N, 26, 26)</span>
-</code></pre></div></p>
+</code></pre></div>
+<code>fv.dmdt</code> is <code>None</code> when <code>compute_dmdt</code> was off or the band was too short, so filter or
+substitute a zero image before stacking.</p>
+<p><strong>One row per (source, band):</strong> <code>FeaturePipeline</code> emits a separate <code>FeatureVector</code> for
+each band of a source. A model sees them as independent rows. If you want a per-source
+prediction, aggregate the per-band probabilities afterwards, and remember that
+<code>source_id</code> is not unique across rows.</p>
 <p><strong>Class imbalance:</strong> if <code>dataset.positive_fraction()</code> is small (&lt; 10%), consider
-weighting the loss function or using <code>scale_pos_weight</code> (XGBoost) / <code>class_weight</code>
-(scikit-learn). The training layer exposes <code>dataset.class_counts()</code> for this purpose.</p>
+weighting the loss function or a class-weighting option in your backend. The training
+layer exposes <code>dataset.class_counts()</code> for this purpose, and it generalises to more than
+two classes where <code>positive_fraction()</code> does not.</p>
 
 
 

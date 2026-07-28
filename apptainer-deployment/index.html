@@ -2041,7 +2041,7 @@ Token (PAT) embedded in the HTTPS URL. Replace <code>&lt;PAT&gt;</code> with you
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s">    collection_sources: ZTF_sources_84525009</span>
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="s">    max_timestamp_hjd: 2459951.5</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s">    bands: [g, r, i]</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s">    min_cadence_days: 0.020833</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s">    min_cadence_days: 0.003472</span>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s">features:</span>
 <a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s">  device: cuda</span>
@@ -2081,9 +2081,11 @@ scratch. Runs as a SLURM job because the conversion (20–40 min, ~6 GB download
 exceeds the login node's CPU time limit.</p>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sbatch<span class="w"> </span>slurm/pull_image.sh
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sbatch<span class="w"> </span>slurm/pull_image.sh
 </code></pre></div></p>
+<p>Submit from the repository root, not from inside <code>slurm/</code> — the script resolves
+the checkout from <code>SLURM_SUBMIT_DIR</code>. <code>logs/</code> is already tracked in git, so there
+is nothing to create. See <a href="../deployment/#slurm-conventions">Deployment → SLURM conventions</a>.</p>
 <p>Monitor progress:</p>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>squeue<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER</span>
@@ -2095,8 +2097,7 @@ exceeds the login node's CPU time limit.</p>
 <h3 id="batch-job-recommended">Batch job (recommended)<a class="headerlink" href="#batch-job-recommended" title="Permanent link">&para;</a></h3>
 <p><strong>Run on MSI:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>~/ml4em
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>logs
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sbatch<span class="w"> </span>slurm/run_demo.sh
 </code></pre></div></p>
 <p>Monitor:</p>
 <p><strong>Run on MSI:</strong>
@@ -2111,9 +2112,13 @@ exceeds the login node's CPU time limit.</p>
 <h3 id="interactive-run-debugging-only">Interactive run (debugging only)<a class="headerlink" href="#interactive-run-debugging-only" title="Permanent link">&para;</a></h3>
 <p>First, request a GPU compute node:</p>
 <p><strong>Run on MSI:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>a100<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>srun<span class="w"> </span>--account<span class="o">=</span>cough052<span class="w"> </span>--partition<span class="o">=</span>interactive-gpu<span class="w"> </span>--gres<span class="o">=</span>gpu:a100:1<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">     </span>--mem<span class="o">=</span>16g<span class="w"> </span>--time<span class="o">=</span><span class="m">1</span>:00:00<span class="w"> </span>--pty<span class="w"> </span>bash
 </code></pre></div></p>
+<p><code>interactive-gpu</code> is the partition for short <code>--pty</code> sessions; batch jobs use
+<code>msigpu</code>, which is what <code>slurm/run_demo.sh</code> requests. The legacy <code>a100</code>,
+<code>agsmall</code> and <code>amdsmall</code> partitions no longer exist — see
+<a href="../deployment/#slurm-conventions">Deployment → SLURM conventions</a>.</p>
 <p>Once on the compute node:</p>
 <p><strong>Run on MSI (compute node):</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>module<span class="w"> </span>load<span class="w"> </span>apptainer
