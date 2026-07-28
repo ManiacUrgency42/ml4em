@@ -89,7 +89,7 @@ def _save_cache(path: str, sources: list[list]) -> None:
             ra_arr.append(lc.ra)
             dec_arr.append(lc.dec)
 
-    tmp = path + ".tmp"
+    tmp = path[:-4] + ".tmp.npz"  # keep .npz suffix so numpy doesn't append another
     np.savez_compressed(
         tmp,
         time         = np.concatenate(times) if times else np.zeros(0),
