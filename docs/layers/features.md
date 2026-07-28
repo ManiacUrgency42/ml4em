@@ -294,7 +294,7 @@ Configure via `config.yaml`:
 features:
   period:
     algorithms: [CE, AOV, LS, MHF, FPW]   # default
-    min_period_days: 0.01
+    min_period_days: 0.003472             # 5 min — matches --max-freq 288
     max_period_days: 10.0
     top_n_periods: 10
     min_agreement: 2
@@ -442,10 +442,11 @@ entries are skipped and get an empty dict, leaving `dmdt` at `None`. This floor 
 than `StatisticsExtractor`'s four on purpose — each extractor's floor is the minimum its
 own kernel needs, not a shared policy.
 
-`DmdtConfig` rejects a non-positive `dt_min` and any inverted range. The Δt axis is built
-with `np.logspace(log10(dt_min), log10(dt_max))`, so a non-positive `dt_min` gives
-`-inf`/`nan` edges and an inverted range gives descending edges; either way the histogram
-is silently meaningless.
+`DmdtConfig` holds the two axes as explicit edge lists, `dt_edges` and `dm_edges`,
+rather than a min/max pair — the reference binning is non-uniform and no spacing law
+reproduces it. It rejects edges that are not strictly increasing (duplicated or
+descending edges give zero- or negative-width bins, which `periodfind.DmDt` does not
+itself reject) and rejects a negative first `dt_edge`, since Δt is never negative.
 
 To skip this extractor:
 

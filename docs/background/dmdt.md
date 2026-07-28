@@ -139,7 +139,7 @@ This saves significant computation time when the model doesn't use it.
   `src/ml4em/config/schema.py`
 - Implementation: `src/ml4em/features/dmdt.py:DmdtExtractor`
 - Backend: `periodfind.DmDt` (Rust implementation, same library as everything else)
-- Bin edges (Δt and Δmag) are pre-built once in `DmdtExtractor.__init__()` using the
-  config parameters and reused for all `extract()` calls
-- Constants: `N_DT_BINS = 26`, `N_DM_BINS = 26`, `DMDT_DT_MIN/MAX`,
-  `DMDT_DM_MIN/MAX` in `src/ml4em/constants.py`
+- Bin edges (Δt and Δmag) are cast to `float32` once in `DmdtExtractor.__init__()`
+  and reused for all `extract()` calls
+- Constants: `DMDT_DT_EDGES`, `DMDT_DM_EDGES` in `src/ml4em/constants.py`;
+  `N_DT_BINS` and `N_DM_BINS` (both 26) are derived from their lengths

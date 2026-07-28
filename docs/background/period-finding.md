@@ -62,7 +62,7 @@ These are set in `config.yaml` under `features.period`:
 ```yaml
 features:
   period:
-    min_period_days: 0.003    # ~4 minutes
+    min_period_days: 0.003472  # 5 minutes
     max_period_days: 30.0
     n_freq_grid: 10000
 ```

@@ -9,8 +9,12 @@ Background
 ----------
 For a light curve with N observations, there are N*(N-1)/2 unique pairs.
 For each pair (i, j) with tⱼ > tᵢ:
-    Δt  = tⱼ − tᵢ   (log-spaced axis, captures intra-night to multi-year)
-    Δmag = mⱼ − mᵢ   (linear axis, captures dimming/brightening)
+    Δt  = tⱼ − tᵢ   (captures intra-night to multi-year)
+    Δmag = mⱼ − mᵢ   (captures dimming/brightening)
+
+Both axes use the non-uniform bin edges defined in constants.py — see
+DMDT_DT_EDGES / DMDT_DM_EDGES for why they are not derived from a
+min/max plus a spacing law.
 
 Output shape: (N_DM_BINS, N_DT_BINS) = (26, 26)
 Matches the shape used by scope-ml's CNN branch.
@@ -29,7 +33,6 @@ from typing import Any
 import numpy as np
 
 from ml4em.config.schema import DmdtConfig
-from ml4em.constants import dmdt_edges
 from ml4em.features.base import to_float32_time
 from ml4em.types import LightCurve
 
@@ -45,20 +48,9 @@ class DmdtExtractor:
 
     def __init__(self, config: DmdtConfig) -> None:
         self._cfg = config
-        self._dt_edges, self._dm_edges = self._build_edges()
-
-    def _build_edges(self) -> tuple[np.ndarray, np.ndarray]:
-        dt_edges = np.logspace(
-            np.log10(self._cfg.dt_min),
-            np.log10(self._cfg.dt_max),
-            self._cfg.n_dt_bins + 1,
-        ).astype(np.float32)
-        dm_edges = np.linspace(
-            self._cfg.dm_min,
-            self._cfg.dm_max,
-            self._cfg.n_dm_bins + 1,
-        ).astype(np.float32)
-        return dt_edges, dm_edges
+        # periodfind.DmDt.calc requires float32 edges.
+        self._dt_edges = np.asarray(config.dt_edges, dtype=np.float32)
+        self._dm_edges = np.asarray(config.dm_edges, dtype=np.float32)
 
     def extract(
         self, sources: list[list[LightCurve]]

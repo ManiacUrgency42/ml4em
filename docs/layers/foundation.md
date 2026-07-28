@@ -40,12 +40,22 @@ Default bin edges for `DmdtExtractor`. Override via `features.dmdt` in `config.y
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `N_DT_BINS` | 26 | Number of Δt bins (time axis) |
-| `N_DM_BINS` | 26 | Number of Δmag bins (magnitude axis) |
-| `DMDT_DT_MIN` | 1×10⁻³ days | Minimum time separation (~1.4 min) |
-| `DMDT_DT_MAX` | 1×10³ days | Maximum time separation (~2.7 years) |
-| `DMDT_DM_MIN` | −3.0 mag | Minimum magnitude difference |
-| `DMDT_DM_MAX` | +3.0 mag | Maximum magnitude difference |
+| `DMDT_DT_EDGES` | 27 edges, 0 → 2000 days | Δt bin edges (time axis) |
+| `DMDT_DM_EDGES` | 27 edges, −8 → +8 mag | Δmag bin edges (magnitude axis) |
+| `N_DT_BINS` | 26 | `len(DMDT_DT_EDGES) - 1` |
+| `N_DM_BINS` | 26 | `len(DMDT_DM_EDGES) - 1` |
+
+Both axes are **non-uniform by design** — these are the hand-tuned edges from the
+reference WDB production run, and the exact values are part of the feature
+definition. A histogram computed on different edges is not comparable to one
+computed on these, even at the same 26×26 shape. Two properties are lost under
+uniform spacing:
+
+- Δmag spans ±8 mag so deep eclipses land in a real bin instead of saturating the
+  outermost one, while the edges tighten to 0.05 mag either side of zero to resolve
+  low-amplitude variability.
+- Δt starts at exactly 0 and places four edges inside the first 0.12 d, resolving
+  same-night pairs instead of collapsing them into one bin.
 
 ### Survey parameters
 
@@ -63,7 +73,7 @@ Default bin edges for `DmdtExtractor`. Override via `features.dmdt` in `config.y
 variability pipeline would use. A 30-minute threshold discards every pair of epochs
 closer together than half an hour, which is precisely the regime short-period
 binaries live in, and it contradicts a period search that reaches down to
-`min_period_days = 0.01` d (14.4 minutes). Five minutes still removes the
+`min_period_days = 0.003472` d (5 minutes). Five minutes still removes the
 back-to-back exposures that would otherwise imprint the nightly cadence on the
 periodogram, without deleting the signal being looked for.
 

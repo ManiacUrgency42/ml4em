@@ -32,7 +32,7 @@ by Caltech that stores all of ZTF's data and lets you query it programmatically.
 send it a list of source IDs and it sends back the corresponding light curves.
 
 Kowalski is organized into collections. The one used by ml4em —
-`ZTF_sources_84525009` — contains ~84 million sources from ZTF DR20. Each document
+`ZTF_sources_20240515` — contains ~84 million sources from ZTF DR20. Each document
 in that collection is one single-band light curve for one sky position, identified by
 an integer `_id`.
 
@@ -80,8 +80,8 @@ itself on the periodogram as a spurious very-short "period".
 The threshold is deliberately tight. A half-hour cutoff — the conventional choice for a
 general variability search — would delete every pair of epochs closer together than
 30 minutes, and short-period binaries are exactly the sources whose signal lives there.
-It would also be inconsistent with searching down to `min_period_days = 0.01` d
-(14.4 minutes), since no epoch pair short enough to constrain such a period would
+It would also be inconsistent with searching down to `min_period_days = 0.003472` d
+(5 minutes), since no epoch pair short enough to constrain such a period would
 survive the filter.
 
 ### Data releases

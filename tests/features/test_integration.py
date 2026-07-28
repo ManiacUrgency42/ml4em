@@ -18,7 +18,7 @@ What this tests
 
 Source IDs used
 ---------------
-ZTF_sources_84525009 collection on melman.  IDs are confirmed present.
+ZTF_sources_20240515 collection on melman.  IDs are confirmed present.
 """
 
 import os
@@ -34,7 +34,7 @@ from ml4em.features.pipeline import FeaturePipeline
 from ml4em.types import FeatureVector, LightCurve
 
 
-# Confirmed sources in ZTF_sources_84525009.  Add more here as they are validated.
+# Confirmed sources in ZTF_sources_20240515.  Add more here as they are validated.
 _ZTF_SOURCE_IDS = [
     "10269362000000",
 ]

@@ -64,7 +64,7 @@ sources:
     host: melman.caltech.edu
     port: 443
     timeout: 300
-    collection_sources: ZTF_sources_84525009
+    collection_sources: ZTF_sources_20240515
     max_timestamp_hjd: 2459951.5
     bands: [g, r, i]
     min_cadence_days: 0.003472

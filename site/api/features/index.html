@@ -5220,8 +5220,11 @@ a Rust-backed batched implementation.</p>
 <h3 id="ml4em.features.dmdt--background">Background<a class="headerlink" href="#ml4em.features.dmdt--background" title="Permanent link">&para;</a></h3>
 <p>For a light curve with N observations, there are N*(N-1)/2 unique pairs.
 For each pair (i, j) with tⱼ &gt; tᵢ:
-    Δt  = tⱼ − tᵢ   (log-spaced axis, captures intra-night to multi-year)
-    Δmag = mⱼ − mᵢ   (linear axis, captures dimming/brightening)</p>
+    Δt  = tⱼ − tᵢ   (captures intra-night to multi-year)
+    Δmag = mⱼ − mᵢ   (captures dimming/brightening)</p>
+<p>Both axes use the non-uniform bin edges defined in constants.py — see
+DMDT_DT_EDGES / DMDT_DM_EDGES for why they are not derived from a
+min/max plus a spacing law.</p>
 <p>Output shape: (N_DM_BINS, N_DT_BINS) = (26, 26)
 Matches the shape used by scope-ml's CNN branch.</p>
 <h3 id="ml4em.features.dmdt--post-processing">Post-processing<a class="headerlink" href="#ml4em.features.dmdt--post-processing" title="Permanent link">&para;</a></h3>
@@ -5276,10 +5279,7 @@ Matches the shape used by scope-ml's CNN branch.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/ml4em/features/dmdt.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-37"> 37</a></span>
-<span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
-<span class="normal"><a href="#__codelineno-0-39"> 39</a></span>
-<span class="normal"><a href="#__codelineno-0-40"> 40</a></span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-40"> 40</a></span>
 <span class="normal"><a href="#__codelineno-0-41"> 41</a></span>
 <span class="normal"><a href="#__codelineno-0-42"> 42</a></span>
 <span class="normal"><a href="#__codelineno-0-43"> 43</a></span>
@@ -5346,93 +5346,74 @@ Matches the shape used by scope-ml's CNN branch.</p>
 <span class="normal"><a href="#__codelineno-0-104">104</a></span>
 <span class="normal"><a href="#__codelineno-0-105">105</a></span>
 <span class="normal"><a href="#__codelineno-0-106">106</a></span>
-<span class="normal"><a href="#__codelineno-0-107">107</a></span>
-<span class="normal"><a href="#__codelineno-0-108">108</a></span>
-<span class="normal"><a href="#__codelineno-0-109">109</a></span>
-<span class="normal"><a href="#__codelineno-0-110">110</a></span>
-<span class="normal"><a href="#__codelineno-0-111">111</a></span>
-<span class="normal"><a href="#__codelineno-0-112">112</a></span>
-<span class="normal"><a href="#__codelineno-0-113">113</a></span>
-<span class="normal"><a href="#__codelineno-0-114">114</a></span>
-<span class="normal"><a href="#__codelineno-0-115">115</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="k">class</span><span class="w"> </span><span class="nc">DmdtExtractor</span><span class="p">:</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Δmag / Δt pairwise histogram via periodfind.DmDt.</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    config:</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        DmdtConfig from FeatureConfig.dmdt.</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DmdtConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span> <span class="o">=</span> <span class="n">config</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dt_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dm_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_edges</span><span class="p">()</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="n">dt_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">dt_min</span><span class="p">),</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">dt_max</span><span class="p">),</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">n_dt_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="n">dm_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">dm_min</span><span class="p">,</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">dm_max</span><span class="p">,</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">n_dm_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="k">return</span> <span class="n">dt_edges</span><span class="p">,</span> <span class="n">dm_edges</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]]</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute dm/dt histograms for a batch of sources.</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">        Parameters</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">        ----------</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">        sources:</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">            Each element is all bands for one source.  The band with the most</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">            observations is used.</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">        Returns</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">        -------</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">        list[dict[str, Any]]</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">            One dict per source with key &quot;dmdt&quot; → ndarray of shape</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">            (N_DM_BINS, N_DT_BINS).  Empty dict for a source that is too</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">            short.  If the kernel itself raises, every source in the call</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">            gets an empty dict — the call is batched and there is no way to</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">            attribute the failure to one entry.</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">        &quot;&quot;&quot;</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">sources</span><span class="p">:</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>            <span class="k">return</span> <span class="p">[]</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="kn">import</span><span class="w"> </span><span class="nn">periodfind</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="n">valid_idx</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">lcs</span><span class="p">:</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>                <span class="k">continue</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>            <span class="n">primary</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lcs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">lc</span><span class="p">:</span> <span class="n">lc</span><span class="o">.</span><span class="n">n_obs</span><span class="p">)</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>            <span class="k">if</span> <span class="n">primary</span><span class="o">.</span><span class="n">n_obs</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>                <span class="k">continue</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>            <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_float32_time</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">time</span><span class="p">))</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>            <span class="n">mags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>            <span class="n">valid_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">]</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_idx</span><span class="p">:</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>            <span class="k">return</span> <span class="n">results</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>            <span class="n">raw</span> <span class="o">=</span> <span class="n">periodfind</span><span class="o">.</span><span class="n">DmDt</span><span class="p">()</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>                <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dm_edges</span>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>            <span class="p">)</span>  <span class="c1"># (M, n_dm_bins, n_dt_bins)</span>
-<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-<a id="__codelineno-0-110" name="__codelineno-0-110"></a>            <span class="k">return</span> <span class="n">results</span>
-<a id="__codelineno-0-111" name="__codelineno-0-111"></a>
-<a id="__codelineno-0-112" name="__codelineno-0-112"></a>        <span class="k">for</span> <span class="n">batch_pos</span><span class="p">,</span> <span class="n">src_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">):</span>
-<a id="__codelineno-0-113" name="__codelineno-0-113"></a>            <span class="n">results</span><span class="p">[</span><span class="n">src_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dmdt&quot;</span><span class="p">:</span> <span class="n">raw</span><span class="p">[</span><span class="n">batch_pos</span><span class="p">]}</span>
-<a id="__codelineno-0-114" name="__codelineno-0-114"></a>
-<a id="__codelineno-0-115" name="__codelineno-0-115"></a>        <span class="k">return</span> <span class="n">results</span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="k">class</span><span class="w"> </span><span class="nc">DmdtExtractor</span><span class="p">:</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Δmag / Δt pairwise histogram via periodfind.DmDt.</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    config:</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        DmdtConfig from FeatureConfig.dmdt.</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DmdtConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span> <span class="o">=</span> <span class="n">config</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="c1"># periodfind.DmDt.calc requires float32 edges.</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dt_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dt_edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dm_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dm_edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]]</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute dm/dt histograms for a batch of sources.</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">        Parameters</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">        ----------</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">        sources:</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">            Each element is all bands for one source.  The band with the most</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">            observations is used.</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">        Returns</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">        -------</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">        list[dict[str, Any]]</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">            One dict per source with key &quot;dmdt&quot; → ndarray of shape</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">            (N_DM_BINS, N_DT_BINS).  Empty dict for a source that is too</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">            short.  If the kernel itself raises, every source in the call</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">            gets an empty dict — the call is batched and there is no way to</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">            attribute the failure to one entry.</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">sources</span><span class="p">:</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>            <span class="k">return</span> <span class="p">[]</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="kn">import</span><span class="w"> </span><span class="nn">periodfind</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="n">valid_idx</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">lcs</span><span class="p">:</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>                <span class="k">continue</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>            <span class="n">primary</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lcs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">lc</span><span class="p">:</span> <span class="n">lc</span><span class="o">.</span><span class="n">n_obs</span><span class="p">)</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>            <span class="k">if</span> <span class="n">primary</span><span class="o">.</span><span class="n">n_obs</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>                <span class="k">continue</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>            <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_float32_time</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">time</span><span class="p">))</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>            <span class="n">mags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>            <span class="n">valid_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">]</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_idx</span><span class="p">:</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>            <span class="k">return</span> <span class="n">results</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>            <span class="n">raw</span> <span class="o">=</span> <span class="n">periodfind</span><span class="o">.</span><span class="n">DmDt</span><span class="p">()</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>                <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dm_edges</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>            <span class="p">)</span>  <span class="c1"># (M, n_dm_bins, n_dt_bins)</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>            <span class="k">return</span> <span class="n">results</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="k">for</span> <span class="n">batch_pos</span><span class="p">,</span> <span class="n">src_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">):</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>            <span class="n">results</span><span class="p">[</span><span class="n">src_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dmdt&quot;</span><span class="p">:</span> <span class="n">raw</span><span class="p">[</span><span class="n">batch_pos</span><span class="p">]}</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="k">return</span> <span class="n">results</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -5476,7 +5457,15 @@ Matches the shape used by scope-ml's CNN branch.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/ml4em/features/dmdt.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-63"> 63</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-0-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-0-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-0-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-0-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-0-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-0-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-0-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-0-63"> 63</a></span>
 <span class="normal"><a href="#__codelineno-0-64"> 64</a></span>
 <span class="normal"><a href="#__codelineno-0-65"> 65</a></span>
 <span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
@@ -5520,67 +5509,59 @@ Matches the shape used by scope-ml's CNN branch.</p>
 <span class="normal"><a href="#__codelineno-0-104">104</a></span>
 <span class="normal"><a href="#__codelineno-0-105">105</a></span>
 <span class="normal"><a href="#__codelineno-0-106">106</a></span>
-<span class="normal"><a href="#__codelineno-0-107">107</a></span>
-<span class="normal"><a href="#__codelineno-0-108">108</a></span>
-<span class="normal"><a href="#__codelineno-0-109">109</a></span>
-<span class="normal"><a href="#__codelineno-0-110">110</a></span>
-<span class="normal"><a href="#__codelineno-0-111">111</a></span>
-<span class="normal"><a href="#__codelineno-0-112">112</a></span>
-<span class="normal"><a href="#__codelineno-0-113">113</a></span>
-<span class="normal"><a href="#__codelineno-0-114">114</a></span>
-<span class="normal"><a href="#__codelineno-0-115">115</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]]</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute dm/dt histograms for a batch of sources.</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">    sources:</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">        Each element is all bands for one source.  The band with the most</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">        observations is used.</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">    list[dict[str, Any]]</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">        One dict per source with key &quot;dmdt&quot; → ndarray of shape</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">        (N_DM_BINS, N_DT_BINS).  Empty dict for a source that is too</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">        short.  If the kernel itself raises, every source in the call</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">        gets an empty dict — the call is batched and there is no way to</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">        attribute the failure to one entry.</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">sources</span><span class="p">:</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">return</span> <span class="p">[]</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">periodfind</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="n">valid_idx</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">lcs</span><span class="p">:</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>            <span class="k">continue</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="n">primary</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lcs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">lc</span><span class="p">:</span> <span class="n">lc</span><span class="o">.</span><span class="n">n_obs</span><span class="p">)</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="k">if</span> <span class="n">primary</span><span class="o">.</span><span class="n">n_obs</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>            <span class="k">continue</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>        <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_float32_time</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">time</span><span class="p">))</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="n">mags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="n">valid_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">]</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_idx</span><span class="p">:</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>        <span class="k">return</span> <span class="n">results</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">periodfind</span><span class="o">.</span><span class="n">DmDt</span><span class="p">()</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>            <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dm_edges</span>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="p">)</span>  <span class="c1"># (M, n_dm_bins, n_dt_bins)</span>
-<a id="__codelineno-0-109" name="__codelineno-0-109"></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="k">return</span> <span class="n">results</span>
-<a id="__codelineno-0-111" name="__codelineno-0-111"></a>
-<a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="k">for</span> <span class="n">batch_pos</span><span class="p">,</span> <span class="n">src_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">):</span>
-<a id="__codelineno-0-113" name="__codelineno-0-113"></a>        <span class="n">results</span><span class="p">[</span><span class="n">src_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dmdt&quot;</span><span class="p">:</span> <span class="n">raw</span><span class="p">[</span><span class="n">batch_pos</span><span class="p">]}</span>
-<a id="__codelineno-0-114" name="__codelineno-0-114"></a>
-<a id="__codelineno-0-115" name="__codelineno-0-115"></a>    <span class="k">return</span> <span class="n">results</span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]]</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute dm/dt histograms for a batch of sources.</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    sources:</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">        Each element is all bands for one source.  The band with the most</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">        observations is used.</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    list[dict[str, Any]]</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">        One dict per source with key &quot;dmdt&quot; → ndarray of shape</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">        (N_DM_BINS, N_DT_BINS).  Empty dict for a source that is too</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">        short.  If the kernel itself raises, every source in the call</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">        gets an empty dict — the call is batched and there is no way to</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">        attribute the failure to one entry.</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">sources</span><span class="p">:</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="k">return</span> <span class="p">[]</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">periodfind</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="n">valid_idx</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lcs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">lcs</span><span class="p">:</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>            <span class="k">continue</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="n">primary</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lcs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">lc</span><span class="p">:</span> <span class="n">lc</span><span class="o">.</span><span class="n">n_obs</span><span class="p">)</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="k">if</span> <span class="n">primary</span><span class="o">.</span><span class="n">n_obs</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>            <span class="k">continue</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_float32_time</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">time</span><span class="p">))</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="n">mags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="n">valid_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">]</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_idx</span><span class="p">:</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="k">return</span> <span class="n">results</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="n">raw</span> <span class="o">=</span> <span class="n">periodfind</span><span class="o">.</span><span class="n">DmDt</span><span class="p">()</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>            <span class="n">times</span><span class="p">,</span> <span class="n">mags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dm_edges</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="p">)</span>  <span class="c1"># (M, n_dm_bins, n_dt_bins)</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="k">return</span> <span class="n">results</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="k">for</span> <span class="n">batch_pos</span><span class="p">,</span> <span class="n">src_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">):</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="n">results</span><span class="p">[</span><span class="n">src_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dmdt&quot;</span><span class="p">:</span> <span class="n">raw</span><span class="p">[</span><span class="n">batch_pos</span><span class="p">]}</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">return</span> <span class="n">results</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

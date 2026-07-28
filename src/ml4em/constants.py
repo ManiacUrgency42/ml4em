@@ -25,36 +25,51 @@ import numpy as np
 #   axis 1 → Δt   dimension  (N_DT_BINS columns)
 #   final ndarray shape: (N_DM_BINS, N_DT_BINS)
 #
-# The histogram2d output (shape N_DT_BINS × N_DM_BINS) is transposed
-# before storage to give (N_DM_BINS, N_DT_BINS).
+# The bin edges below are the hand-tuned, non-uniform edges used by the
+# reference WDB production run (scope-ml config.defaults.yaml → dmdt_ints).
+# They are *not* derivable from a min/max plus a spacing law, and the exact
+# values are part of the feature definition: a histogram computed on
+# different edges is not comparable to one computed on these, even at the
+# same 26×26 shape.  Two properties matter and are lost under uniform
+# spacing:
+#
+#   Δmag  spans ±8 mag so deep eclipses land in a real bin instead of
+#         saturating the outermost one, while the edges tighten to 0.05 mag
+#         either side of zero to resolve low-amplitude variability.
+#   Δt    starts at exactly 0 and places four edges inside the first
+#         0.12 d, so same-night pairs — the regime short-period binaries
+#         live in — are resolved rather than collapsed into one bin.
 # ---------------------------------------------------------------------------
 
-N_DT_BINS : int = 26   # time-difference bins
-N_DM_BINS : int = 26   # magnitude-difference bins
+DMDT_DM_EDGES : tuple[float, ...] = (
+    -8.0, -4.5, -3.0, -2.5, -2.0, -1.5, -1.25, -0.75, -0.5, -0.3,
+    -0.2, -0.1, -0.05, 0.0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75,
+    1.25, 1.5, 2.0, 2.5, 3.0, 4.5, 8.0,
+)
 
-# Scalar range parameters (bin edges are derived from these in dmdt_edges()).
-DMDT_DT_MIN : float =  1e-3   # days  (~1.4 min)
-DMDT_DT_MAX : float =  1e3    # days  (~2.7 yr)
-DMDT_DM_MIN : float = -3.0    # mag   (source brightened by 3 mag)
-DMDT_DM_MAX : float =  3.0    # mag   (source faded by 3 mag)
+DMDT_DT_EDGES : tuple[float, ...] = (
+    0.0, 0.02759, 0.04, 0.08, 0.12, 0.3, 0.75, 1.0, 1.5, 2.5,
+    3.5, 4.5, 5.5, 7.0, 10.0, 20.0, 30.0, 45.0, 60.0, 90.0,
+    120.0, 180.0, 240.0, 360.0, 500.0, 650.0, 2000.0,
+)
+
+N_DT_BINS : int = len(DMDT_DT_EDGES) - 1   # time-difference bins      → 26
+N_DM_BINS : int = len(DMDT_DM_EDGES) - 1   # magnitude-difference bins → 26
 
 
 def dmdt_edges() -> tuple[np.ndarray, np.ndarray]:
-    """Return (dt_edges, dm_edges) bin-edge arrays for the dm/dt histogram.
+    """Return (dt_edges, dm_edges) as float32 arrays for periodfind.DmDt.
 
-    dt_edges : shape (N_DT_BINS + 1,)  — log-spaced over DMDT_DT_MIN..DMDT_DT_MAX
-    dm_edges : shape (N_DM_BINS + 1,)  — linearly spaced over DMDT_DM_MIN..DMDT_DM_MAX
+    dt_edges : shape (N_DT_BINS + 1,)
+    dm_edges : shape (N_DM_BINS + 1,)
 
-    Time differences are log-spaced because relevant timescales span six
-    orders of magnitude (minutes to years).  Magnitude differences are
-    linear because eclipses and variability are typically bounded within
-    a few magnitudes and we want uniform resolution there.
+    periodfind.DmDt.calc requires float32 edges; returning them already
+    cast keeps that requirement in one place.
     """
-    dt_edges = np.logspace(
-        np.log10(DMDT_DT_MIN), np.log10(DMDT_DT_MAX), N_DT_BINS + 1
+    return (
+        np.asarray(DMDT_DT_EDGES, dtype=np.float32),
+        np.asarray(DMDT_DM_EDGES, dtype=np.float32),
     )
-    dm_edges = np.linspace(DMDT_DM_MIN, DMDT_DM_MAX, N_DM_BINS + 1)
-    return dt_edges, dm_edges
 
 
 # ---------------------------------------------------------------------------
@@ -77,7 +92,7 @@ ZTF_SIDEREAL_DAY : float = 0.997_269_57   # days
 # (--min-cadence-minutes 5.0).  scope-ml's *library* default is 30 minutes,
 # but 30 min would discard every pair of epochs closer together than half
 # an hour — which is exactly the regime short-period WDBs live in, and is
-# incompatible with searching down to min_period_days = 0.01 d (14.4 min).
+# incompatible with searching down to min_period_days = 0.003472 d (5 min).
 ZTF_MIN_CADENCE_DAYS : float = 5.0 / 1440.0   # 5 minutes in days
 
 # Maximum HJD for ZTF DR16.  Set when restricting to a specific data release.

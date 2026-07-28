@@ -2427,7 +2427,7 @@ field list.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">features</span><span class="p">:</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">period</span><span class="p">:</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">algorithms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">CE</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AOV</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">LS</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">MHF</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">FPW</span><span class="p p-Indicator">]</span><span class="w">   </span><span class="c1"># default</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">min_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.01</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">min_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.003472</span><span class="w">             </span><span class="c1"># 5 min — matches --max-freq 288</span>
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="nt">max_period_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0</span>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="nt">top_n_periods</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="nt">min_agreement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
@@ -2575,10 +2575,11 @@ reused. Times go through <a href="#time-precision"><code>to_float32_time</code><
 entries are skipped and get an empty dict, leaving <code>dmdt</code> at <code>None</code>. This floor is lower
 than <code>StatisticsExtractor</code>'s four on purpose — each extractor's floor is the minimum its
 own kernel needs, not a shared policy.</p>
-<p><code>DmdtConfig</code> rejects a non-positive <code>dt_min</code> and any inverted range. The Δt axis is built
-with <code>np.logspace(log10(dt_min), log10(dt_max))</code>, so a non-positive <code>dt_min</code> gives
-<code>-inf</code>/<code>nan</code> edges and an inverted range gives descending edges; either way the histogram
-is silently meaningless.</p>
+<p><code>DmdtConfig</code> holds the two axes as explicit edge lists, <code>dt_edges</code> and <code>dm_edges</code>,
+rather than a min/max pair — the reference binning is non-uniform and no spacing law
+reproduces it. It rejects edges that are not strictly increasing (duplicated or
+descending edges give zero- or negative-width bins, which <code>periodfind.DmDt</code> does not
+itself reject) and rejects a negative first <code>dt_edge</code>, since Δt is never negative.</p>
 <p>To skip this extractor:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">features</span><span class="p">:</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">compute_dmdt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>

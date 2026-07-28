@@ -21,6 +21,12 @@
 # Output directories (created automatically by the demo):
 #   /scratch.global/$USER/ml4em_data/features/demo.parquet
 #   /scratch.global/$USER/ml4em_data/models/logistic_demo/
+#
+# --time is 4 h because period-finding dominates the runtime and the grid
+# scales with 1/min_period_days.  At the default 0.003472 d (5 min) floor and
+# a multi-year ZTF baseline the grid is ~6.25M trial frequencies per
+# algorithm — 2.9x what a 0.01 d floor produced.  Two hours was not enough.
+# If you shorten the algorithm list in config, this can come back down.
 # ==============================================================================
 
 #SBATCH --job-name=ml4em_demo

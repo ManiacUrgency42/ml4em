@@ -9,12 +9,12 @@ sources:
     host: melman.caltech.edu
     port: 443
     timeout: 300
-    collection_sources: ZTF_sources_84525009  # largest available collection on melman (DR20)
+    collection_sources: ZTF_sources_20240515   # DR20 source catalog on melman
     max_timestamp_hjd: 2459951.5   # end of ZTF DR16; null = all data
     bands: [g, r, i]
     # 5 minutes.  30 min (scope-ml's library default) would discard every pair
     # of epochs closer together than half an hour, which is the regime short-
-    # period WDBs live in and is incompatible with min_period_days: 0.01.
+    # period WDBs live in and is incompatible with min_period_days: 0.003472.
     min_cadence_days: 0.003472     # 5 minutes
 
 features:
@@ -22,19 +22,22 @@ features:
   compute_dmdt: true
 
   period:
-    algorithms: [CE, AOV, LS, BLS]
-    min_period_days: 0.01
+    algorithms: [CE, AOV, LS, MHF, FPW]
+    # 5 minutes, matching the reference WDB production run (--max-freq 288).
+    # A coarser floor excludes the ultracompact binaries this pipeline exists
+    # to find, and contradicts the 5-minute min_cadence_days above.
+    min_period_days: 0.003472
     max_period_days: 10.0
-    top_n_periods: 3
+    top_n_periods: 10
     min_agreement: 2
 
-  dmdt:
-    n_dt_bins: 26
-    n_dm_bins: 26
-    dt_min: 0.001
-    dt_max: 1000.0
-    dm_min: -3.0
-    dm_max:  3.0
+  # dm/dt bin edges are non-uniform by design — see DMDT_DT_EDGES /
+  # DMDT_DM_EDGES in src/ml4em/constants.py.  Omit these keys to use the
+  # reference binning; override only if you are training from scratch, since
+  # changing them invalidates every previously computed histogram.
+  # dmdt:
+  #   dt_edges: [0.0, 0.02759, ...]
+  #   dm_edges: [-8.0, -4.5, ...]
 
   catalog:
     xmatch_radius_arcsec: 2.0

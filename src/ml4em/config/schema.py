@@ -27,12 +27,8 @@ from typing import ClassVar, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from ml4em.constants import (
-    DMDT_DM_MAX,
-    DMDT_DM_MIN,
-    DMDT_DT_MAX,
-    DMDT_DT_MIN,
-    N_DM_BINS,
-    N_DT_BINS,
+    DMDT_DM_EDGES,
+    DMDT_DT_EDGES,
     XMATCH_RADIUS_ARCSEC,
     ZTF_BANDS,
     ZTF_MIN_CADENCE_DAYS,
@@ -59,9 +55,12 @@ class ZTFConfig(BaseModel):
     protocol : str = "https"
     timeout  : int = 300   # seconds
 
-    # Source catalog to query for light curves.
-    # ZTF_sources_84525009 is the largest available collection on melman (DR20).
-    collection_sources : str = "ZTF_sources_84525009"
+    # Source catalog to query for light curves.  Kowalski names these
+    # ZTF_sources_<YYYYMMDD>.  Note the date is the catalog build date, not a
+    # data-release label, and the ZTF_exposures_* collections carry *different*
+    # dates — picking an exposures date here yields a collection that does not
+    # exist and a silent zero-result cone search.
+    collection_sources : str = "ZTF_sources_20240515"
 
     # Restrict to observations before this HJD (end of a specific data release).
     # None → use every epoch in collection_sources.
@@ -145,8 +144,14 @@ class PeriodConfig(BaseModel):
     model_config = {"validate_assignment": True}
 
     algorithms      : list[str]    = ["CE", "AOV", "LS", "MHF", "FPW"]
-    min_period_days : float        = 0.01   # days
-    max_period_days : float        = 10.0   # days
+
+    # 5 minutes — equivalent to the reference WDB production run's
+    # --max-freq 288 (cycles/day).  A coarser floor silently excludes the
+    # ultracompact and AM CVn systems that are the point of the pipeline,
+    # and would contradict the 5-minute ZTF_MIN_CADENCE_DAYS filter that
+    # exists precisely to preserve those epoch pairs.
+    min_period_days : float        = 0.003472   # days (5 min)
+    max_period_days : float        = 10.0       # days
     top_n_periods   : int          = 10     # periods retained per algorithm before scoring (matches scope-ml)
     min_agreement   : int          = 2      # algorithms that must agree → "high confidence"
 
@@ -206,37 +211,41 @@ class DmdtConfig(BaseModel):
     # silently and only fails much later, inside whatever consumes it.
     model_config = {"validate_assignment": True}
 
-    n_dt_bins : int   = N_DT_BINS     # number of time-difference bins
-    n_dm_bins : int   = N_DM_BINS     # number of magnitude-difference bins
-    dt_min    : float = DMDT_DT_MIN   # minimum Δt  (days, log-spaced axis)
-    dt_max    : float = DMDT_DT_MAX   # maximum Δt  (days)
-    dm_min    : float = DMDT_DM_MIN   # minimum Δmag (mag, linear axis)
-    dm_max    : float = DMDT_DM_MAX   # maximum Δmag (mag)
+    # Explicit edges rather than a min/max pair: the reference binning is
+    # non-uniform and deliberately so (see constants.py), and no min/max plus
+    # spacing law reproduces it.  Bin counts follow from the edge lists.
+    dt_edges : list[float] = list(DMDT_DT_EDGES)   # Δt   bin edges (days)
+    dm_edges : list[float] = list(DMDT_DM_EDGES)   # Δmag bin edges (mag)
 
-    @field_validator("n_dt_bins", "n_dm_bins")
+    @property
+    def n_dt_bins(self) -> int:
+        return len(self.dt_edges) - 1
+
+    @property
+    def n_dm_bins(self) -> int:
+        return len(self.dm_edges) - 1
+
+    @field_validator("dt_edges", "dm_edges")
     @classmethod
-    def _positive_int(cls, v: int) -> int:
-        if v < 1:
-            raise ValueError(f"Bin count must be ≥ 1, got {v}")
+    def _strictly_increasing(cls, v: list[float]) -> list[float]:
+        # periodfind.DmDt assigns a pair to a bin by searching these edges.
+        # Duplicated or descending edges produce zero-width or negative-width
+        # bins, which the kernel does not reject — it silently returns a
+        # histogram that cannot be interpreted.  Reject here instead.
+        if len(v) < 2:
+            raise ValueError(f"Need at least 2 edges to form a bin, got {len(v)}")
+        if any(b <= a for a, b in zip(v, v[1:])):
+            raise ValueError(f"Bin edges must be strictly increasing, got {v}")
         return v
 
-    @model_validator(mode="after")
-    def _ordered_edges(self):
-        # The Δt axis is built with np.logspace(log10(dt_min), log10(dt_max)),
-        # so a non-positive dt_min gives -inf/nan edges and an inverted range
-        # gives descending edges.  Either way the histogram is silently
-        # meaningless, so both are rejected here.
-        if self.dt_min <= 0:
-            raise ValueError(f"dt_min must be positive (log axis), got {self.dt_min}")
-        if self.dt_min >= self.dt_max:
-            raise ValueError(
-                f"dt_min ({self.dt_min}) must be < dt_max ({self.dt_max})"
-            )
-        if self.dm_min >= self.dm_max:
-            raise ValueError(
-                f"dm_min ({self.dm_min}) must be < dm_max ({self.dm_max})"
-            )
-        return self
+    @field_validator("dt_edges")
+    @classmethod
+    def _non_negative_dt(cls, v: list[float]) -> list[float]:
+        # Δt is |tⱼ − tᵢ| over ordered pairs, so it is never negative and a
+        # negative edge would define a bin nothing can ever fall into.
+        if v[0] < 0:
+            raise ValueError(f"dt_edges must start at ≥ 0, got {v[0]}")
+        return v
 
 
 class CatalogConfig(BaseModel):
@@ -478,8 +487,8 @@ class PipelineConfig(BaseModel):
             collection_sources: ZTF_sources_20240515
         features:
           period:
-            algorithms: [CE, AOV, LS, BLS]
-            min_period_days: 0.01
+            algorithms: [CE, AOV, LS, MHF, FPW]
+            min_period_days: 0.003472
             max_period_days: 10.0
         storage:
           features_dir: /data/ml4em/features
