@@ -68,7 +68,7 @@ pip install --quiet external/periodfind
 # torch is already installed above; pip sees it as satisfied and will not pull
 # in a second wheel when resolving [training,inference] extras.
 echo "==> Installing ml4em in editable mode..."
-pip install --quiet -e ".[ztf,catalog,training,dev]"
+pip install --quiet -e ".[ztf,catalog,training,plots,dev]"
 
 echo ""
 echo "Done. Verify the install:"

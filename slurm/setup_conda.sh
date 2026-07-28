@@ -25,11 +25,12 @@
 #SBATCH --job-name=ml4em_conda_setup
 #SBATCH --output=logs/ml4em_conda_setup_%j.out
 #SBATCH --error=logs/ml4em_conda_setup_%j.err
-#SBATCH -p amdsmall
+#SBATCH -p msismall
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
-#SBATCH --mem=8G
-#SBATCH --time=00:45:00
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=16G
+#SBATCH --time=03:00:00
 #SBATCH -A cough052
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=jin00404@umn.edu
@@ -38,8 +39,12 @@ module purge
 module load conda
 module load cuda/11.8.0   # provides nvcc for periodfind CUDA extensions
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# sbatch copies the submitted script to /var/spool on the compute node, so
+# BASH_SOURCE points there and not at the checkout.  SLURM_SUBMIT_DIR is the
+# directory sbatch was called from; the BASH_SOURCE form is the fallback for
+# running this script directly with bash.
+REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 
 conda env create -f "${REPO_DIR}/environment-gpu.yml"
 
-conda run -n ml4em-gpu bash "${REPO_DIR}/scripts/setup_conda.sh" gpu
+conda run --no-capture-output -n ml4em-gpu bash "${REPO_DIR}/scripts/setup_conda.sh" gpu

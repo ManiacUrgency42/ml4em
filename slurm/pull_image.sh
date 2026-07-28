@@ -22,7 +22,7 @@
 #SBATCH --job-name=pull_ml4em.job
 #SBATCH --output=logs/pull_ml4em_%j.out
 #SBATCH --error=logs/pull_ml4em_%j.err
-#SBATCH -p amdsmall
+#SBATCH -p msismall
 #SBATCH --nodes 1
 #SBATCH --ntasks-per-node 8
 #SBATCH --mem 16G

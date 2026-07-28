@@ -58,10 +58,15 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 import time
 
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import _scaling_common as sc
 
 logging.basicConfig(
     level=logging.INFO,
@@ -115,16 +120,21 @@ def main():
     for lc in lcs:
         groups[lc.source_id].append(lc)
     sources = [groups.get(sid, []) for sid in source_ids]
-    valid   = [s for s in sources if s and max(lc.n_obs for lc in s) >= cfg.features.min_observations]
+
+    # One work unit per band, as FeaturePipeline.run_batch does.  Bucketing by
+    # source and letting the extractor pick the longest band would time only
+    # part of the real workload and hide the short bands entirely, which is
+    # precisely the population this sweep exists to characterise.
+    valid   = sc.split_by_band(sources, cfg.features.min_observations)
     n_valid = len(valid)
-    log.info("%d valid sources", n_valid)
+    log.info("%d valid light curves (%d sources, >= %d obs)",
+             n_valid, sum(1 for s in sources if s), cfg.features.min_observations)
 
     if n_valid == 0:
-        log.error("No valid sources.")
+        log.error("No valid light curves.")
         sys.exit(1)
 
     # ── Sort into n_obs buckets ───────────────────────────────────────────────
-    # Use the primary band (most observations) to determine n_obs per source
     def primary_n_obs(lcs_list):
         return max(lc.n_obs for lc in lcs_list)
 
@@ -154,59 +164,70 @@ def main():
     log.info("n_obs distribution:")
     for lo, hi, bucket in filled:
         hi_str = str(hi) if hi and hi < 999_999 else "+"
-        log.info("  [%d – %s): %d sources", lo, hi_str, len(bucket))
+        log.info("  [%d – %s): %d light curves", lo, hi_str, len(bucket))
 
     # ── GPU warmup ────────────────────────────────────────────────────────────
     log.info("GPU warmup (not timed)...")
-    periodfind.set_device(args.device)
-    PeriodExtractor(cfg.features.period).extract(valid[:min(50, n_valid)])
+    periodfind.set_device(sc.normalize_device(args.device))
+    _warm = PeriodExtractor(cfg.features.period)
+    _warm.prepare(valid)
+    _warm.extract(valid[:min(50, n_valid)])
     log.info("Warmup complete")
 
     # ── Time period finding per bucket ────────────────────────────────────────
-    bucket_results = []   # (label, n_sources, t_period)
+    bucket_results = []   # (label, n_lightcurves, t_period)
 
     for lo, hi, bucket in filled:
         hi_str = str(hi) if hi and hi < 999_999 else "+"
         label  = f"{lo:>6} – {hi_str}"
         n      = len(bucket)
-        log.info("Timing bucket [%s): %d sources...", label.strip(), n)
+        log.info("Timing bucket [%s): %d light curves...", label.strip(), n)
 
+        # Grid built from this bucket before timing starts, so the measured
+        # time reflects the bucket's epoch count and not grid construction.
         ext = PeriodExtractor(cfg.features.period)
+        ext.prepare(bucket)
         t0  = time.perf_counter()
         ext.extract(bucket)
         t_period = time.perf_counter() - t0
 
-        log.info("  → %.3fs  (%.1f ms/source)", t_period, t_period / n * 1000)
+        log.info("  → %.3fs  (%.1f ms/LC)", t_period, t_period / n * 1000)
         bucket_results.append((label, n, t_period))
 
     # ── Summary ───────────────────────────────────────────────────────────────
     t_total_period = sum(t for _, _, t in bucket_results)
-    ms_per_src_overall = t_total_period / n_valid * 1000
+    ms_per_lc_overall = t_total_period / n_valid * 1000
 
     sep = "─" * 70
     print(f"\n  Region: RA={args.ra}  Dec={args.dec}  radius={args.radius_arcsec:.0f} arcsec"
-          f"  |  {n_valid} valid sources")
+          f"  |  {n_valid} valid light curves")
     print(f"  Device: {args.device}  |  Algorithms: {', '.join(cfg.features.period.algorithms)}")
     print(f"\n{sep}")
-    print(f"  {'n_obs bucket':>14}  {'Sources':>8}  {'Period time':>14}  {'ms / source':>12}  {'% of total':>10}")
+    print(f"  {'n_obs bucket':>14}  {'Lightcurves':>11}  {'Period time':>14}  {'ms / LC':>12}  {'% of total':>10}")
     print(sep)
 
     for label, n, t_period in bucket_results:
         ms_per = t_period / n * 1000
         pct    = t_period / t_total_period * 100 if t_total_period > 0 else 0
-        print(f"  {label:>14}  {n:>8}  {t_period:>12.2f}s  {ms_per:>12.1f}  {pct:>9.1f}%")
+        print(f"  {label:>14}  {n:>11}  {t_period:>12.2f}s  {ms_per:>12.1f}  {pct:>9.1f}%")
 
     print(sep)
-    print(f"  {'Total':>14}  {n_valid:>8}  {t_total_period:>12.2f}s"
-          f"  {ms_per_src_overall:>12.1f}  {'100.0%':>10}")
+    print(f"  {'Total':>14}  {n_valid:>11}  {t_total_period:>12.2f}s"
+          f"  {ms_per_lc_overall:>12.1f}  {'100.0%':>10}")
     print(sep)
 
     # ── Compute projection ────────────────────────────────────────────────────
-    print(f"\n  Compute projection (period finding only):")
+    # The pipeline emits one feature vector per band, so a source costs
+    # bands_per_source light curves, not one.
+    n_src_with_lcs   = sum(1 for s in sources if s)
+    bands_per_source = n_valid / n_src_with_lcs if n_src_with_lcs else 1.0
+
+    print(f"\n  Compute projection (period finding only)"
+          f"  |  {bands_per_source:.2f} usable bands per source:")
     for scale in [100_000, 1_000_000, 10_000_000]:
-        gpu_hours = scale * ms_per_src_overall / 1000 / 3600
+        gpu_hours = scale * bands_per_source * ms_per_lc_overall / 1000 / 3600
         print(f"    {scale:>12,} sources → ~{gpu_hours:.1f} GPU-hours")
-    print(f"\n  Note: projection assumes same n_obs distribution as this region.")
+    print(f"\n  Note: projection assumes same n_obs and band distribution as this region.")
     print(f"        Actual time scales with n_obs — check bucket breakdown above.")
     print()
 

@@ -1,35 +1,36 @@
 #!/bin/bash
 # ==============================================================================
-# sweep_nobs.sh — n_obs vs period finding time on real ZTF light curves
+# scaling_gpu.sh — Multi-GPU strong scaling for period finding
 #
-# Fetches a real ZTF region, groups light curves into observation-count
-# buckets, then times period finding per bucket.  Outputs a breakdown of
-# ms/source by n_obs range and a projected GPU-hour estimate for your
-# total source count.
+# Fetches a real ZTF region once, caches it, then measures aggregate
+# period-finding throughput at 1, 2 and 4 GPUs.  Each measurement is
+# repeated so the plot can show run-to-run spread rather than one number.
 #
-# This is the benchmark to run when estimating compute hours for a cluster
-# allocation request.  The ms/source column by n_obs bucket lets you project
-# total GPU time given your target field's n_obs distribution.
+# Requests 4 A100s on a single node.  A single node is required because
+# the benchmark shards the workload across local devices via
+# CUDA_VISIBLE_DEVICES — it does not use MPI and cannot span nodes.
 #
-# Run after sweep_batch_size.sh so you're timing with the optimal batch size.
+# Run sweep_batch_size.sh first so --batch-size below reflects the
+# per-GPU optimum; scaling measured at a too-small batch understates
+# what the hardware can do.
 #
 # Usage (from ml4em repo root on MSI login node):
 #   mkdir -p logs
-#   sbatch benchmarks/slurm/sweep_nobs.sh
+#   sbatch benchmarks/slurm/scaling_gpu.sh
 #
-#   # Custom bucket boundaries:
-#   sbatch benchmarks/slurm/sweep_nobs.sh --buckets 50 100 300 500 1000 2000
+#   # Override GPU counts or trial count:
+#   sbatch benchmarks/slurm/scaling_gpu.sh --gpu-counts 1 2 4 --trials 7
 # ==============================================================================
-#SBATCH --job-name=ml4em_sweep_nobs
-#SBATCH --output=logs/sweep_nobs_%j.out
-#SBATCH --error=logs/sweep_nobs_%j.err
+#SBATCH --job-name=ml4em_scaling_gpu
+#SBATCH --output=logs/scaling_gpu_%j.out
+#SBATCH --error=logs/scaling_gpu_%j.err
 #SBATCH -p msigpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:a100:1
-#SBATCH --mem=32G
-#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=32
+#SBATCH --gres=gpu:a100:4
+#SBATCH --mem=128G
+#SBATCH --time=04:00:00
 #SBATCH -A cough052
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=jin00404@umn.edu
@@ -62,9 +63,16 @@ if [[ -z "${ML4EM_ZTF_TOKEN:-}" ]]; then
     exit 1
 fi
 
+cd "${REPO_DIR}"
+
 conda run --no-capture-output -n ml4em-gpu \
-    python "${REPO_DIR}/benchmarks/sweep_nobs.py" \
+    python "${REPO_DIR}/benchmarks/scaling_gpu.py" \
         --config "${DATA_DIR}/config_msi.yaml" \
         --ra 116.7 --dec 36.2 --radius-arcsec 1800 \
-        --device cuda \
+        --gpu-counts 1 2 4 \
+        --trials 5 \
         "$@"
+
+# Render the plot if matplotlib is present in the env.
+conda run --no-capture-output -n ml4em-gpu \
+    python "${REPO_DIR}/benchmarks/plot_scaling.py" || true

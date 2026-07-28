@@ -78,6 +78,10 @@ from datetime import datetime
 
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import _scaling_common as sc
+
 _DEFAULT_BATCH_SIZE = 1_000
 _DEFAULT_DEVICE     = "cpu"
 _DEFAULT_RADIUS     = 1800.0   # arcsec — roughly a ZTF quad footprint
@@ -126,12 +130,15 @@ def _time_extractors(sources, cfg, device, batch_size, kowalski_client):
     from ml4em.features.dmdt       import DmdtExtractor
     from ml4em.features.catalog    import CatalogExtractor
 
-    periodfind.set_device(device)
+    periodfind.set_device(sc.normalize_device(device))
 
-    valid = [s for s in sources if s]
+    # One work unit per band, as FeaturePipeline.run_batch does.  Timing the
+    # per-source groups instead would let every extractor see only the longest
+    # band and would understate the real cost by the mean band count.
+    valid = sc.split_by_band(sources, cfg.features.min_observations)
     n = len(valid)
     if n == 0:
-        logging.getLogger(__name__).error("No valid sources after filtering.")
+        logging.getLogger(__name__).error("No valid light curves after filtering.")
         sys.exit(1)
 
     timings: dict[str, float] = {}
@@ -144,6 +151,7 @@ def _time_extractors(sources, cfg, device, batch_size, kowalski_client):
 
     t0 = time.perf_counter()
     ext = PeriodExtractor(cfg.features.period)
+    ext.prepare(valid)
     period_results = []
     for i in range(0, n, batch_size):
         period_results.extend(ext.extract(valid[i : i + batch_size]))
@@ -263,10 +271,12 @@ def main():
         log.info("GPU warmup (not timed)...")
         import periodfind
         from ml4em.features.period import PeriodExtractor
-        periodfind.set_device(args.device)
-        warmup = [s for s in sources if s][:min(50, len(sources))]
+        periodfind.set_device(sc.normalize_device(args.device))
+        warmup = sc.split_by_band(sources, cfg.features.min_observations)[:50]
         if warmup:
-            PeriodExtractor(cfg.features.period).extract(warmup)
+            _warm = PeriodExtractor(cfg.features.period)
+            _warm.prepare(warmup)
+            _warm.extract(warmup)
         log.info("Warmup complete")
 
     # ── Feature extraction timing ─────────────────────────────────────────────
@@ -311,6 +321,8 @@ def main():
     out(f"  {'Source IDs (near query)':<32}{n_ids:>8,}")
     out(f"  {'Light curves returned':<32}{len(lcs):>8,}   ({band_str})")
     out(f"  {'Valid sources (>= ' + str(cfg.features.min_observations) + ' obs)':<32}{n_valid:>8,}")
+    out(f"  {'Feature units (one per band)':<32}{n_timed:>8,}"
+        f"   ({n_timed / n_valid:.2f} per source)" if n_valid else "")
     out(f"  {'Skipped sources':<32}{skipped:>8,}   (< {cfg.features.min_observations} obs or no clean data)")
     if len(nobs_per_source) > 0:
         out(f"  n_obs per source:  "
@@ -322,7 +334,7 @@ def main():
     # Timing table
     out()
     out(sep)
-    out(f"  {'Stage':<28}{'Sources':>9}{'Total (s)':>11}{'Per src (ms)':>14}{'Throughput':>12}")
+    out(f"  {'Stage':<28}{'Units':>9}{'Total (s)':>11}{'Per unit (ms)':>14}{'Throughput':>12}")
     out(sep)
     out(f"  {'Near (ID discovery)':<28}{n_ids:>9}{t_near:>10.3f}s"
         f"{t_near / n_ids * 1000:>12.2f}  {n_ids / t_near:>8.0f}/s")
@@ -339,7 +351,7 @@ def main():
 
     # Algorithm breakdown
     out()
-    out(f"  Period algorithm breakdown ({n_timed} sources):")
+    out(f"  Period algorithm breakdown ({n_timed} light curves):")
     for algo, count in sorted(algo_counts.items(), key=lambda x: -x[1]):
         out(f"    {algo:<6} {count:>6}  ({count / n_timed * 100:.1f}%)")
     if nan_count:

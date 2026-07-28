@@ -48,9 +48,14 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 import time
 from collections import defaultdict
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import _scaling_common as sc
 
 logging.basicConfig(
     level=logging.INFO,
@@ -128,7 +133,7 @@ def main() -> None:
     primary  = max(target_lcs, key=lambda lc: lc.n_obs)
     baseline = float(primary.time.max() - primary.time.min())
     spp      = cfg.features.period.samples_per_peak
-    f_min    = 2.0 / baseline
+    f_min    = max(2.0 / baseline, 1.0 / cfg.features.period.max_period_days)
     f_max    = 1.0 / cfg.features.period.min_period_days
     df       = 1.0 / (spp * baseline)
     n_grid   = max(1, int((f_max - f_min) / df))
@@ -142,22 +147,32 @@ def main() -> None:
     from ml4em.features.dmdt       import DmdtExtractor
     from ml4em.features.catalog    import CatalogExtractor
 
+    device = sc.normalize_device(device)
     periodfind.set_device(device)
-    source_batch = [target_lcs]
+
+    # One entry per band, as FeaturePipeline.run_batch does.  Passing all bands
+    # as a single entry would time only the longest one, so the reported
+    # latency would be for a fraction of the work the pipeline actually does
+    # for this source.
+    source_batch = [[lc] for lc in target_lcs]
 
     # CUDA warmup: first GPU call pays JIT compile cost — run throwaway first
-    if device == "cuda":
+    if device == "gpu":
         log.info("CUDA warmup (not timed)...")
         t0 = time.perf_counter()
-        PeriodExtractor(cfg.features.period).extract(source_batch)
+        _warm = PeriodExtractor(cfg.features.period)
+        _warm.prepare(source_batch)
+        _warm.extract(source_batch)
         log.info("Warmup complete (%.3fs)", time.perf_counter() - t0)
 
     t0 = time.perf_counter()
     StatisticsExtractor().extract(source_batch)
     t_stats = time.perf_counter() - t0
 
+    _period_ext = PeriodExtractor(cfg.features.period)
+    _period_ext.prepare(source_batch)
     t0 = time.perf_counter()
-    PeriodExtractor(cfg.features.period).extract(source_batch)
+    _period_ext.extract(source_batch)
     t_period = time.perf_counter() - t0
 
     t0 = time.perf_counter()

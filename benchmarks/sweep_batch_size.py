@@ -57,8 +57,13 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 import time
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import _scaling_common as sc
 
 logging.basicConfig(
     level=logging.INFO,
@@ -114,18 +119,24 @@ def main():
     for lc in lcs:
         groups[lc.source_id].append(lc)
     sources = [groups.get(sid, []) for sid in source_ids]
-    valid   = [s for s in sources if s and max(lc.n_obs for lc in s) >= cfg.features.min_observations]
+
+    # One work unit per band, as FeaturePipeline.run_batch does.  The VRAM
+    # ceiling this sweep is looking for is a property of the batch that
+    # actually reaches the GPU, so the batch has to be shaped the same way.
+    valid   = sc.split_by_band(sources, cfg.features.min_observations)
     n_valid = len(valid)
-    log.info("%d valid sources (>= %d obs)", n_valid, cfg.features.min_observations)
+    log.info("%d valid light curves (>= %d obs)", n_valid, cfg.features.min_observations)
 
     if n_valid == 0:
-        log.error("No valid sources for feature extraction.")
+        log.error("No valid light curves for feature extraction.")
         sys.exit(1)
 
     # ── GPU warmup ────────────────────────────────────────────────────────────
     log.info("GPU warmup (not timed)...")
-    periodfind.set_device(args.device)
-    PeriodExtractor(cfg.features.period).extract(valid[:min(50, n_valid)])
+    periodfind.set_device(sc.normalize_device(args.device))
+    _warm = PeriodExtractor(cfg.features.period)
+    _warm.prepare(valid)
+    _warm.extract(valid[:min(50, n_valid)])
     log.info("Warmup complete")
 
     # ── Sweep ─────────────────────────────────────────────────────────────────
@@ -134,12 +145,15 @@ def main():
     for batch_size in sorted(args.batch_sizes):
         log.info("batch_size=%d ...", batch_size)
         try:
+            # Same grid for every batch size, otherwise the sweep would be
+            # comparing different amounts of work at each point.
             ext = PeriodExtractor(cfg.features.period)
+            ext.prepare(valid)
             t0  = time.perf_counter()
             for i in range(0, n_valid, batch_size):
                 ext.extract(valid[i : i + batch_size])
             t_period = time.perf_counter() - t0
-            log.info("  → %.3fs  (%.0f sources/s)", t_period, n_valid / t_period)
+            log.info("  → %.3fs  (%.0f LC/s)", t_period, n_valid / t_period)
             results.append((batch_size, t_period))
         except (RuntimeError, MemoryError) as exc:
             log.warning("  → OOM at batch_size=%d: %s", batch_size, exc)
@@ -153,7 +167,7 @@ def main():
 
     sep = "─" * 68
     print(f"\n  Region: RA={args.ra}  Dec={args.dec}  radius={args.radius_arcsec:.0f} arcsec"
-          f"  |  {n_valid} valid sources")
+          f"  |  {n_valid} valid light curves")
     print(f"  Device: {args.device}  |  Algorithms: {', '.join(cfg.features.period.algorithms)}")
     print(f"\n{sep}")
     print(f"  {'batch_size':>10}  {'Period time':>14}  {'Throughput':>11}  {'vs batch=' + str(results[0][0]):>14}")

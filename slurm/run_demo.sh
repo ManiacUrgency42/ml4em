@@ -26,7 +26,7 @@
 #SBATCH --job-name=ml4em_demo
 #SBATCH --output=logs/ml4em_demo_%j.out
 #SBATCH --error=logs/ml4em_demo_%j.err
-#SBATCH -p a100
+#SBATCH -p msigpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
@@ -42,7 +42,11 @@ SIF=/scratch.global/$USER/ml4em_gpu.sif
 DATA_DIR=/scratch.global/$USER/ml4em_data
 
 # Repo root (where this script lives under slurm/)
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# sbatch copies the submitted script to /var/spool on the compute node, so
+# BASH_SOURCE points there and not at the checkout.  SLURM_SUBMIT_DIR is the
+# directory sbatch was called from; the BASH_SOURCE form is the fallback for
+# running this script directly with bash.
+REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 
 # ── Load modules ──────────────────────────────────────────────────────────────
 module purge
