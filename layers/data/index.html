@@ -795,17 +795,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rubinsource" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RubinSource (stub)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#simulatedsource" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1493,7 +1482,7 @@
   <span class="md-ellipsis">
     
   
-    Surveys (ZTF & Rubin)
+    Surveys (ZTF)
   
 
     
@@ -1855,17 +1844,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rubinsource" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RubinSource (stub)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#simulatedsource" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1903,14 +1881,12 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/data/
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py         LightCurveSource Protocol
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  ztf.py          ZTFSource          [implemented]
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  rubin.py        RubinSource        [stub]
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  simulation.py   SimulatedSource    [stub]
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  simulation.py   SimulatedSource    [stub]
 </code></pre></div>
 <h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="#lightcurvesource">LightCurveSource Protocol</a></li>
 <li><a href="#ztfsource">ZTFSource</a></li>
-<li><a href="#rubinsource">RubinSource (stub)</a></li>
 <li><a href="#simulatedsource">SimulatedSource (stub)</a></li>
 </ul>
 <hr />
@@ -1989,15 +1965,6 @@
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="rubinsource"><code>RubinSource</code> <em>(stub)</em><a class="headerlink" href="#rubinsource" title="Permanent link">&para;</a></h2>
-<p>Will query Rubin DP1 via the TAP protocol using <code>pyvo</code>.</p>
-<p><strong>Consumes:</strong> Rubin <code>objectId</code> strings</p>
-<p><strong>Emits:</strong> <code>list[LightCurve]</code> — up to 6 per source (bands: u, g, r, i, z, y)</p>
-<p>Planned query joins <code>dp1.Object</code>, <code>dp1.ForcedSource</code>, and <code>dp1.Visit</code> on <code>objectId</code>, converting <code>psfFlux</code> (nanojanskies) to AB magnitudes.</p>
-<blockquote>
-<p><strong>Status:</strong> raises <code>NotImplementedError</code> — pending Rubin DP1 schema confirmation.</p>
-</blockquote>
 <hr />
 <h2 id="simulatedsource"><code>SimulatedSource</code> <em>(stub)</em><a class="headerlink" href="#simulatedsource" title="Permanent link">&para;</a></h2>
 <p>Not yet implemented.</p>

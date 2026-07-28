@@ -1521,7 +1521,7 @@
   <span class="md-ellipsis">
     
   
-    Surveys (ZTF & Rubin)
+    Surveys (ZTF)
   
 
     
@@ -2077,11 +2077,6 @@
 <td>Maximum HJD in ZTF Data Release 16</td>
 </tr>
 <tr>
-<td><code>RUBIN_BANDS</code></td>
-<td><code>("u", "g", "r", "i", "z", "y")</code></td>
-<td>Rubin photometric bands</td>
-</tr>
-<tr>
 <td><code>XMATCH_RADIUS_ARCSEC</code></td>
 <td>2.0</td>
 <td>Gaia cross-match search radius</td>
@@ -2108,10 +2103,6 @@
 <tr>
 <td><code>sources.ztf</code></td>
 <td><code>ZTFSource</code> — connection + data quality</td>
-</tr>
-<tr>
-<td><code>sources.rubin</code></td>
-<td><code>RubinSource</code> — TAP endpoint + table names</td>
 </tr>
 <tr>
 <td><code>features</code></td>
@@ -2212,9 +2203,8 @@
 <p>Tokens are never stored in <code>config.yaml</code>. Set them as environment variables or in a <code>.env</code> file:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># .env  (never commit this file)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_kowalski_token
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nv">ML4EM_RUBIN_TOKEN</span><span class="o">=</span>your_rsp_token
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ztf_token</span><span class="p">,</span> <span class="n">get_rubin_token</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ztf_token</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">token</span> <span class="o">=</span> <span class="n">get_ztf_token</span><span class="p">()</span>    <span class="c1"># reads ML4EM_ZTF_TOKEN from env or .env</span>
 </code></pre></div>

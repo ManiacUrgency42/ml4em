@@ -1352,7 +1352,7 @@
   <span class="md-ellipsis">
     
   
-    Surveys (ZTF & Rubin)
+    Surveys (ZTF)
   
 
     
@@ -1935,8 +1935,8 @@ background of more distant stars — this shift is called <strong>parallax</stro
 <p>The data release used by ml4em is <strong>Gaia EDR3</strong> (Early Data Release 3, published 2020).</p>
 <hr />
 <h2 id="catalog-cross-match">Catalog cross-match<a class="headerlink" href="#catalog-cross-match" title="Permanent link">&para;</a></h2>
-<p>To get Gaia information for a source in our light curve data (ZTF or Rubin), we look
-up the Gaia source at the same sky position. This is called a <strong>catalog cross-match</strong>.</p>
+<p>To get Gaia information for a source in our light curve data, we look up the Gaia
+source at the same sky position. This is called a <strong>catalog cross-match</strong>.</p>
 <p>The procedure:
 1. Take the source's (ra, dec) from <code>LightCurve</code>
 2. Search the Gaia EDR3 catalog for any Gaia source within 2 arcseconds of that position
@@ -1946,7 +1946,7 @@ up the Gaia source at the same sky position. This is called a <strong>catalog cr
 1 arcsecond = 1/3600 of a degree. 2 arcseconds is roughly the angular diameter of a
 1 mm ball seen from 100 meters away. This search radius is small enough to be
 unambiguous for most isolated stars, while large enough to account for small position
-offsets between the Gaia catalog and the ZTF/Rubin positions.</p>
+offsets between the Gaia catalog and the ZTF positions.</p>
 <div class="admonition note">
 <p class="admonition-title">Status</p>
 <p><code>CatalogExtractor</code> is currently a stub. These 4 fields are all <code>NaN</code> until it is
@@ -1965,7 +1965,7 @@ milliarcseconds (mas), caused by Earth's orbital motion around the Sun.</p>
 parallax of 10 mas.</p>
 <p><strong>Why it matters for WDB detection:</strong> White dwarfs are stellar remnants — the collapsed
 cores of dead stars. They are intrinsically faint objects. For us to detect them
-photometrically (bright enough to be in ZTF or Rubin), they must be relatively nearby.
+photometrically (bright enough to be in ZTF), they must be relatively nearby.
 Nearby stars have large parallaxes. A large <code>gaia_parallax</code> is therefore a prior
 indicator of a white dwarf candidate.</p>
 <h3 id="gaia_parallax_error-reliability-of-the-parallax">gaia_parallax_error — reliability of the parallax<a class="headerlink" href="#gaia_parallax_error-reliability-of-the-parallax" title="Permanent link">&para;</a></h3>

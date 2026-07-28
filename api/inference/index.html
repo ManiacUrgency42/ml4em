@@ -1336,7 +1336,7 @@
   <span class="md-ellipsis">
     
   
-    Surveys (ZTF & Rubin)
+    Surveys (ZTF)
   
 
     
@@ -2763,8 +2763,7 @@ to a Candidate by:
      thresholds defined in InferenceConfig.confidence_thresholds.
   2. Copying identity fields (source_id, ra, dec, survey) from FeatureVector.
   3. Copying period and period_algorithm from FeatureVector (nan / "" if
-     the period extractor did not run or failed).
-  4. Attaching any extra metadata passed by the caller.</p>
+     the period extractor did not run or failed).</p>
 <p>The result type (Candidate) is generic — this module does not assume any
 science case.  The caller decides what FeatureVectors mean and what
 the model's positive class represents.</p>
@@ -2820,7 +2819,8 @@ config:
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/ml4em/inference/postprocess.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-31">31</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
 <span class="normal"><a href="#__codelineno-0-32">32</a></span>
 <span class="normal"><a href="#__codelineno-0-33">33</a></span>
 <span class="normal"><a href="#__codelineno-0-34">34</a></span>
@@ -2872,61 +2872,60 @@ config:
 <span class="normal"><a href="#__codelineno-0-80">80</a></span>
 <span class="normal"><a href="#__codelineno-0-81">81</a></span>
 <span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span>
-<span class="normal"><a href="#__codelineno-0-84">84</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="k">def</span><span class="w"> </span><span class="nf">probabilities_to_candidates</span><span class="p">(</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">],</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">probabilities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">config</span><span class="p">:</span> <span class="n">InferenceConfig</span><span class="p">,</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]:</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert raw model probabilities to Candidate results.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    features:</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">        One FeatureVector per source, in the same order as probabilities.</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    probabilities:</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        Shape (N,), dtype float — P(positive class) in [0, 1] for each source.</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        Output of MLModel.predict_proba().</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    config:</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        InferenceConfig from PipelineConfig.inference.</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        confidence_thresholds maps tier names to probability cutoffs.</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">    list[Candidate]</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">        One Candidate per source, in the same order as input.</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    Raises</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    ------</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    ValueError</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">        If len(features) != len(probabilities).</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>            <span class="sa">f</span><span class="s2">&quot;features and probabilities must have the same length. &quot;</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="si">}</span><span class="s2"> features and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span><span class="si">}</span><span class="s2"> probabilities.&quot;</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="p">)</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">high_thresh</span>   <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">confidence_thresholds</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">medium_thresh</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">confidence_thresholds</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">for</span> <span class="n">fv</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">):</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="n">confidence</span> <span class="o">=</span> <span class="n">_assign_confidence</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">prob</span><span class="p">),</span> <span class="n">high_thresh</span><span class="p">,</span> <span class="n">medium_thresh</span><span class="p">)</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="n">Candidate</span><span class="p">(</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>                <span class="n">source_id</span>        <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">source_id</span><span class="p">,</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>                <span class="n">ra</span>               <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>                <span class="n">dec</span>              <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>                <span class="n">survey</span>           <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">survey</span><span class="p">,</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>                <span class="n">probability</span>      <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">prob</span><span class="p">),</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>                <span class="n">period</span>           <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fv</span><span class="o">.</span><span class="n">period</span><span class="p">),</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>                <span class="n">period_algorithm</span> <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">period_algorithm</span><span class="p">,</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>                <span class="n">confidence</span>       <span class="o">=</span> <span class="n">confidence</span><span class="p">,</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>            <span class="p">)</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="p">)</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="k">return</span> <span class="n">candidates</span>
+<span class="normal"><a href="#__codelineno-0-83">83</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">def</span><span class="w"> </span><span class="nf">probabilities_to_candidates</span><span class="p">(</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">],</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">probabilities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">config</span><span class="p">:</span> <span class="n">InferenceConfig</span><span class="p">,</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]:</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert raw model probabilities to Candidate results.</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    features:</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">        One FeatureVector per source, in the same order as probabilities.</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    probabilities:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        Shape (N,), dtype float — P(positive class) in [0, 1] for each source.</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        Output of MLModel.predict_proba().</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    config:</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        InferenceConfig from PipelineConfig.inference.</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        confidence_thresholds maps tier names to probability cutoffs.</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">    list[Candidate]</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        One Candidate per source, in the same order as input.</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    Raises</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    ------</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    ValueError</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        If len(features) != len(probabilities).</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>            <span class="sa">f</span><span class="s2">&quot;features and probabilities must have the same length. &quot;</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="si">}</span><span class="s2"> features and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span><span class="si">}</span><span class="s2"> probabilities.&quot;</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="p">)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="n">high_thresh</span>   <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">confidence_thresholds</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">medium_thresh</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">confidence_thresholds</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="k">for</span> <span class="n">fv</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">):</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="n">confidence</span> <span class="o">=</span> <span class="n">_assign_confidence</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">prob</span><span class="p">),</span> <span class="n">high_thresh</span><span class="p">,</span> <span class="n">medium_thresh</span><span class="p">)</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="n">Candidate</span><span class="p">(</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>                <span class="n">source_id</span>        <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">source_id</span><span class="p">,</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>                <span class="n">ra</span>               <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>                <span class="n">dec</span>              <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>                <span class="n">survey</span>           <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">survey</span><span class="p">,</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>                <span class="n">probability</span>      <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">prob</span><span class="p">),</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>                <span class="n">period</span>           <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fv</span><span class="o">.</span><span class="n">period</span><span class="p">),</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>                <span class="n">period_algorithm</span> <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">period_algorithm</span><span class="p">,</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>                <span class="n">confidence</span>       <span class="o">=</span> <span class="n">confidence</span><span class="p">,</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>            <span class="p">)</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="p">)</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">return</span> <span class="n">candidates</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

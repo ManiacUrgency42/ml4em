@@ -24,7 +24,7 @@
       name:  "constants.py",
       file:  "src/ml4em/constants.py",
       status: "complete",
-      desc: "Physical constants (G, c, M☉) and survey-specific parameters: ZTF band IDs (1→g, 2→r, 3→i), Rubin LSST bands, dm/dt histogram binning (26×26 log-spaced time axis), and cross-match radii. Nothing here is tunable at runtime — all adjustable parameters live in <code>config.yaml</code> instead.",
+      desc: "Physical constants (G, c, M☉) and survey-specific parameters: ZTF band IDs (1→g, 2→r, 3→i), dm/dt histogram binning (26×26 log-spaced time axis), and cross-match radii. Nothing here is tunable at runtime — all adjustable parameters live in <code>config.yaml</code> instead.",
       link: "layers/foundation/"
     },
     config: {
@@ -45,15 +45,6 @@
       file:  "src/ml4em/data/ztf.py",
       status: "complete",
       desc: "Queries the Zwicky Transient Facility via the Kowalski API (penquins client). Automatically applies two quality filters: removes bad observations where <code>catflags ≠ 0</code>, and drops intra-night duplicates where <code>Δt &lt; 30 min</code>. Returns one <code>LightCurve</code> per band (g, r, i) for each requested source.",
-      link: "layers/data/"
-    },
-    rubin: {
-      layer: "data",
-      icon:  "🌌",
-      name:  "RubinSource",
-      file:  "src/ml4em/data/rubin.py",
-      status: "stub",
-      desc: "TAP/SQL interface to Vera C. Rubin Observatory LSST data products. The query structure and <code>LightCurveSource</code> protocol implementation are in place. Pending connection to a live Rubin TAP endpoint once survey operations begin. A drop-in replacement for <code>ZTFSource</code> — the rest of the pipeline is unchanged.",
       link: "layers/data/"
     },
     simulated: {

@@ -1493,7 +1493,7 @@
   <span class="md-ellipsis">
     
   
-    Surveys (ZTF & Rubin)
+    Surveys (ZTF)
   
 
     
@@ -1961,17 +1961,17 @@ There is nothing magical about this date — it was chosen by convention.</p>
 <p>This means the first observation was taken 59,000 days after the reference date —
 roughly the year 2020. For most coding purposes, MJD is just a float timestamp with
 "days" as the unit.</p>
-<p>Rubin uses MJD (<code>expMidptMJD</code> in <code>dp1.Visit</code>).</p>
 <h3 id="hjd-heliocentric-julian-date">HJD — Heliocentric Julian Date<a class="headerlink" href="#hjd-heliocentric-julian-date" title="Permanent link">&para;</a></h3>
 <p>HJD is MJD corrected for Earth's position in its orbit around the Sun. As Earth moves
 from one side of its orbit to the other (January to July), the light travel time to a
 distant star changes by up to ±8 minutes. HJD removes that offset so that observations
 from different times of year are comparable.</p>
-<p>ZTF data arrives in HJD.</p>
+<p>ZTF data arrives in HJD. Simulated light curves and any future source may use MJD
+instead.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In ml4em, both MJD and HJD are stored in <code>LightCurve.time</code> — the conversion is
-handled transparently in the data layer (<code>ZTFSource</code>, <code>RubinSource</code>). The feature
+<p>In ml4em, both MJD and HJD are stored in <code>LightCurve.time</code> — which system a given
+light curve uses is recorded by the data source that built it. The feature
 extractors don't know which system was used; they only see the numeric timestamps.</p>
 </div>
 <hr />
@@ -1986,7 +1986,6 @@ brightness only in green light.</p>
 <th>Band</th>
 <th>Wavelength center</th>
 <th>Color</th>
-<th>Used by</th>
 </tr>
 </thead>
 <tbody>
@@ -1994,40 +1993,35 @@ brightness only in green light.</p>
 <td><code>u</code></td>
 <td>~355 nm</td>
 <td>Ultraviolet</td>
-<td>Rubin</td>
 </tr>
 <tr>
 <td><code>g</code></td>
 <td>~475 nm</td>
 <td>Green</td>
-<td>ZTF, Rubin</td>
 </tr>
 <tr>
 <td><code>r</code></td>
 <td>~622 nm</td>
 <td>Red</td>
-<td>ZTF, Rubin</td>
 </tr>
 <tr>
 <td><code>i</code></td>
 <td>~763 nm</td>
 <td>Near-infrared</td>
-<td>ZTF, Rubin</td>
 </tr>
 <tr>
 <td><code>z</code></td>
 <td>~905 nm</td>
 <td>Near-infrared</td>
-<td>Rubin</td>
 </tr>
 <tr>
 <td><code>y</code></td>
 <td>~990 nm</td>
 <td>Near-infrared</td>
-<td>Rubin</td>
 </tr>
 </tbody>
 </table>
+<p>ZTF observes in <code>g</code>, <code>r</code>, and <code>i</code>.</p>
 <p><strong>In ml4em:</strong> each band is a separate <code>LightCurve</code> object. One star observed in ZTF
 g, r, and i produces <strong>three</strong> <code>LightCurve</code> objects. <code>LightCurve.band</code> records which
 filter was used.</p>
@@ -2095,7 +2089,7 @@ The library is agnostic about <em>which</em> class you are looking for.</p>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">mag</span>       <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>     <span class="c1"># Apparent magnitude, shape (N,)</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">mag_err</span>   <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>     <span class="c1"># 1-sigma uncertainty, shape (N,)</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">band</span>      <span class="p">:</span> <span class="n">Band</span>           <span class="c1"># &quot;u&quot; | &quot;g&quot; | &quot;r&quot; | &quot;i&quot; | &quot;z&quot; | &quot;y&quot;</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">survey</span>    <span class="p">:</span> <span class="n">Survey</span>         <span class="c1"># &quot;ztf&quot; | &quot;rubin&quot; | &quot;simulated&quot;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">survey</span>    <span class="p">:</span> <span class="n">Survey</span>         <span class="c1"># &quot;ztf&quot; | &quot;simulated&quot;</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">ra</span>        <span class="p">:</span> <span class="nb">float</span>          <span class="c1"># Right ascension, decimal degrees (J2000)</span>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">dec</span>       <span class="p">:</span> <span class="nb">float</span>          <span class="c1"># Declination, decimal degrees (J2000)</span>
 </code></pre></div>

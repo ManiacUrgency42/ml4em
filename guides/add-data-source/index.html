@@ -1460,7 +1460,7 @@
   <span class="md-ellipsis">
     
   
-    Surveys (ZTF & Rubin)
+    Surveys (ZTF)
   
 
     
@@ -1931,8 +1931,8 @@ a pandas DataFrame without <code>.values.flatten()</code>), you'll get a validat
 magnitudes. Convert before building <code>LightCurve</code>:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">mag</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flux_njy</span> <span class="o">/</span> <span class="mf">3631e9</span><span class="p">)</span>   <span class="c1"># AB magnitude</span>
 </code></pre></div></p>
-<p><strong>HJD vs MJD:</strong> Both are fine as long as you're consistent. ZTF uses HJD, Rubin uses
-MJD. The feature extractors treat <code>time</code> as just a float array of days.</p>
+<p><strong>HJD vs MJD:</strong> Both are fine as long as you're consistent. ZTF uses HJD; other surveys
+publish MJD. The feature extractors treat <code>time</code> as just a float array of days.</p>
 
 
 
