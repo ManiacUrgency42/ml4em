@@ -64,8 +64,8 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-_DEFAULT_RA             = 116.7354
-_DEFAULT_DEC            =  36.1980
+_DEFAULT_RA             = 2.569364   # confirmed 67-pt r-band source in ZTF_sources_20240515
+_DEFAULT_DEC            = -22.4367011
 _DEFAULT_RADIUS_ARCSEC  = 2.0
 
 
