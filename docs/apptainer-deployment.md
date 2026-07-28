@@ -67,7 +67,7 @@ sources:
     collection_sources: ZTF_sources_84525009
     max_timestamp_hjd: 2459951.5
     bands: [g, r, i]
-    min_cadence_days: 0.020833
+    min_cadence_days: 0.003472
 
 features:
   device: cuda
@@ -117,9 +117,12 @@ exceeds the login node's CPU time limit.
 **Run on MSI:**
 ```bash
 cd ~/ml4em
-mkdir -p logs
 sbatch slurm/pull_image.sh
 ```
+
+Submit from the repository root, not from inside `slurm/` — the script resolves
+the checkout from `SLURM_SUBMIT_DIR`. `logs/` is already tracked in git, so there
+is nothing to create. See [Deployment → SLURM conventions](deployment.md#slurm-conventions).
 
 Monitor progress:
 
@@ -140,7 +143,6 @@ Output: `/scratch.global/$USER/ml4em_gpu.sif`
 **Run on MSI:**
 ```bash
 cd ~/ml4em
-mkdir -p logs
 sbatch slurm/run_demo.sh
 ```
 
@@ -163,9 +165,14 @@ First, request a GPU compute node:
 
 **Run on MSI:**
 ```bash
-srun --account=cough052 --partition=a100 --gres=gpu:a100:1 \
+srun --account=cough052 --partition=interactive-gpu --gres=gpu:a100:1 \
      --mem=16g --time=1:00:00 --pty bash
 ```
+
+`interactive-gpu` is the partition for short `--pty` sessions; batch jobs use
+`msigpu`, which is what `slurm/run_demo.sh` requests. The legacy `a100`,
+`agsmall` and `amdsmall` partitions no longer exist — see
+[Deployment → SLURM conventions](deployment.md#slurm-conventions).
 
 Once on the compute node:
 

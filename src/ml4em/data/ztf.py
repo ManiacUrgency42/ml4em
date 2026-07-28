@@ -243,8 +243,8 @@ class ZTFSource:
 
         Use this when you have sky coordinates (e.g. from a WDB catalog)
         and need to resolve them to ZTF source IDs and light curve data.
-        For a catalog of N positions, call this N times or see
-        scripts/prepare_labels.py for the batch workflow.
+        For a catalog of N positions, call this N times; see
+        docs/guides/label-preparation.md for the surrounding workflow.
 
         Parameters
         ----------

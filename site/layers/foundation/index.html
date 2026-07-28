@@ -779,6 +779,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#assignment-is-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assignment is validated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#storageconfig" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1895,6 +1906,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#assignment-is-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assignment is validated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#storageconfig" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2064,12 +2086,17 @@
 <tr>
 <td><code>ZTF_SIDEREAL_DAY</code></td>
 <td>0.99727 days</td>
-<td>Sidereal day length</td>
+<td>Sidereal day length, in solar days</td>
+</tr>
+<tr>
+<td><code>SIDEREAL_FREQ_PER_DAY</code></td>
+<td>24/23.9345 ≈ 1.00274</td>
+<td>Sidereal frequency, cycles per solar day. Used to group alias peaks into families</td>
 </tr>
 <tr>
 <td><code>ZTF_MIN_CADENCE_DAYS</code></td>
-<td>30/1440</td>
-<td>Intra-night duplicate threshold (30 min)</td>
+<td>5/1440 ≈ 0.003472</td>
+<td>Intra-night duplicate threshold (5 min)</td>
 </tr>
 <tr>
 <td><code>ZTF_DR16_MAX_HJD</code></td>
@@ -2088,6 +2115,13 @@
 </tr>
 </tbody>
 </table>
+<p><code>ZTF_MIN_CADENCE_DAYS</code> is 5 minutes rather than the half hour a general-purpose
+variability pipeline would use. A 30-minute threshold discards every pair of epochs
+closer together than half an hour, which is precisely the regime short-period
+binaries live in, and it contradicts a period search that reaches down to
+<code>min_period_days = 0.01</code> d (14.4 minutes). Five minutes still removes the
+back-to-back exposures that would otherwise imprint the nightly cadence on the
+periodogram, without deleting the signal being looked for.</p>
 <hr />
 <h2 id="config"><code>config/</code> — Pipeline configuration<a class="headerlink" href="#config" title="Permanent link">&para;</a></h2>
 <h3 id="pipelineconfig"><code>PipelineConfig</code><a class="headerlink" href="#pipelineconfig" title="Permanent link">&para;</a></h3>
@@ -2134,6 +2168,21 @@
 </tr>
 </tbody>
 </table>
+<h3 id="assignment-is-validated">Assignment is validated<a class="headerlink" href="#assignment-is-validated" title="Permanent link">&para;</a></h3>
+<p>Every nested config model — <code>ZTFConfig</code>, <code>FeatureConfig</code>, <code>PeriodConfig</code>,
+<code>DmdtConfig</code>, <code>CatalogConfig</code>, <code>StorageConfig</code>, <code>TrainingConfig</code>,
+<code>InferenceConfig</code> — sets <code>model_config = {"validate_assignment": True}</code>.</p>
+<p>Pydantic runs field validators when a model is <em>constructed</em>, but by default it
+skips them when a field is <em>assigned</em> afterwards. Overriding a field after load is
+the normal way scripts and benchmarks reconfigure a run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>          <span class="c1"># normalised to &quot;gpu&quot; by the field validator</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">cfg</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">feature_batch_size</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1"># raises ValidationError here, not mid-run</span>
+</code></pre></div>
+<p>Without <code>validate_assignment</code> the first line would leave the un-normalised string
+<code>"cuda"</code> in place until <code>periodfind.set_device()</code> rejected it hours later, and the
+second would produce a pipeline that silently returned nothing. With it, an invalid
+assignment raises at the assignment site, where the offending line is still visible.</p>
 <h3 id="storageconfig"><code>StorageConfig</code><a class="headerlink" href="#storageconfig" title="Permanent link">&para;</a></h3>
 <p>All file paths used by the pipeline. Relative paths resolve from wherever you run the process. On MSI, override with absolute scratch paths in <code>config.yaml</code> — no environment variables, no magic.</p>
 <p><strong>Input files</strong> (must exist before running):</p>
@@ -2149,12 +2198,12 @@
 <tr>
 <td><code>catalog_path</code></td>
 <td><code>data/wdb_sources.csv</code></td>
-<td>CSV of known target sources with <code>ra</code>, <code>dec</code> columns. Used by <code>prepare_labels.py</code> to look up ZTF IDs via cone search.</td>
+<td>CSV of known target sources with <code>ra</code>, <code>dec</code> columns. Resolved to ZTF source IDs via <code>ZTFSource.fetch_by_position()</code> or <code>fetch_by_region()</code> cone search.</td>
 </tr>
 <tr>
 <td><code>labels_path</code></td>
 <td><code>data/labels.csv</code></td>
-<td>CSV produced by <code>prepare_labels.py</code>. Columns: <code>source_id</code>, <code>label</code> (0 or 1). Read by the training layer.</td>
+<td>CSV you supply; ml4em never generates labels. Columns: <code>source_id</code>, <code>label</code> (non-negative class index; 0/1 for the binary case). Read by <code>FeatureDataset._load_labels()</code>. See <a href="../../guides/label-preparation/">Label preparation</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -2186,27 +2235,27 @@
 </tbody>
 </table>
 <p>On MSI, override the two input paths in <code>config.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">storage</span><span class="p">:</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">catalog_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/jin00404/ml4em/data/wdb_sources.csv</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">labels_path</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/jin00404/ml4em/data/labels.csv</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">storage</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">catalog_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/jin00404/ml4em/data/wdb_sources.csv</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">labels_path</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">/scratch.global/jin00404/ml4em/data/labels.csv</span>
 </code></pre></div>
 <p>The <code>data/</code> directory, <code>config.yaml</code>, and all output directories are gitignored and never committed.</p>
 <p>Model architecture hyperparameters (tree depth, estimators, dropout) are <strong>not</strong> in <code>PipelineConfig</code> — they live in per-model config dataclasses set in code. See <a href="../../architecture/design-principles/#2-code-controls-architecture-config-controls-parameters">Design Principles</a>.</p>
 <h3 id="loading-config">Loading config<a class="headerlink" href="#loading-config" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">load_default_config</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>   <span class="c1"># from file</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>                <span class="c1"># looks for config.yaml in cwd</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_default_config</span><span class="p">()</span>        <span class="c1"># programmatic defaults, no file needed</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">load_default_config</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>   <span class="c1"># from file</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>                <span class="c1"># looks for config.yaml in cwd</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_default_config</span><span class="p">()</span>        <span class="c1"># programmatic defaults, no file needed</span>
 </code></pre></div>
 <h3 id="api-tokens">API tokens<a class="headerlink" href="#api-tokens" title="Permanent link">&para;</a></h3>
 <p>Tokens are never stored in <code>config.yaml</code>. Set them as environment variables or in a <code>.env</code> file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># .env  (never commit this file)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_kowalski_token
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># .env  (never commit this file)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nv">ML4EM_ZTF_TOKEN</span><span class="o">=</span>your_kowalski_token
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ztf_token</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">token</span> <span class="o">=</span> <span class="n">get_ztf_token</span><span class="p">()</span>    <span class="c1"># reads ML4EM_ZTF_TOKEN from env or .env</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ztf_token</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">token</span> <span class="o">=</span> <span class="n">get_ztf_token</span><span class="p">()</span>    <span class="c1"># reads ML4EM_ZTF_TOKEN from env or .env</span>
 </code></pre></div>
 <p>Raises a clear error if the token is not found.</p>
 <hr />

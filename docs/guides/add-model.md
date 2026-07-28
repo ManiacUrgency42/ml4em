@@ -41,12 +41,11 @@ class MyModel:
 
     def predict_proba(self, features: list[FeatureVector]) -> np.ndarray:
         """
-        Returns (N, 2) array: column 0 = P(background), column 1 = P(positive).
+        Returns a (N,) float32 array: P(positive class) for each source.
         """
-        X = features_to_array(features)   # (N, 43) float32
+        X = features_to_array(features)   # (N, 45) float32
         # or use dmdt: stack [fv.dmdt for fv in features]  → (N, 26, 26)
-        probs = self._model.predict_proba(X)
-        return probs   # shape (N, 2)
+        return self._model.predict(X).astype(np.float32)   # shape (N,)
 
     def save(self, path: str) -> None:
         os.makedirs(path, exist_ok=True)
@@ -65,14 +64,21 @@ class MyModel:
 ```
 
 **`predict_proba` contract:**
+
 - Input: `list[FeatureVector]` — arbitrary length
-- Output: `np.ndarray` of shape `(N, 2)`, dtype float
-- Column 0 = probability of background class
-- Column 1 = probability of positive class
-- Probabilities must sum to 1 per row
+- Output: `np.ndarray` of shape `(N,)`, dtype float32
+- Each value is P(positive class) in `[0, 1]`
+- Same order as the input; one entry per input, no filtering
+
+A single column, not a per-class matrix. `probabilities_to_candidates` and
+`InferenceConfig.confidence_thresholds` both operate on one probability per source, and
+for a binary problem the second column is redundant. If your backend returns `(N, 2)`,
+take `[:, 1]`.
 
 **`manifest.json` is required.** `load_model` reads it to know which class to
-instantiate. Use the exact class name as the string.
+instantiate. Use the exact class name as the string. Anything `load()` needs to
+reconstruct the model — a serialised config, for example — should go in the manifest too;
+see `LogisticExampleClassifier.save()` for the pattern.
 
 ## Step 3 — Register in the loader
 
@@ -80,7 +86,7 @@ Add one entry to `src/ml4em/inference/loader.py`:
 
 ```python
 _MODEL_REGISTRY: dict[str, str] = {
-    "XGBoostClassifier": "ml4em.models.xgboost",
+    "LogisticExampleClassifier": "ml4em.models.logistic_example",
     "MyModel": "ml4em.models.my_model",   # add this
 }
 ```
@@ -91,8 +97,8 @@ Swap one import and one constructor in your training script:
 
 ```python
 # Before:
-# from ml4em.models import XGBoostClassifier, XGBoostConfig
-# model = XGBoostClassifier(config=XGBoostConfig(n_estimators=500))
+# from ml4em.models import LogisticExampleClassifier, LogisticExampleConfig
+# model = LogisticExampleClassifier(config=LogisticExampleConfig(n_epochs=300))
 
 # After:
 from ml4em.models.my_model import MyModel, MyModelConfig
@@ -103,6 +109,10 @@ trainer = StandardTrainer(model, cfg.training)
 trainer.fit(dataset)
 trainer.save("models/my_model_v1/")
 ```
+
+`StandardTrainer.fit` currently raises `NotImplementedError` — see
+[Training](../layers/training.md#standardtrainer). Until it is filled in, give your model
+its own `fit()` and call it directly, as `LogisticExampleClassifier` does.
 
 Loading at inference time:
 
@@ -123,12 +133,26 @@ of `models.SCALAR_FIELDS`. If you train with one version of `SCALAR_FIELDS` and 
 change it, your saved model will produce wrong predictions on the new ordering. Always
 retrain after changing `SCALAR_FIELDS`.
 
-**Using the dmdt image:** `XGBoostClassifier` ignores `dmdt` because gradient-boosted
-trees don't have spatial awareness. A CNN can use it:
+**Missing values:** `features_to_array` preserves `np.nan`, and maps the optional Gaia
+fields' `None` to NaN as well. Imputation is your model's decision. Tree ensembles handle
+NaN natively; a neural net does not, and `LogisticExampleClassifier` zeroes them with
+`np.nan_to_num` before fitting.
+
+**Using the dmdt image:** a scalar-only model ignores `dmdt`; gradient-boosted trees have
+no spatial awareness, so the flattened histogram would just be 676 weak columns. A CNN can
+use it:
 ```python
 images = np.stack([fv.dmdt for fv in features], axis=0)   # (N, 26, 26)
 ```
+`fv.dmdt` is `None` when `compute_dmdt` was off or the band was too short, so filter or
+substitute a zero image before stacking.
+
+**One row per (source, band):** `FeaturePipeline` emits a separate `FeatureVector` for
+each band of a source. A model sees them as independent rows. If you want a per-source
+prediction, aggregate the per-band probabilities afterwards, and remember that
+`source_id` is not unique across rows.
 
 **Class imbalance:** if `dataset.positive_fraction()` is small (< 10%), consider
-weighting the loss function or using `scale_pos_weight` (XGBoost) / `class_weight`
-(scikit-learn). The training layer exposes `dataset.class_counts()` for this purpose.
+weighting the loss function or a class-weighting option in your backend. The training
+layer exposes `dataset.class_counts()` for this purpose, and it generalises to more than
+two classes where `positive_fraction()` does not.

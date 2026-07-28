@@ -250,7 +250,7 @@ ZTF observes roughly every night, producing peaks near:
   stored as `ZTF_SIDEREAL_DAY` in `constants.py`)
 - 0.5 day, 0.3333 day, ... (harmonics)
 
-The `min_cadence_days` filter in `ZTFSource` (default 30 minutes) reduces intra-night
+The `min_cadence_days` filter in `ZTFSource` (default 5 minutes) reduces intra-night
 aliases but does not eliminate the ~1-day alias. The feature vector contains the raw
 period without alias correction — alias rejection is left to the trained model.
 

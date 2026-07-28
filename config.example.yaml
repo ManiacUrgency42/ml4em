@@ -12,7 +12,10 @@ sources:
     collection_sources: ZTF_sources_84525009  # largest available collection on melman (DR20)
     max_timestamp_hjd: 2459951.5   # end of ZTF DR16; null = all data
     bands: [g, r, i]
-    min_cadence_days: 0.020833     # 30 minutes
+    # 5 minutes.  30 min (scope-ml's library default) would discard every pair
+    # of epochs closer together than half an hour, which is the regime short-
+    # period WDBs live in and is incompatible with min_period_days: 0.01.
+    min_cadence_days: 0.003472     # 5 minutes
 
 features:
   min_observations: 50
@@ -41,7 +44,7 @@ storage:
   # Input files — place in ml4em/data/ locally (gitignored).
   # Override with absolute paths on MSI.
   catalog_path: data/wdb_sources.csv   # ra/dec catalog of target sources
-  labels_path:  data/labels.csv        # produced by scripts/prepare_labels.py
+  labels_path:  data/labels.csv        # you supply this; see docs/guides/label-preparation.md
 
   # Output directories
   features_dir:    features

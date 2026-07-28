@@ -71,10 +71,18 @@ light curve contains only clean measurements.
 
 ### Cadence and intra-night duplicates
 
-ZTF sometimes observes the same source multiple times in a single night. Observations
-separated by less than 30 minutes (`ZTF_MIN_CADENCE_DAYS = 30/1440 days`) are treated
-as duplicates and all but the first are removed. This prevents the nightly cadence from
-creating a spurious ~0.02-day "period" signal in the period-finding step.
+ZTF sometimes observes the same source multiple times in a single night, occasionally
+in back-to-back exposures a few minutes apart. Observations separated by less than
+5 minutes (`ZTF_MIN_CADENCE_DAYS = 5/1440 days`) are treated as duplicates and all but
+the first are removed. This stops a burst of near-simultaneous exposures from imprinting
+itself on the periodogram as a spurious very-short "period".
+
+The threshold is deliberately tight. A half-hour cutoff — the conventional choice for a
+general variability search — would delete every pair of epochs closer together than
+30 minutes, and short-period binaries are exactly the sources whose signal lives there.
+It would also be inconsistent with searching down to `min_period_days = 0.01` d
+(14.4 minutes), since no epoch pair short enough to constrain such a period would
+survive the filter.
 
 ### Data releases
 

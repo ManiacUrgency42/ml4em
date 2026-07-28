@@ -1893,14 +1893,15 @@ no raw dicts, tuples, or numpy arrays with implicit structure.</p>
 <p>Single-band photometric time series for one source.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@dataclass</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurve</span><span class="p">:</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">source_id</span> <span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">time</span>      <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,)</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">mag</span>       <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">mag_err</span>   <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">band</span>      <span class="p">:</span> <span class="n">Band</span>         <span class="c1"># &quot;u&quot;|&quot;g&quot;|&quot;r&quot;|&quot;i&quot;|&quot;z&quot;|&quot;y&quot;</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">survey</span>    <span class="p">:</span> <span class="n">Survey</span>       <span class="c1"># &quot;ztf&quot;|&quot;simulated&quot;</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">ra</span>        <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">dec</span>       <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">source_id</span>   <span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">time</span>        <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,), float64</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">mag</span>         <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,), float64</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">mag_err</span>     <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>   <span class="c1"># shape (N,), float64</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">band</span>        <span class="p">:</span> <span class="n">Band</span>         <span class="c1"># &quot;u&quot;|&quot;g&quot;|&quot;r&quot;|&quot;i&quot;|&quot;z&quot;|&quot;y&quot;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">survey</span>      <span class="p">:</span> <span class="n">Survey</span>       <span class="c1"># &quot;ztf&quot;|&quot;simulated&quot;</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">ra</span>          <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">dec</span>         <span class="p">:</span> <span class="nb">float</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">time_system</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hjd&quot;</span>  <span class="c1"># &quot;hjd&quot;|&quot;mjd&quot;|&quot;bjd&quot;|&quot;jd&quot;|&quot;relative&quot;</span>
 </code></pre></div>
 <table>
 <thead>
@@ -1918,17 +1919,17 @@ no raw dicts, tuples, or numpy arrays with implicit structure.</p>
 </tr>
 <tr>
 <td><code>time</code></td>
-<td><code>ndarray (N,)</code></td>
-<td>Observation timestamps (MJD or HJD)</td>
+<td><code>ndarray (N,) float64</code></td>
+<td>Observation timestamps in days, in the system named by <code>time_system</code></td>
 </tr>
 <tr>
 <td><code>mag</code></td>
-<td><code>ndarray (N,)</code></td>
+<td><code>ndarray (N,) float64</code></td>
 <td>Apparent magnitude — <strong>smaller = brighter</strong></td>
 </tr>
 <tr>
 <td><code>mag_err</code></td>
-<td><code>ndarray (N,)</code></td>
+<td><code>ndarray (N,) float64</code></td>
 <td>1-sigma uncertainty in magnitude</td>
 </tr>
 <tr>
@@ -1951,11 +1952,37 @@ no raw dicts, tuples, or numpy arrays with implicit structure.</p>
 <td><code>float</code></td>
 <td>Declination, decimal degrees (J2000)</td>
 </tr>
+<tr>
+<td><code>time_system</code></td>
+<td><code>str</code></td>
+<td>Which time scale <code>time</code> is on: <code>hjd</code>, <code>mjd</code>, <code>bjd</code>, <code>jd</code>, or <code>relative</code></td>
+</tr>
 </tbody>
 </table>
-<p><strong>Validation rules</strong> (enforced in <code>__post_init__</code>):
-- <code>time</code>, <code>mag</code>, <code>mag_err</code> must all have the same length (N)
-- All arrays must be 1-dimensional</p>
+<p><strong>Validation rules</strong> (enforced in <code>__post_init__</code>, so every consumer may rely on them):</p>
+<ul>
+<li><code>time</code>, <code>mag</code>, <code>mag_err</code> must all have the same length (N), and all must be 1-dimensional.</li>
+<li><code>time_system</code> must be one of the five recognised values. Nothing downstream can tell
+  the systems apart from the values alone, and every feature here depends only on time
+  <em>differences</em>, so an unlabelled mix would produce plausible-looking nonsense rather
+  than an error.</li>
+<li><strong><code>time</code> must not be float32.</strong> A float32 array is rejected with a <code>ValueError</code>
+  naming the offending <code>source_id</code>; it is not silently upcast. At HJD ~2.46e6 one
+  float32 ULP is 0.25 days, so by the time such an array arrives here every pair of
+  epochs less than six hours apart has already collapsed to a separation of exactly
+  zero. Upcasting would satisfy the float64 guarantee while carrying that damage
+  forward invisibly. Rejecting it at the boundary keeps the blame on the loader that
+  produced it. Loaders must build <code>time</code> in float64.</li>
+<li><code>mag</code> and <code>mag_err</code> <em>are</em> coerced to float64, since they carry no large zero point
+  and lose nothing meaningful in a narrower type.</li>
+<li><code>time</code> is sorted ascending, with <code>mag</code> and <code>mag_err</code> permuted to match.
+  Consecutive-difference statistics (von Neumann ratio, Stetson J and K) and the dm/dt
+  histogram all read neighbouring elements and are silently wrong on unsorted input
+  rather than failing, so the sort happens once here instead of being trusted to every
+  loader and every extractor.</li>
+</ul>
+<p>Non-finite values are <strong>not</strong> removed. Dropping epochs is a survey loader's decision,
+and doing it here would hide it from the caller.</p>
 <p><strong>One object per band:</strong> a source observed in ZTF g, r, and i produces three
 <code>LightCurve</code> objects. The feature layer receives <code>list[list[LightCurve]]</code> — the outer
 list is one entry per source, the inner list contains all bands for that source.</p>
@@ -1963,17 +1990,25 @@ list is one entry per source, the inner list contains all bands for that source.
 and bands.</p>
 <hr />
 <h2 id="featurevector-features-training-inference">FeatureVector — Features → Training / Inference<a class="headerlink" href="#featurevector-features-training-inference" title="Permanent link">&para;</a></h2>
-<p>Fully extracted feature set for one source. All float fields default to <code>np.nan</code>.</p>
+<p>Fully extracted feature set for one <strong>(source, band)</strong> pair. All float fields default to
+<code>np.nan</code>, so a partially extracted feature set is explicit rather than absent.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@dataclass</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">FeatureVector</span><span class="p">:</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">source_id</span>        <span class="p">:</span> <span class="nb">str</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">survey</span>           <span class="p">:</span> <span class="n">Survey</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">ra</span>               <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">dec</span>              <span class="p">:</span> <span class="nb">float</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="c1"># ... 46 more fields</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">band</span>             <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">ra</span>               <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">dec</span>              <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="c1"># ... 62 more fields (67 dataclass fields in total)</span>
 </code></pre></div>
+<p><strong>One row per (source, band).</strong> The feature pipeline expands each source into one entry
+per photometric band, so a source observed in g and r yields two <code>FeatureVector</code> rows
+sharing a <code>source_id</code> and distinguished by <code>band</code>. Independent per-band periods are
+themselves a signal: a real variable repeats across bands, an artefact usually does not.</p>
+<p>The authoritative field list is <code>dataclasses.fields(FeatureVector)</code>; the scalar subset a
+model consumes is <code>ml4em.models.base.SCALAR_FIELDS</code>.</p>
 <h3 id="field-groups">Field groups<a class="headerlink" href="#field-groups" title="Permanent link">&para;</a></h3>
-<p><strong>Sky position (2 fields)</strong></p>
+<p><strong>Identity and sky position (5 fields)</strong></p>
 <table>
 <thead>
 <tr>
@@ -1983,8 +2018,20 @@ and bands.</p>
 </thead>
 <tbody>
 <tr>
+<td><code>source_id</code></td>
+<td>Survey-native identifier, shared across the bands of one source</td>
+</tr>
+<tr>
+<td><code>survey</code></td>
+<td>Originating survey</td>
+</tr>
+<tr>
+<td><code>band</code></td>
+<td>Photometric band these features were computed from</td>
+</tr>
+<tr>
 <td><code>ra</code>, <code>dec</code></td>
-<td>Sky position in decimal degrees</td>
+<td>Sky position in decimal degrees, copied from the primary <code>LightCurve</code></td>
 </tr>
 </tbody>
 </table>
@@ -2068,7 +2115,10 @@ and bands.</p>
 </tbody>
 </table>
 <p>See <a href="../background/variability-statistics/">Variability Statistics</a> for definitions.</p>
-<p><strong>Period features (3 fields)</strong> — computed by <code>PeriodExtractor</code></p>
+<p><strong>Period features</strong> — computed by <code>PeriodExtractor</code></p>
+<p>The adopted period, plus everything needed to judge how much to trust it. Only the
+first two are scalars a model consumes; the rest are diagnostics and structured
+candidate lists.</p>
 <table>
 <thead>
 <tr>
@@ -2079,18 +2129,80 @@ and bands.</p>
 <tbody>
 <tr>
 <td><code>period</code></td>
-<td>Best period in days</td>
+<td>Adopted period in days</td>
 </tr>
 <tr>
 <td><code>period_significance</code></td>
-<td>Algorithm confidence score</td>
+<td>Algorithm-specific confidence score for that period</td>
 </tr>
 <tr>
 <td><code>period_algorithm</code></td>
-<td>Which algorithm(s) found the period (<code>str</code>, not a scalar)</td>
+<td>Algorithm that found it (<code>str</code>, not a scalar)</td>
+</tr>
+<tr>
+<td><code>period_top</code></td>
+<td><code>dict[algorithm, list[float]]</code> — top-N candidate periods per algorithm, best first</td>
+</tr>
+<tr>
+<td><code>significance_top</code></td>
+<td><code>dict[algorithm, list[float]]</code> — matching significance values</td>
+</tr>
+<tr>
+<td><code>period_n_agree_pairs</code> <code>period_n_total_pairs</code></td>
+<td>Agreeing (algorithm, algorithm) pairs, and pairs compared</td>
+</tr>
+<tr>
+<td><code>period_agree_score</code></td>
+<td><code>n_agree_pairs / n_total_pairs</code></td>
+</tr>
+<tr>
+<td><code>period_agree_strict</code></td>
+<td>Same, counting only exact 1:1 matches</td>
+</tr>
+<tr>
+<td><code>period_agree_weighted</code></td>
+<td>Agreement weighted by peak rank</td>
+</tr>
+<tr>
+<td><code>period_best_agree</code></td>
+<td>Period from the best agreeing pair, days</td>
+</tr>
+<tr>
+<td><code>period_best_consensus</code></td>
+<td>Period agreed on by the most algorithms, days</td>
+</tr>
+<tr>
+<td><code>period_family_n_algos</code></td>
+<td>Distinct algorithms in the winning sidereal-alias family</td>
+</tr>
+<tr>
+<td><code>period_family_rank_score</code></td>
+<td>Rank-weighted strength of that family</td>
+</tr>
+<tr>
+<td><code>period_family_n_members</code> <code>period_family_n_total</code></td>
+<td>Peaks in the winning family, and families found</td>
+</tr>
+<tr>
+<td><code>period_family_best</code></td>
+<td>Representative period of the winning family, days</td>
+</tr>
+<tr>
+<td><code>period_family_algorithm</code></td>
+<td>Algorithm contributing that representative</td>
 </tr>
 </tbody>
 </table>
+<p>Two peaks "agree" when they match within tolerance at a 1:1, 1:2, 2:1, 1:3 or 3:1
+harmonic ratio. The <code>period_family_*</code> group exists because ground-based cadence makes a
+true frequency and its sidereal aliases indistinguishable: all top-N peaks from all
+algorithms are treated as nodes, peaks linked by an alias relation are merged into
+families, and the family spanning the most distinct algorithms wins. That survives the
+common case where every algorithm found the same star but landed on a different alias
+of its period.</p>
+<p><code>period_top</code> and <code>significance_top</code> are kept as dicts because the number of algorithms
+is a config choice. The training layer flattens them into <code>period_{rank}_{ALGO}</code> and
+<code>significance_{rank}_{ALGO}</code> parquet columns on save and reverses that on load.</p>
 <p><strong>Fourier features (14 fields)</strong> — computed by <code>PeriodExtractor</code></p>
 <table>
 <thead>
@@ -2147,13 +2259,18 @@ and bands.</p>
 <tbody>
 <tr>
 <td><code>dmdt</code></td>
-<td><code>ndarray (26, 26)</code></td>
-<td>L2-normalized Δmag/Δt pairwise histogram</td>
+<td><code>Optional[ndarray (26, 26)]</code></td>
+<td>L2-normalized Δmag/Δt pairwise histogram; <code>None</code> when not computed</td>
 </tr>
 </tbody>
 </table>
+<p>Shape is <code>(N_DM_BINS, N_DT_BINS)</code>. It is <code>None</code> when <code>features.compute_dmdt</code> is off, or
+when the band had too few observations to form a pair.</p>
 <p>See <a href="../background/dmdt/">The dm/dt Histogram</a> for a full explanation.</p>
-<p><strong>Gaia catalog features (4 fields)</strong> — computed by <code>CatalogExtractor</code> (stub)</p>
+<p><strong>Gaia catalog features (7 fields)</strong> — computed by <code>CatalogExtractor</code></p>
+<p>Nearest Gaia EDR3 source within <code>XMATCH_RADIUS_ARCSEC</code>. Every field is
+<code>Optional[float]</code> and is <code>None</code> — not NaN — when no counterpart was found or when no
+Kowalski client was supplied to the pipeline.</p>
 <table>
 <thead>
 <tr>
@@ -2171,20 +2288,46 @@ and bands.</p>
 <td>Parallax uncertainty in milliarcseconds</td>
 </tr>
 <tr>
-<td><code>gaia_bp_rp</code></td>
-<td>BP–RP colour (temperature proxy)</td>
+<td><code>gaia_g_mean_mag</code></td>
+<td>G apparent magnitude</td>
 </tr>
 <tr>
-<td><code>gaia_ruwe</code></td>
-<td>Astrometric quality — RUWE &gt; 1.4 suggests binary</td>
+<td><code>gaia_bp_mean_mag</code></td>
+<td>BP apparent magnitude</td>
+</tr>
+<tr>
+<td><code>gaia_rp_mean_mag</code></td>
+<td>RP apparent magnitude</td>
+</tr>
+<tr>
+<td><code>gaia_bp_rp</code></td>
+<td>BP−RP colour (temperature proxy)</td>
+</tr>
+<tr>
+<td><code>gaia_astrometric_excess_noise</code></td>
+<td>Astrometric residual noise; lower means a cleaner single-source fit</td>
 </tr>
 </tbody>
 </table>
+<p>The raw G/BP/RP magnitudes are kept alongside the derived colour. They cost nothing
+extra — the cross-match already returns them — and a colour alone cannot be turned back
+into them, so dropping them would decide on the model's behalf that apparent brightness
+is irrelevant. G together with parallax gives absolute magnitude, which is what places a
+source on the HR diagram, the standard way to separate white dwarfs from main sequence
+stars of the same colour.</p>
 <p>See <a href="../background/gaia/">Gaia &amp; Stellar Catalogs</a> for definitions.</p>
 <h3 id="scalar_fields">SCALAR_FIELDS<a class="headerlink" href="#scalar_fields" title="Permanent link">&para;</a></h3>
-<p><code>models.SCALAR_FIELDS</code> is an ordered list of <strong>43 float field names</strong> — everything
-in <code>FeatureVector</code> except <code>source_id</code>, <code>survey</code>, <code>period_algorithm</code>, and <code>dmdt</code>. This
-is the input to any scalar-based model.</p>
+<p><code>models.SCALAR_FIELDS</code> is an ordered list of <strong>45 field names</strong> whose values are plain
+floats, or ints castable to float. <code>N_SCALAR_FEATURES</code> is its length.</p>
+<p>It excludes the string and structured fields: <code>source_id</code>, <code>survey</code>, <code>band</code>,
+<code>period_algorithm</code>, <code>period_family_algorithm</code>, the <code>period_top</code> /
+<code>significance_top</code> dicts, and the <code>dmdt</code> image. It also excludes <code>ra</code> and <code>dec</code>, which
+identify a source rather than describe its variability. <code>features_to_array()</code> turns a
+<code>list[FeatureVector]</code> into a <code>(N, 45)</code> float32 array in this order, mapping <code>None</code> Gaia
+values to NaN, because an unmatched source is missing data rather than a zero.</p>
+<p>A name in <code>SCALAR_FIELDS</code> that <code>FeatureVector</code> does not declare would be invisible at
+runtime — <code>features_to_array()</code> would fall back to NaN and every model would train on a
+dead column. That mismatch is checked once at import, so a typo fails loudly.</p>
 <div class="admonition warning">
 <p class="admonition-title">Field order is stable</p>
 <p>The ordering of <code>SCALAR_FIELDS</code> is fixed. Changing it invalidates any previously
@@ -2196,12 +2339,19 @@ retraining all models.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@dataclass</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">LabeledSample</span><span class="p">:</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">feature</span> <span class="p">:</span> <span class="n">FeatureVector</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">label</span>   <span class="p">:</span> <span class="nb">int</span>   <span class="c1"># 1 = positive class, 0 = background</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">label</span>   <span class="p">:</span> <span class="nb">int</span>   <span class="c1"># non-negative class index</span>
 </code></pre></div>
 <p>Wraps a <code>FeatureVector</code> with its ground-truth label. Labels are never generated by
 ml4em — they must be supplied by the researcher (e.g. from a catalog cross-match).</p>
-<p>Labels must be binary: <code>1</code> = positive class (whatever you're looking for), <code>0</code> =
-background. See <a href="../guides/label-preparation/">Preparing Labels</a> for how to create them.</p>
+<p><code>label</code> is a <strong>non-negative class index</strong>, not a strict 0/1 flag. Binary use is the
+common case (<code>0</code> = background, <code>1</code> = the positive class you are looking for), but the
+feature store is not specific to binary classification and a multi-class head is an
+equally valid consumer of it. <code>FeatureDataset._load_labels()</code> accepts any non-negative
+integer and rejects negatives, since a negative label is almost always a parse error
+rather than a real class.</p>
+<p><code>FeatureDataset.positive_fraction()</code> counts <code>label == 1</code> specifically and is therefore
+only meaningful for the binary case; <code>class_counts()</code> is the general form.</p>
+<p>See <a href="../guides/label-preparation/">Preparing Labels</a> for how to create the labels CSV.</p>
 <hr />
 <h2 id="candidate-inference-output">Candidate — Inference → Output<a class="headerlink" href="#candidate-inference-output" title="Permanent link">&para;</a></h2>
 <p>Immutable inference result for one source (<code>frozen=True</code> on the dataclass — no field
@@ -2258,8 +2408,8 @@ can be changed after creation).</p>
 thresholds from <code>InferenceConfig.confidence_thresholds</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">inference</span><span class="p">:</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">confidence_thresholds</span><span class="p">:</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">high</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">0.9</span><span class="w">   </span><span class="c1"># default</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span><span class="w">   </span><span class="c1"># default</span>
 </code></pre></div>
 <table>
 <thead>
@@ -2274,15 +2424,17 @@ thresholds from <code>InferenceConfig.confidence_thresholds</code>:</p>
 <td><code>"high"</code></td>
 </tr>
 <tr>
-<td>0.5 – 0.9</td>
+<td>0.7 – 0.9</td>
 <td><code>"medium"</code></td>
 </tr>
 <tr>
-<td>&lt; 0.5</td>
+<td>&lt; 0.7</td>
 <td><code>"low"</code></td>
 </tr>
 </tbody>
 </table>
+<p>Both keys are required, each must lie in [0, 1], and <code>high</code> must be strictly greater
+than <code>medium</code>; <code>InferenceConfig</code> rejects any other combination at load time.</p>
 <p>Thresholds are configurable. There is no science-specific meaning baked into the tiers —
 set them to match the purity/completeness trade-off you need.</p>
 

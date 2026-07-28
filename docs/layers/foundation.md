@@ -52,11 +52,20 @@ Default bin edges for `DmdtExtractor`. Override via `features.dmdt` in `config.y
 | Constant | Value | Description |
 |----------|-------|-------------|
 | `ZTF_BANDS` | `("g", "r", "i")` | ZTF photometric bands |
-| `ZTF_SIDEREAL_DAY` | 0.99727 days | Sidereal day length |
-| `ZTF_MIN_CADENCE_DAYS` | 30/1440 | Intra-night duplicate threshold (30 min) |
+| `ZTF_SIDEREAL_DAY` | 0.99727 days | Sidereal day length, in solar days |
+| `SIDEREAL_FREQ_PER_DAY` | 24/23.9345 ≈ 1.00274 | Sidereal frequency, cycles per solar day. Used to group alias peaks into families |
+| `ZTF_MIN_CADENCE_DAYS` | 5/1440 ≈ 0.003472 | Intra-night duplicate threshold (5 min) |
 | `ZTF_DR16_MAX_HJD` | 2,459,951.5 | Maximum HJD in ZTF Data Release 16 |
 | `XMATCH_RADIUS_ARCSEC` | 2.0 | Gaia cross-match search radius |
 | `GAIA_RUWE_CLEAN` | 1.4 | RUWE threshold for a clean astrometric solution |
+
+`ZTF_MIN_CADENCE_DAYS` is 5 minutes rather than the half hour a general-purpose
+variability pipeline would use. A 30-minute threshold discards every pair of epochs
+closer together than half an hour, which is precisely the regime short-period
+binaries live in, and it contradicts a period search that reaches down to
+`min_period_days = 0.01` d (14.4 minutes). Five minutes still removes the
+back-to-back exposures that would otherwise imprint the nightly cadence on the
+periodogram, without deleting the signal being looked for.
 
 ---
 
@@ -77,6 +86,27 @@ Each section of `PipelineConfig` maps directly to a layer:
 | `training` | `StandardTrainer` — loop parameters |
 | `inference` | `StandardPredictor` — batch size, confidence thresholds |
 
+### Assignment is validated
+
+Every nested config model — `ZTFConfig`, `FeatureConfig`, `PeriodConfig`,
+`DmdtConfig`, `CatalogConfig`, `StorageConfig`, `TrainingConfig`,
+`InferenceConfig` — sets `model_config = {"validate_assignment": True}`.
+
+Pydantic runs field validators when a model is *constructed*, but by default it
+skips them when a field is *assigned* afterwards. Overriding a field after load is
+the normal way scripts and benchmarks reconfigure a run:
+
+```python
+cfg = load_config("config.yaml")
+cfg.features.device = "cuda"          # normalised to "gpu" by the field validator
+cfg.features.feature_batch_size = 0   # raises ValidationError here, not mid-run
+```
+
+Without `validate_assignment` the first line would leave the un-normalised string
+`"cuda"` in place until `periodfind.set_device()` rejected it hours later, and the
+second would produce a pipeline that silently returned nothing. With it, an invalid
+assignment raises at the assignment site, where the offending line is still visible.
+
 ### `StorageConfig`
 
 All file paths used by the pipeline. Relative paths resolve from wherever you run the process. On MSI, override with absolute scratch paths in `config.yaml` — no environment variables, no magic.
@@ -85,8 +115,8 @@ All file paths used by the pipeline. Relative paths resolve from wherever you ru
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `catalog_path` | `data/wdb_sources.csv` | CSV of known target sources with `ra`, `dec` columns. Used by `prepare_labels.py` to look up ZTF IDs via cone search. |
-| `labels_path` | `data/labels.csv` | CSV produced by `prepare_labels.py`. Columns: `source_id`, `label` (0 or 1). Read by the training layer. |
+| `catalog_path` | `data/wdb_sources.csv` | CSV of known target sources with `ra`, `dec` columns. Resolved to ZTF source IDs via `ZTFSource.fetch_by_position()` or `fetch_by_region()` cone search. |
+| `labels_path` | `data/labels.csv` | CSV you supply; ml4em never generates labels. Columns: `source_id`, `label` (non-negative class index; 0/1 for the binary case). Read by `FeatureDataset._load_labels()`. See [Label preparation](../guides/label-preparation.md). |
 
 **Output directories** (created automatically):
 

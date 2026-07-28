@@ -340,14 +340,17 @@ class StorageConfig(BaseModel):
     Input files (read by the pipeline)
     ------------------------------------
     catalog_path  CSV of known target sources with ra, dec columns.
-                  Used by scripts/prepare_labels.py to look up ZTF IDs
-                  via cone search and produce labels_path.
+                  Resolved to ZTF source IDs via ZTFLoader.fetch_by_coords()
+                  cone search when building labels_path.
                   Local default:  data/wdb_sources.csv
                   MSI example:    /scratch.global/jin00404/ml4em/data/wdb_sources.csv
 
-    labels_path   CSV produced by prepare_labels.py.
-                  Columns: source_id (ZTF integer _id as str), label (0 or 1).
+    labels_path   CSV supplied by the user; ml4em never generates labels.
+                  Columns: source_id (ZTF integer _id as str), label
+                  (non-negative class index; 0/1 for the binary case).
                   Read by FeatureDataset._load_labels() during training.
+                  See docs/guides/label-preparation.md for the cross-match
+                  workflow that produces it.
                   Local default:  data/labels.csv
                   MSI example:    /scratch.global/jin00404/ml4em/data/labels.csv
 
@@ -367,7 +370,7 @@ class StorageConfig(BaseModel):
     # Place them in ml4em/data/ locally (gitignored).
     # Override in config.yaml on MSI with absolute scratch paths.
     catalog_path : str = "data/wdb_sources.csv"   # ra/dec catalog of target sources
-    labels_path  : str = "data/labels.csv"         # source_id,label — produced by prepare_labels.py
+    labels_path  : str = "data/labels.csv"         # source_id,label — supplied by the user
 
     # Output directories — created automatically by each layer
     features_dir    : str = "features"     # parquet files, one per ZTF quadrant

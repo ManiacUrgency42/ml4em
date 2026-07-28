@@ -70,3 +70,81 @@ the core team.
 
 Both paths install ml4em in **editable mode**: changes to Python source files
 are picked up immediately with `git pull` — no rebuild or reinstall needed.
+
+---
+
+## SLURM conventions { #slurm-conventions }
+
+Everything in `slurm/` and `benchmarks/slurm/` follows the same four rules.
+They are not stylistic — each one exists because the obvious alternative fails
+silently on MSI.
+
+### Submit from the repository root
+
+```bash
+cd ~/ml4em
+sbatch slurm/run_demo.sh
+sbatch benchmarks/slurm/scaling_gpu.sh
+```
+
+`sbatch` copies the submitted script to `/var/spool` on the compute node before
+running it, so `${BASH_SOURCE[0]}` inside the job points at the spool copy and
+not at your checkout. Every script therefore resolves the repository from
+`SLURM_SUBMIT_DIR` — the directory `sbatch` was invoked from — and falls back to
+`BASH_SOURCE` only for the case where you run the file directly with `bash`:
+
+```bash
+REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+```
+
+Submitting from inside `slurm/` or `benchmarks/slurm/` makes `REPO_DIR` point at
+the wrong directory and the job fails on the first path it builds from it.
+
+### `logs/` must already exist
+
+Every script writes to `logs/<name>_%j.out`. SLURM opens that file *before* the
+job body runs, so an in-script `mkdir -p logs` is too late — the job is rejected
+at submission with an output-file error. The directory is tracked in git via
+`logs/.gitkeep`, so a fresh clone already has it and no manual step is needed.
+
+### Partitions
+
+The legacy `a100`, `agsmall` and `amdsmall` partitions no longer exist on MSI.
+Current ones:
+
+| Job type | Partition | Extra flags |
+|----------|-----------|-------------|
+| GPU batch | `msigpu` | `--gres=gpu:a100:1` (or `:4`) |
+| CPU batch | `msismall` | — |
+| Interactive GPU | `interactive-gpu` | `--gres=gpu:a100:1` |
+
+`msilarge`, `msibigmem`, `msilong`, `preempt-gpu`, `a100-4-long` and
+`a100-8-long` also exist but nothing in this repository requests them.
+
+Validate a script's account and partition before queuing it for real:
+
+```bash
+sbatch --test-only benchmarks/slurm/scaling_gpu.sh
+```
+
+`--test-only` performs the full authorization check and reports the estimated
+start time without submitting anything, which catches a wrong `-A` or a
+partition you are not authorized for immediately rather than after the job sits
+in the queue and then fails.
+
+### Fail-fast preconditions and unbuffered output
+
+Each script sources `$DATA_DIR/.env` and then checks two prerequisites before
+doing any work:
+
+```bash
+if [[ ! -f "${DATA_DIR}/config_msi.yaml" ]]; then ... exit 1; fi
+if [[ -z "${ML4EM_ZTF_TOKEN:-}" ]]; then ... exit 1; fi
+```
+
+Both would otherwise surface minutes later as a pydantic validation error or a
+Kowalski authentication failure, neither of which names the actual missing file.
+
+The Python step runs under `conda run --no-capture-output`. Without that flag
+`conda run` buffers stdout and stderr until the process exits, so `tail -f` on
+the log file shows nothing at all while a multi-hour benchmark is running.

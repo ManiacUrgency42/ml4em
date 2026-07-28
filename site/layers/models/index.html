@@ -839,6 +839,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#logistic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LogisticExampleClassifier
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1810,6 +1821,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#logistic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LogisticExampleClassifier
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1833,35 +1855,48 @@
 <h1 id="models-layer">Models Layer<a class="headerlink" href="#models-layer" title="Permanent link">&para;</a></h1>
 <p>Defines the contract between training and inference. The models layer does not perform training or inference — it provides the <code>MLModel</code> Protocol that both layers depend on, plus utilities for extracting scalar features from <code>FeatureVector</code> objects.</p>
 <p><strong>Consumes:</strong> <code>list[FeatureVector]</code> (via <code>predict_proba</code>)</p>
-<p><strong>Emits:</strong> <code>np.ndarray</code> of shape <code>(N, 2)</code> — per-class probabilities</p>
+<p><strong>Emits:</strong> <code>np.ndarray</code> of shape <code>(N,)</code> — P(positive class) per source</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/ml4em/models/
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py       MLModel Protocol + SCALAR_FIELDS utilities
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  base.py              MLModel Protocol + SCALAR_FIELDS utilities
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  logistic_example.py  LogisticExampleClassifier — reference implementation
 </code></pre></div>
 <h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="#mlmodel">MLModel Protocol</a></li>
 <li><a href="#scalar-fields">SCALAR_FIELDS and features_to_array</a></li>
+<li><a href="#logistic-example">LogisticExampleClassifier</a></li>
 </ul>
 <hr />
 <h2 id="mlmodel"><code>MLModel</code> Protocol<a class="headerlink" href="#mlmodel" title="Permanent link">&para;</a></h2>
-<p>The contract every model must satisfy. Any class with compatible <code>predict_proba</code> and <code>save</code> methods is a valid <code>MLModel</code>.</p>
+<p>The contract every model must satisfy. Any class with compatible <code>predict_proba</code> and <code>save</code> methods is a valid <code>MLModel</code> — no base class, no registration.</p>
 <p><strong>Consumes:</strong> <code>list[FeatureVector]</code></p>
-<p><strong>Emits:</strong> <code>np.ndarray</code> shape <code>(N, 2)</code> — <code>[:, 0]</code> is P(background), <code>[:, 1]</code> is P(positive class)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MLModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<p><strong>Emits:</strong> <code>np.ndarray</code> shape <code>(N,)</code>, dtype float32 — P(positive class) in <code>[0, 1]</code>, in the same order as the input</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@runtime_checkable</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">MLModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
-<p><code>save</code> must write a <code>manifest.json</code> containing at least <code>{"model_class": "ClassName"}</code> so that <code>inference.load_model</code> can reconstruct the model. <code>load</code> is not on the Protocol because backends serialize differently — dispatch lives in <code>inference/loader.py</code>.</p>
+<p><code>predict_proba</code> receives <code>list[FeatureVector]</code> rather than a pre-flattened array so each model can extract exactly the fields it needs — scalars, the dm/dt image, or both.</p>
+<p><code>save</code> must write a <code>manifest.json</code> containing at least <code>{"model_class": "ClassName"}</code> so that <code>inference.load_model</code> can reconstruct the model. <code>load</code> is not on the Protocol because backends serialize differently — dispatch lives in <code>inference/loader.py</code>, which maps the manifest's class name to a module via <code>_MODEL_REGISTRY</code>.</p>
+<p><code>fit</code> is not on the Protocol either. Training signatures differ per backend, and both the training and inference layers only ever need to <em>use</em> a model.</p>
 <hr />
 <h2 id="scalar-fields"><code>SCALAR_FIELDS</code> and <code>features_to_array</code><a class="headerlink" href="#scalar-fields" title="Permanent link">&para;</a></h2>
-<p>Defined in <code>models/base.py</code>. Shared by all model implementations that operate on scalar features.</p>
+<p>Defined in <code>models/base.py</code> rather than inside any model, because they describe the <code>FeatureVector</code> contract and not one model's internals.</p>
 <h3 id="scalar_fields"><code>SCALAR_FIELDS</code><a class="headerlink" href="#scalar_fields" title="Permanent link">&para;</a></h3>
-<p>An ordered list of 43 float field names from <code>FeatureVector</code> — everything except <code>source_id</code>, <code>survey</code>, <code>period_algorithm</code>, and <code>dmdt</code>.</p>
+<p>An ordered list of <strong>45</strong> field names from <code>FeatureVector</code> whose values are plain floats,
+or ints castable to float. It excludes <code>source_id</code>, <code>survey</code>, <code>band</code>, <code>ra</code>, <code>dec</code>, the
+string fields <code>period_algorithm</code> and <code>period_family_algorithm</code>, the <code>period_top</code> /
+<code>significance_top</code> dicts, and the <code>dmdt</code> image.</p>
+<p><code>ra</code> and <code>dec</code> are excluded deliberately: they identify where a source is, not how it
+varies, and a model given them can learn the survey footprint instead of the physics.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCALAR_FIELDS</span><span class="p">,</span> <span class="n">N_SCALAR_FEATURES</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">N_SCALAR_FEATURES</span><span class="p">)</span>   <span class="c1"># 43</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">N_SCALAR_FEATURES</span><span class="p">)</span>   <span class="c1"># 45</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">SCALAR_FIELDS</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>   <span class="c1"># [&#39;n_obs&#39;, &#39;median&#39;, &#39;wmean&#39;, &#39;chi2red&#39;, &#39;roms&#39;]</span>
 </code></pre></div>
+<p>The list is validated against <code>FeatureVector</code> at import. A name that the dataclass does
+not declare would be invisible at runtime — <code>features_to_array()</code> would fall back to NaN
+and every model would train on a dead column — so the mismatch raises immediately.</p>
 <div class="admonition warning">
 <p class="admonition-title">Field order is fixed</p>
 <p>The ordering of <code>SCALAR_FIELDS</code> is stable across versions. A model trained on one ordering cannot be used with a different ordering. Never reorder <code>SCALAR_FIELDS</code> without retraining.</p>
@@ -1869,9 +1904,41 @@
 <h3 id="features_to_array"><code>features_to_array</code><a class="headerlink" href="#features_to_array" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">features_to_array</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>   <span class="c1"># np.ndarray, shape (N, 43), dtype float32</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">X</span> <span class="o">=</span> <span class="n">features_to_array</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>   <span class="c1"># np.ndarray, shape (N, 45), dtype float32</span>
 </code></pre></div>
-<p>Extracts the 43 scalar fields in <code>SCALAR_FIELDS</code> order. <code>np.nan</code> values are preserved (models that handle missing data natively, such as gradient boosting trees, can use them directly).</p>
+<p>Extracts the 45 scalar fields in <code>SCALAR_FIELDS</code> order. <code>np.nan</code> is preserved, so models
+that handle missing data natively (gradient boosting trees, for instance) can use it
+directly; imputation is the model's decision, not this function's.</p>
+<p>The Gaia fields are <code>Optional[float]</code> and are <code>None</code> — not absent — whenever a source has
+no catalogue counterpart, so <code>float(None)</code> would raise. <code>features_to_array</code> maps <code>None</code> to
+NaN, because an unmatched source is missing data rather than a zero.</p>
+<hr />
+<h2 id="logistic-example"><code>LogisticExampleClassifier</code><a class="headerlink" href="#logistic-example" title="Permanent link">&para;</a></h2>
+<p>A deliberately minimal reference implementation: one <code>nn.Linear(45, 1)</code> layer,
+<code>BCEWithLogitsLoss</code>, Adam. That is exactly logistic regression. It exists to prove the
+feature → train → inference path is wired correctly before committing to a more
+expressive architecture, and to give any later model a concrete accuracy baseline to
+beat.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml4em.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticExampleClassifier</span><span class="p">,</span> <span class="n">LogisticExampleConfig</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">model</span> <span class="o">=</span> <span class="n">LogisticExampleClassifier</span><span class="p">(</span><span class="n">LogisticExampleConfig</span><span class="p">(</span><span class="n">n_epochs</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">))</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">probs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">feature_vectors</span><span class="p">)</span>   <span class="c1"># shape (N,), float32</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;models/logistic_v1/&quot;</span><span class="p">)</span>              <span class="c1"># weights.pt + manifest.json</span>
+</code></pre></div>
+<p><code>LogisticExampleConfig</code> lives in this module, not in <code>PipelineConfig</code> — model
+architecture hyperparameters are code, not configuration. See
+<a href="../../architecture/design-principles/#2-code-controls-architecture-config-controls-parameters">Design Principles</a>.</p>
+<p><code>weights()</code> returns the learned weight per <code>SCALAR_FIELDS</code> name, sorted by descending
+absolute value. With 45 numbers and one layer, that mapping is directly readable: a large
+<code>|w|</code> means the model is leaning on that feature.</p>
+<p>NaN scalars are zeroed before fitting and before prediction. The training loop runs a
+fixed <code>n_epochs</code> full-batch passes with no validation split and no early stopping, which
+is fine for a demo dataset and not what you want in production.</p>
+<p><code>torch</code> is imported lazily inside <code>fit</code>, <code>predict_proba</code> and <code>load</code>, so importing
+<code>ml4em.models</code> does not require it. It ships in the <code>[training]</code> optional dependency
+group.</p>
 <hr />
 <p><a class="md-button" href="../features/">← Features</a> <a class="md-button md-button--primary" href="../training/">Training →</a> <a class="md-button md-button--primary" href="../inference/">Inference →</a></p>
 

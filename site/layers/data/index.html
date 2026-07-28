@@ -768,6 +768,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#near_ids-and-fetch_by_regionra-dec-radius_arcsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        near_ids() and fetch_by_region(ra, dec, radius_arcsec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#data-cleaning" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1817,6 +1828,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#near_ids-and-fetch_by_regionra-dec-radius_arcsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        near_ids() and fetch_by_region(ra, dec, radius_arcsec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#data-cleaning" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1894,12 +1916,20 @@
 <p>The contract every data source must satisfy. Any class with a compatible <code>fetch_batch</code> method qualifies — no base class or registration required.</p>
 <p><strong>Consumes:</strong> <code>list[str]</code> — source ID strings</p>
 <p><strong>Emits:</strong> <code>list[LightCurve]</code> — all light curves across all requested sources and bands</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurveSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@runtime_checkable</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">LightCurveSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]:</span> <span class="o">...</span>
 </code></pre></div>
-<p>Pass a one-element list to fetch a single source:</p>
+<p><code>fetch_batch()</code> is the only member. Pass a one-element list to fetch a single source:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_batch</span><span class="p">([</span><span class="n">single_id</span><span class="p">])</span>
 </code></pre></div>
+<p>Every source returns one <code>LightCurve</code> per band per sky position. For ZTF each <code>_id</code>
+encodes a single band, so a multi-band source is several ids; a survey that keys one
+object across all its filters would instead return several <code>LightCurve</code>s for one id.
+Order is not guaranteed.</p>
+<p>Time arrays must be <strong>float64</strong> — <code>LightCurve</code> rejects float32. See
+<a href="../../guides/add-data-source/">Add a data source</a> for the reason and for the rest of the
+loader contract.</p>
 <hr />
 <h2 id="ztfsource"><code>ZTFSource</code><a class="headerlink" href="#ztfsource" title="Permanent link">&para;</a></h2>
 <p>Fetches ZTF photometric light curves from the Kowalski database via the <code>penquins</code> client. Issues a single batched query for all requested IDs.</p>
@@ -1918,8 +1948,21 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">lcs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch_by_position</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">256.123</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">45.678</span><span class="p">,</span> <span class="n">radius_arcsec</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 </code></pre></div>
 <p>Default radius is 2.0 arcsec — appropriate for isolated stars. Increase to 5–10 arcsec in crowded fields.</p>
+<h3 id="near_ids-and-fetch_by_regionra-dec-radius_arcsec"><code>near_ids()</code> and <code>fetch_by_region(ra, dec, radius_arcsec)</code><a class="headerlink" href="#near_ids-and-fetch_by_regionra-dec-radius_arcsec" title="Permanent link">&para;</a></h3>
+<p>For production runs that start from a sky region rather than an ID list,
+<code>fetch_by_region()</code> uses two Kowalski round trips instead of one cone search:
+<code>near_ids()</code> hits the spatial index and returns only <code>_id</code>s (a tiny response), then
+<code>fetch_batch()</code> pulls the light curves for those IDs and can be parallelised across
+<code>n_workers</code> threads. It returns <code>(source_ids, light_curves)</code>.</p>
+<p><code>near_ids()</code> also applies <code>sources.ztf.min_nobs</code> server-side. Kowalski indexes an <code>nobs</code>
+field per source, so filtering there rejects sparsely-sampled sources before any light
+curve data crosses the network. Without it a region query returns every source in the
+footprint and the pipeline pays the full transfer cost for rows it will immediately
+discard against <code>features.min_observations</code>. Set it to 0 to disable.</p>
+<p>A ZTF quad is roughly 3600 arcsec across, so <code>radius_arcsec=1800</code> gives a quad-sized
+circular region.</p>
 <h3 id="data-cleaning">Data cleaning<a class="headerlink" href="#data-cleaning" title="Permanent link">&para;</a></h3>
-<p>Two filtering steps are applied before returning:</p>
+<p>Three filtering steps are applied before returning:</p>
 <table>
 <thead>
 <tr>
@@ -1935,12 +1978,29 @@
 <td>Drops observations flagged bad by the ZTF pipeline</td>
 </tr>
 <tr>
+<td>programid filter</td>
+<td>epoch <code>programid</code> not in <code>sources.ztf.program_ids</code></td>
+<td>Drops epochs from unwanted observing programs</td>
+</tr>
+<tr>
 <td>Intra-night dedup</td>
-<td>Δt &lt; 30 min between same-night observations</td>
+<td>Δt &lt; 5 min from the previous kept point</td>
 <td>Drops near-simultaneous repeat observations</td>
 </tr>
 </tbody>
 </table>
+<p>The programid filter is applied <strong>per epoch</strong>, not only in the Mongo query. The query
+filter on <code>data.programid</code> selects <em>documents</em> containing at least one matching epoch; it
+does not remove the non-matching epochs from the returned array. Relying on the query
+alone would silently return partnership and Caltech data to a run configured for public
+data only. An epoch with no <code>programid</code> field passes, because some collections omit it
+and dropping those epochs would return empty light curves rather than an error.</p>
+<p>The cadence threshold is <code>sources.ztf.min_cadence_days</code>, defaulting to
+<code>ZTF_MIN_CADENCE_DAYS = 5/1440</code> days (5 minutes). Set it to 0 to disable deduplication.
+See <a href="../../background/surveys/#ztf">Surveys → Cadence</a> for why 5 minutes rather than the
+conventional half hour.</p>
+<p>A source whose document survives none of these — no clean epochs, or nothing left after
+cadence filtering — is dropped entirely rather than returned empty.</p>
 <h3 id="band-mapping">Band mapping<a class="headerlink" href="#band-mapping" title="Permanent link">&para;</a></h3>
 <p>ZTF stores filter codes as integers. <code>ZTFSource</code> converts them to the string band codes used in <code>LightCurve.band</code>:</p>
 <table>

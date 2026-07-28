@@ -163,7 +163,7 @@ When `.calc()` is called, execution jumps from Python directly into compiled Rus
 
 ### What is a GPU and why does it help?
 
-A GPU (Graphics Processing Unit) is a chip originally designed to render video game graphics. To draw 4K video at 60 frames per second, a GPU must perform billions of simple arithmetic operations every second — it does this by having **thousands of small computing cores** working in parallel rather than a handful of powerful ones like a CPU. NVIDIA's A100 (the GPU on MSI's a100 partition) has 6,912 cores.
+A GPU (Graphics Processing Unit) is a chip originally designed to render video game graphics. To draw 4K video at 60 frames per second, a GPU must perform billions of simple arithmetic operations every second — it does this by having **thousands of small computing cores** working in parallel rather than a handful of powerful ones like a CPU. NVIDIA's A100 (the GPU on MSI's `msigpu` partition) has 6,912 cores.
 
 Period finding maps perfectly onto this architecture: each (source, trial-period) pair is an independent computation that can run on its own GPU core simultaneously. A batch of 1,000 sources × 10,000 periods means 10 million independent jobs that a GPU can start simultaneously.
 

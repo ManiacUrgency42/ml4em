@@ -53,9 +53,12 @@ as a SLURM job — no GPU needed, it runs on a CPU node.
 **Run on MSI:**
 ```bash
 cd ~/ml4em
-mkdir -p logs
 sbatch slurm/setup_conda.sh
 ```
+
+Submit from the repository root, not from inside `slurm/` — the script resolves
+the checkout from `SLURM_SUBMIT_DIR`. `logs/` is already tracked in git, so there
+is nothing to create. See [Deployment → SLURM conventions](deployment.md#slurm-conventions).
 
 Monitor progress:
 
@@ -73,6 +76,13 @@ module load conda
 conda activate ml4em-gpu
 python -c 'import ml4em; import periodfind; print("OK")'
 ```
+
+The job installs torch for the requested mode, builds periodfind's Rust and
+Cython extensions, and finishes with
+`pip install -e ".[ztf,catalog,training,plots,dev]"`. The `plots` extra is
+included because the scaling benchmarks call `benchmarks/plot_scaling.py` at
+the end of the job; without matplotlib in the environment the run still
+completes but produces no figure.
 
 ---
 
@@ -112,7 +122,7 @@ sources:
     collection_sources: ZTF_sources_84525009
     max_timestamp_hjd: 2459951.5
     bands: [g, r, i]
-    min_cadence_days: 0.020833
+    min_cadence_days: 0.003472
 
 features:
   device: cuda
@@ -159,7 +169,6 @@ your credentials at any time, re-run the script.
 **Run on MSI:**
 ```bash
 cd ~/ml4em
-mkdir -p logs
 sbatch slurm/run_demo_conda.sh
 ```
 
@@ -182,9 +191,14 @@ First, request a GPU compute node:
 
 **Run on MSI:**
 ```bash
-srun --account=cough052 --partition=a100 --gres=gpu:a100:1 \
+srun --account=cough052 --partition=interactive-gpu --gres=gpu:a100:1 \
      --mem=16g --time=1:00:00 --pty bash
 ```
+
+`interactive-gpu` is the partition for short `--pty` sessions; batch jobs use
+`msigpu`, which is what `slurm/run_demo_conda.sh` requests. The legacy `a100`,
+`agsmall` and `amdsmall` partitions no longer exist — see
+[Deployment → SLURM conventions](deployment.md#slurm-conventions).
 
 Once on the compute node:
 
@@ -217,7 +231,7 @@ sbatch slurm/run_demo_conda.sh
 |--------|--------|
 | `src/ml4em/` Python code | `git pull` only |
 | `scripts/`, `slurm/`, `docs/` | `git pull` only |
-| `pyproject.toml` — new pure-Python dep | `pip install -e ".[ztf,catalog,training,dev]"` inside the active env |
+| `pyproject.toml` — new pure-Python dep | `pip install -e ".[ztf,catalog,training,plots,dev]"` inside the active env |
 | `external/periodfind` submodule update | Full rebuild (see below) |
 | CUDA version change | Full rebuild (see below) |
 
@@ -226,6 +240,6 @@ Full rebuild from scratch:
 **Run on MSI:**
 ```bash
 conda env remove -n ml4em-gpu --yes
-cd ~/ml4em && mkdir -p logs
+cd ~/ml4em
 sbatch slurm/setup_conda.sh
 ```

@@ -16,10 +16,76 @@ for your node allocation.
 | `benchmarks/sweep_workers.py` | Sweep `n_workers` to find the Kowalski LC fetch throughput ceiling |
 | `benchmarks/sweep_batch_size.py` | Sweep `feature_batch_size` to find the GPU throughput ceiling and VRAM limit |
 | `benchmarks/sweep_nobs.py` | Bucket real ZTF LCs by observation count, time period finding per bucket |
+| `benchmarks/scaling_cpu.py` | CPU core scaling and Amdahl fit for period finding |
+| `benchmarks/scaling_gpu.py` | Multi-GPU strong scaling for period finding |
+| `benchmarks/plot_scaling.py` | Renders the figures from the two scaling runs |
 
 **Use `batch_throughput.py` for all MSI compute estimates.**
 The single-source script is for local development only — single-source latency
 does not predict batch throughput because GPU utilization is near zero on one source.
+
+---
+
+## Running on MSI
+
+Each Python benchmark has a matching SLURM wrapper in `benchmarks/slurm/`.
+Submit them from the repository root:
+
+```bash
+cd ~/ml4em
+sbatch benchmarks/slurm/batch_throughput.sh
+sbatch benchmarks/slurm/sweep_workers.sh
+sbatch benchmarks/slurm/sweep_batch_size.sh
+sbatch benchmarks/slurm/sweep_nobs.sh
+sbatch benchmarks/slurm/scaling_cpu.sh
+sbatch benchmarks/slurm/scaling_gpu.sh
+sbatch benchmarks/slurm/single_latency.sh
+```
+
+Extra flags are forwarded to the Python script, so you can override a parameter
+without editing anything:
+
+```bash
+sbatch benchmarks/slurm/batch_throughput.sh --n-workers 8 --device cuda
+sbatch benchmarks/slurm/scaling_cpu.sh --max-sources 2000 --trials 3
+```
+
+| Script | Partition | Resources |
+|--------|-----------|-----------|
+| `batch_throughput.sh` | `msigpu` | 1×A100, 16 CPU, 32 GB, 30 min |
+| `single_latency.sh` | `msigpu` | 1×A100, 4 CPU, 16 GB, 15 min |
+| `sweep_batch_size.sh` | `msigpu` | 1×A100, 8 CPU, 64 GB, 1 h |
+| `sweep_nobs.sh` | `msigpu` | 1×A100, 8 CPU, 32 GB, 1 h |
+| `scaling_gpu.sh` | `msigpu` | 4×A100, 32 CPU, 128 GB, 4 h |
+| `sweep_workers.sh` | `msismall` | 32 CPU, 32 GB, 1 h |
+| `scaling_cpu.sh` | `msismall` | 64 CPU, 128 GB, 12 h |
+
+The two Kowalski-bound benchmarks run on `msismall` because nothing in them
+touches a GPU — `sweep_workers` measures network throughput and `scaling_cpu`
+deliberately measures the CPU backend.
+
+Check that your account is authorized for a partition before queuing a long job:
+
+```bash
+sbatch --test-only benchmarks/slurm/scaling_gpu.sh
+```
+
+### Preconditions
+
+Every wrapper sources `/scratch.global/$USER/ml4em_data/.env` and then refuses to
+start unless both of the following hold:
+
+- `/scratch.global/$USER/ml4em_data/config_msi.yaml` exists
+- `ML4EM_ZTF_TOKEN` is set
+
+Neither is checked by the Python scripts themselves, and both would otherwise
+appear several minutes in as a pydantic validation error or a Kowalski
+authentication failure that does not name the missing file. Run
+`python scripts/get_credentials.py` to populate the token.
+
+The rest of the SLURM conventions these scripts follow — submitting from the
+repo root, the tracked `logs/` directory, `conda run --no-capture-output` — are
+described in [Deployment → SLURM conventions](../deployment.md#slurm-conventions).
 
 ---
 
@@ -180,6 +246,52 @@ GPU-hours = (total_sources × ms_per_source_from_sweep_nobs) / 3_600_000
 
 Add the Kowalski fetch time from `batch_throughput.py` for total wall time.
 Kowalski stages consume wall time (node reserved) but minimal GPU-hours.
+
+---
+
+## Step 6 — Parallel scaling
+
+Steps 1–5 size a single run. The two scaling benchmarks answer a different
+question: how much faster does period finding get when you add hardware.
+
+Both fetch the region once, cache the light curves, and then re-run period
+finding on that same cached set at every parallelism level, so the measurement
+isolates compute from network variance.
+
+```bash
+sbatch benchmarks/slurm/scaling_cpu.sh
+sbatch benchmarks/slurm/scaling_gpu.sh
+```
+
+`scaling_cpu.py` runs each core count in its own subprocess. That is not an
+implementation detail worth hiding: periodfind's Rayon thread pool is sized once
+from `RAYON_NUM_THREADS` when the extension loads, so a single process cannot
+change its core count between measurements. It fits Amdahl's law to the results
+and reports the serial fraction:
+
+```
+  Cores     Runtime       Ideal      Amdahl  ...
+```
+
+`scaling_gpu.py` shards the workload across local devices via
+`CUDA_VISIBLE_DEVICES` and reports median light curves per second with the
+run-to-run spread. It uses no MPI, so it cannot span nodes — the SLURM wrapper
+requests 4 A100s on one node for that reason.
+
+Run `sweep_batch_size.sh` (Step 3) first. Scaling measured at a batch size below
+the per-GPU optimum understates what the hardware can do, because each device is
+underutilised at every point on the curve.
+
+Both write JSON to `logs/benchmarks/` and the SLURM wrappers finish by calling:
+
+```bash
+python benchmarks/plot_scaling.py
+```
+
+which renders `logs/benchmarks/scaling.png` from whichever of
+`scaling_cpu.json` and `scaling_gpu.json` are present. The plot call is
+tolerant of a missing matplotlib — the benchmark result is the JSON, and the
+figure is a convenience on top of it.
 
 ---
 
