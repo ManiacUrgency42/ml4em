@@ -32,7 +32,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time=02:00:00
+#SBATCH --time=04:00:00
 #SBATCH -A cough052
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=jin00404@umn.edu
@@ -63,9 +63,15 @@ mkdir -p "$APPTAINER_CACHEDIR" "$TMPDIR"
 # --bind DATA:..  : scratch data dir → catalog, .env, output features/models
 # --env-file      : injects ML4EM_ZTF_TOKEN from .env into the container
 
+# PYTHONPATH=/data/pyshim loads sitecustomize.py, which patches a gap in the
+# image's python3.11.0rc1 (Ubuntu 22.04 ships the release candidate, which
+# lacks sys.get_int_max_str_digits).  Without it torch.optim.Adam raises
+# AttributeError via torch._dynamo.  Drop this once the image is rebuilt on a
+# final Python 3.11 — see the Dockerfile note.
 apptainer run --nv \
     --bind "${REPO_DIR}:/app/ml4em" \
     --bind "${DATA_DIR}:/data" \
     --env-file "${DATA_DIR}/.env" \
+    --env PYTHONPATH=/data/pyshim \
     "${SIF}" \
     python scripts/run_demo.py --config /data/config_msi.yaml

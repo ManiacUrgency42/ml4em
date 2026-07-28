@@ -16,7 +16,10 @@ import sys
 import urllib.request
 from pathlib import Path
 
-HOST = "melman.caltech.edu"
+# ZTF light curves live on gloria.  melman hosts the reference catalogs
+# (Gaia_EDR3, PS1, AllWISE) but its ZTF_sources_* collections are 16-document
+# stubs, so a melman token cannot fetch light curves.
+HOST = "gloria.caltech.edu"
 ENV_FILE = Path(f"/scratch.global/{os.environ['USER']}/ml4em_data/.env")
 
 
