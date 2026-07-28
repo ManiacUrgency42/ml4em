@@ -2033,9 +2033,14 @@ doing any work:</p>
 </code></pre></div>
 <p>Both would otherwise surface minutes later as a pydantic validation error or a
 Kowalski authentication failure, neither of which names the actual missing file.</p>
-<p>The Python step runs under <code>conda run --no-capture-output</code>. Without that flag
-<code>conda run</code> buffers stdout and stderr until the process exits, so <code>tail -f</code> on
-the log file shows nothing at all while a multi-hour benchmark is running.</p>
+<p><code>slurm/run_demo.sh</code> runs the Python step under <code>apptainer run</code> against
+<code>ml4em_gpu.sif</code>; <code>slurm/run_demo_conda.sh</code> is its conda counterpart. The demo is
+a smoke test, so each version pins one environment and stays readable.</p>
+<p>The benchmarks under <code>benchmarks/slurm/</code> do the opposite: they run under either
+environment, chosen at submission time rather than baked into the file. See
+<a href="../guides/benchmarking/#launcher">Benchmarking → Conda or Apptainer</a>. Neither
+<code>apptainer run</code> nor <code>conda run --no-capture-output</code> buffers, so <code>tail -f</code> on the
+log file shows progress while a multi-hour benchmark is still running.</p>
 
 
 
