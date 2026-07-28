@@ -28,45 +28,9 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=jin00404@umn.edu
 
-SIF=/scratch.global/$USER/ml4em_gpu.sif
-DATA_DIR=/scratch.global/$USER/ml4em_data
-# sbatch copies the submitted script to /var/spool on the compute node, so
-# BASH_SOURCE points there and not at the checkout.  SLURM_SUBMIT_DIR is the
-# directory sbatch was called from; the BASH_SOURCE form is the fallback for
-# running this script directly with bash.
-REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+ML4EM_GPU=1
+source "${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/benchmarks/slurm/_common.sh"
 
-module purge
-module load apptainer
-
-if [[ -f "${DATA_DIR}/.env" ]]; then
-    set -a; source "${DATA_DIR}/.env"; set +a
-fi
-
-# Both are prerequisites, and failing here names the missing one instead of
-# surfacing as a pydantic or Kowalski error several minutes in.
-if [[ ! -f "${SIF}" ]]; then
-    echo "ERROR: ${SIF} not found." >&2
-    echo "       Run: sbatch slurm/pull_image.sh" >&2
-    exit 1
-fi
-if [[ ! -f "${DATA_DIR}/config_msi.yaml" ]]; then
-    echo "ERROR: ${DATA_DIR}/config_msi.yaml not found." >&2
-    echo "       cp config.example.yaml ${DATA_DIR}/config_msi.yaml and edit storage.*" >&2
-    exit 1
-fi
-if [[ -z "${ML4EM_ZTF_TOKEN:-}" ]]; then
-    echo "ERROR: ML4EM_ZTF_TOKEN is not set (expected in ${DATA_DIR}/.env)." >&2
-    echo "       Run: python scripts/get_credentials.py" >&2
-    exit 1
-fi
-
-apptainer run --nv \
-    --bind "${REPO_DIR}:/app/ml4em" \
-    --bind "${DATA_DIR}:/data" \
-    --env-file "${DATA_DIR}/.env" \
-    --env PYTHONPATH=/data/pyshim \
-    "${SIF}" \
-    python benchmarks/single_latency.py \
-        --config /data/config_msi.yaml \
-        "$@"
+ml4em_run benchmarks/single_latency.py \
+    --config "${ML4EM_CONFIG}" \
+    "$@"

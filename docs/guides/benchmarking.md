@@ -70,12 +70,51 @@ Check that your account is authorized for a partition before queuing a long job:
 sbatch --test-only benchmarks/slurm/scaling_gpu.sh
 ```
 
+### Conda or Apptainer — the benchmarks do not care { #launcher }
+
+The benchmarks are plain Python scripts. Nothing in them knows about conda or
+Apptainer. Every wrapper is a `#SBATCH` header followed by two lines:
+
+```bash
+ML4EM_GPU=1
+source ".../benchmarks/slurm/_common.sh"
+
+ml4em_run benchmarks/scaling_gpu.py --config "${ML4EM_CONFIG}" ...
+```
+
+`benchmarks/slurm/_common.sh` is the single place that decides how Python gets
+started. By default it picks whichever environment actually exists on the
+machine, preferring Apptainer:
+
+| `ML4EM_LAUNCHER` | What runs | Chosen automatically when |
+|---|---|---|
+| `apptainer` | `apptainer run [--nv] … ml4em_gpu.sif python …` | `/scratch.global/$USER/ml4em_gpu.sif` exists |
+| `conda` | `conda run -n ml4em-gpu python …` | no `.sif`, but `conda` is available |
+| `python` | `python …` | never — set it explicitly |
+
+Override per job without editing anything:
+
+```bash
+ML4EM_LAUNCHER=conda sbatch benchmarks/slurm/scaling_gpu.sh
+```
+
+`ML4EM_GPU=1` in the wrapper is what adds `--nv` under Apptainer and
+`module load cuda/11.8.0` under conda. The two CPU jobs (`scaling_cpu.sh`,
+`sweep_workers.sh`) set `ML4EM_GPU=0`.
+
+`ML4EM_CONFIG` is set by `_common.sh` to a path valid in the chosen environment
+— `/data/config_msi.yaml` inside the container, `$DATA_DIR/config_msi.yaml`
+otherwise. Wrappers pass `--config "${ML4EM_CONFIG}"` and never spell out a path
+themselves, which is what keeps container-internal paths out of the seven files.
+
+`slurm/run_demo.sh` is deliberately *not* built on this. It is a smoke test with
+one fixed environment, not a measurement.
+
 ### Preconditions
 
 Every wrapper sources `/scratch.global/$USER/ml4em_data/.env` and then refuses to
-start unless all of the following hold:
+start unless both of the following hold:
 
-- `/scratch.global/$USER/ml4em_gpu.sif` exists (`sbatch slurm/pull_image.sh`)
 - `/scratch.global/$USER/ml4em_data/config_msi.yaml` exists
 - `ML4EM_ZTF_TOKEN` is set
 
@@ -84,10 +123,9 @@ appear several minutes in as a pydantic validation error or a Kowalski
 authentication failure that does not name the missing file. Run
 `python scripts/get_credentials.py` to populate the token.
 
-The benchmarks run inside the same Apptainer image as the demo, with the same
-`apptainer run --bind REPO:/app/ml4em --bind DATA:/data` invocation, so there is
-one environment to keep working rather than two. GPU jobs add `--nv`; the two
-CPU jobs (`scaling_cpu.sh`, `sweep_workers.sh`) omit it.
+The chosen launcher is then checked for its own prerequisite — a missing `.sif`
+or a missing `ml4em-gpu` environment fails immediately with the command that
+creates it.
 
 The rest of the SLURM conventions these scripts follow — submitting from the
 repo root, the tracked `logs/` directory — are described in

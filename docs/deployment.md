@@ -145,8 +145,12 @@ if [[ -z "${ML4EM_ZTF_TOKEN:-}" ]]; then ... exit 1; fi
 Both would otherwise surface minutes later as a pydantic validation error or a
 Kowalski authentication failure, neither of which names the actual missing file.
 
-The Python step runs under `apptainer run` against `ml4em_gpu.sif`, the same
-image and the same bind mounts the demo uses. Every job script — demo and
-benchmarks alike — goes through the container, so there is a single environment
-to keep working. `apptainer run` does not buffer, so `tail -f` on the log file
-shows progress while a multi-hour benchmark is still running.
+`slurm/run_demo.sh` runs the Python step under `apptainer run` against
+`ml4em_gpu.sif`; `slurm/run_demo_conda.sh` is its conda counterpart. The demo is
+a smoke test, so each version pins one environment and stays readable.
+
+The benchmarks under `benchmarks/slurm/` do the opposite: they run under either
+environment, chosen at submission time rather than baked into the file. See
+[Benchmarking → Conda or Apptainer](guides/benchmarking.md#launcher). Neither
+`apptainer run` nor `conda run --no-capture-output` buffers, so `tail -f` on the
+log file shows progress while a multi-hour benchmark is still running.
