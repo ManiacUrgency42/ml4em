@@ -109,7 +109,13 @@ def _save_cache(path: str, sources: list[list]) -> None:
 def _load_cache(path: str) -> list[list]:
     from ml4em.types import LightCurve
 
-    d = np.load(path, allow_pickle=False)
+    # np.load on a compressed .npz returns a lazy NpzFile, and its __getitem__
+    # re-inflates the whole member on EVERY access.  The loop below touches
+    # seven members per light curve, so indexing the NpzFile directly turns a
+    # seconds-long load into hours of redundant zlib work.  Materialize each
+    # member exactly once and index plain ndarrays instead.
+    with np.load(path, allow_pickle=False) as npz:
+        d = {k: npz[k] for k in npz.files}
     offsets   = d["offsets"]
     src_index = d["source_index"]
     n_sources = int(d["n_sources"][0])
